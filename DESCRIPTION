@@ -1,0 +1,16 @@
+Package: nhp.inputs.report.app
+Title: NHP Inputs Report App
+Version: 0.0.0.9000
+Authors@R: person('Ozayr', 'Mohammed', email = 'ozayr.mohammed@nhs.net', role = c('cre', 'aut'))
+Description: An application to explore the mitigator values selected by Trusts in the NHP Inputs App.
+License: MIT + file LICENSE
+Imports: 
+    config (>= 0.3.1),
+    golem (>= 0.4.1),
+    shiny (>= 1.7.4)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
