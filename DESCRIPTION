@@ -5,12 +5,20 @@ Authors@R: person('Ozayr', 'Mohammed', email = 'ozayr.mohammed@nhs.net', role = 
 Description: An application to explore the mitigator values selected by Trusts in the NHP Inputs App.
 License: MIT + file LICENSE
 Imports: 
+    bslib (>= 0.7.0),
     config (>= 0.3.1),
+    dplyr,
+    ggplot2,
     golem (>= 0.4.1),
-    shiny (>= 1.7.4)
+    htmltools,
+    purrr,
+    scales,
+    shiny (>= 1.7.4),
+    tibble,
+    tidyr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.1
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
