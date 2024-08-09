@@ -15,7 +15,13 @@ app_ui <- function(request) {
       sidebar = bslib::sidebar(
         shiny::selectInput(
           inputId = "schemes",
-          label = "Select schemes",
+          label = bslib::tooltip(
+            trigger = list(
+              "Select schemes",
+              bsicons::bs_icon("info-circle")
+            ),
+            "Select one or more schemes"
+          ),
           choices = NULL,
           selected = NULL,
           multiple = TRUE

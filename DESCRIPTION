@@ -5,6 +5,7 @@ Authors@R: person('Ozayr', 'Mohammed', email = 'ozayr.mohammed@nhs.net', role = 
 Description: An application to explore the mitigator values selected by Trusts in the NHP Inputs App.
 License: MIT + file LICENSE
 Imports: 
+    bsicons,
     bslib (>= 0.7.0),
     config (>= 0.3.1),
     dplyr,
