@@ -9,8 +9,123 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
-    fluidPage(
-      h1("nhp.inputs.report.app")
+    bslib::page_navbar(
+      title = "NHP mitigator comparisons",
+      window_title = "NHP mitigator comparisons",
+      sidebar = bslib::sidebar(
+        shiny::selectInput(
+          inputId = "schemes",
+          label = "Select schemes",
+          choices = NULL,
+          selected = NULL,
+          multiple = TRUE
+        ),
+        shiny::selectInput(
+          inputId = "focus_scheme",
+          label = "Select focal scheme",
+          choices = NULL,
+          selected = NULL,
+          multiple = FALSE
+        ),
+        shiny::selectInput(
+          inputId = "mitigator_groups",
+          label = "Select mitigator group",
+          choices = NULL,
+          selected = NULL,
+          multiple = FALSE
+        ),
+        shiny::selectInput(
+          inputId = "mitigators",
+          label = "Select mitigators",
+          choices = NULL,
+          selected = NULL,
+          multiple = TRUE
+        ),
+        shiny::checkboxInput(
+          inputId = "toggle_horizon",
+          label = "Standardise by horizon length?",
+          value = FALSE
+        ),
+        shiny::checkboxInput(
+          inputId = "toggle_invert_facets",
+          label = "Facet by scheme?",
+          value = FALSE
+        ),
+        shiny::numericInput(
+          inputId = "facet_rows",
+          label = "Number of facet rows",
+          value = 1,
+          min = 1,
+          max = 5,
+          step = 1
+        )
+      ),
+      bslib::nav_panel(
+        title = "Information",
+        bslib::navset_card_underline(
+          bslib::nav_panel(
+            title = "Introduction",
+            htmltools::p("Information about the app.")
+          ),
+          bslib::nav_panel(
+            title = "Notes",
+            htmltools::p("Notes about use of the app.")
+          )
+        )
+      ),
+      bslib::nav_panel(
+        title = "Peer comparison",
+        bslib::navset_card_underline(
+          bslib::nav_panel(
+            title = "Inpatients",
+            shiny::plotOutput("p")
+          ),
+          bslib::nav_panel(
+            title = "Outpatients",
+            htmltools::p("Placeholder for plot")
+          ),
+          bslib::nav_panel(
+            title = "A&E",
+            htmltools::p("Placeholder for plot")
+          )
+        )
+      ),
+      bslib::nav_panel(
+        title = "Heatmaps",
+        bslib::navset_card_underline(
+          bslib::nav_panel(
+            "Binary",
+            htmltools::p("Placeholder for heatmap.")
+          ),
+          bslib::nav_panel(
+            "Midpoints",
+            htmltools::p("Placeholder for heatmap.")
+          ),
+          bslib::nav_panel(
+            "Ranges",
+            htmltools::p("Placeholder for heatmap.")
+          )
+        )
+      ),
+      bslib::nav_panel(
+        title = "Data",
+        bslib::navset_card_underline(
+          bslib::nav_panel(
+            "Raw data",
+            htmltools::p("Placeholder for table.")
+          ),
+          bslib::nav_panel(
+            "Mitigator lookup",
+            htmltools::p("Placeholder for table.")
+          ),
+          bslib::nav_panel(
+            "Scheme lookup",
+            htmltools::p("Placeholder for table.")
+          )
+        )
+      ),
+      bslib::nav_spacer(),
+      bslib::nav_item(bslib::input_dark_mode(mode = "light"))
     )
   )
 }

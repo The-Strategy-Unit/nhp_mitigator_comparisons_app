@@ -5,5 +5,156 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # Your application server logic
+
+  # Reactives
+
+  dat <- shiny::reactive({
+    generate_test_dataset()
+  })
+
+  all_schemes <- shiny::reactive({
+    dat() |>
+      shiny::req() |>
+      dplyr::distinct(scheme) |>
+      dplyr::pull() |>
+      sort()
+  })
+
+  all_mitigators <- shiny::reactive({
+    dat() |>
+      shiny::req() |>
+      dplyr::distinct(mitigator) |>
+      dplyr::pull() |>
+      sort()
+  })
+
+  all_mitigator_groups <- shiny::reactive({
+    dat() |>
+      shiny::req() |>
+      dplyr::distinct(mitigator_group) |>
+      dplyr::pull() |>
+      sort()
+  })
+
+  dat_selected <- shiny::reactive({
+
+    shiny::validate(
+      need(input$schemes, message = "Select at least one scheme.")
+    )
+
+    shiny::validate(
+      need(input$mitigators, message = "Select at least one mitigator.")
+    )
+
+    dat <- dat()
+
+    if (input$toggle_horizon) {
+      dat <- dat |>
+        dplyr::mutate(dplyr::across(c(lo, hi, mid), \(x) x / years))
+    }
+
+    dat |>
+      dplyr::filter(
+        scheme %in% input$schemes,
+        mitigator %in% input$mitigators
+      )
+
+  })
+
+  # Observers
+
+  shiny::observe({
+    shiny::updateSelectInput(
+      session,
+      "schemes",
+      choices = all_schemes(),
+      selected = all_schemes()[1:5]
+    )
+  })
+
+  shiny::observe({
+    shiny::updateSelectInput(
+      session,
+      "mitigator_groups",
+      choices = all_mitigator_groups(),
+      selected = all_mitigator_groups()[1]
+    )
+  })
+
+  shiny::observe({
+    shiny::updateSelectInput(
+      session,
+      "focus_scheme",
+      choices = input$schemes,
+      selected = input$schemes[1]
+    )
+  })
+
+  shiny::observeEvent(input$mitigator_groups, {
+
+    mitigator_group_set <- dat() |>
+      dplyr::filter(mitigator_group == input$mitigator_groups) |>
+      dplyr::distinct(mitigator) |>
+      dplyr::pull()
+
+    shiny::updateSelectInput(
+      session,
+      "mitigators",
+      choices = all_mitigators(),
+      selected = mitigator_group_set
+    )
+
+  })
+
+  # Renders
+
+  output$p <- shiny::renderPlot({
+
+    p <- dat_selected() |>
+      dplyr::mutate(
+        point_colour = dplyr::if_else(
+          scheme == input$focus_scheme,
+          TRUE,
+          FALSE
+        )
+      ) |>
+      ggplot2::ggplot()
+
+    if (!input$toggle_invert_facets) {
+      p <- p +
+        ggplot2::geom_pointrange(
+          ggplot2::aes(
+            x = mid, y = scheme,
+            xmin = lo, xmax = hi,
+            colour = point_colour
+          )
+        ) +
+        ggplot2::facet_wrap(~mitigator, nrow = input$facet_rows)
+    }
+
+    if (input$toggle_invert_facets) {
+      p <- p +
+        ggplot2::geom_pointrange(
+          ggplot2::aes(
+            x = mid, y = mitigator,
+            xmin = lo, xmax = hi,
+            colour = point_colour
+          )
+        ) +
+        ggplot2::facet_wrap(~scheme, nrow = input$facet_rows)
+    }
+
+    p +
+      ggplot2::scale_color_manual(
+        values = c("FALSE" = "black", "TRUE" = "red")
+      ) +
+      ggplot2::labs(x = "80% Confidence Interval") +
+      ggplot2::theme_bw(base_size = 20) +
+      ggplot2::theme(
+        axis.title.y = ggplot2::element_blank(),
+        legend.position = "none"
+      )
+
+  })
+
 }
