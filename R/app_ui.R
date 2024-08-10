@@ -8,6 +8,7 @@ app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+    shinyjs::useShinyjs(),
     # Your application UI logic
     bslib::page_navbar(
       title = "NHP mitigator comparisons",
@@ -97,10 +98,10 @@ app_ui <- function(request) {
           full_screen = TRUE,
           bslib::layout_sidebar(
             sidebar = bslib::sidebar(
-              title = "Plot settings",
+              title = "Point-range settings",
               open = TRUE,
               shiny::checkboxInput(
-                inputId = "toggle_horizon",
+                inputId = "toggle_horizon_pointrange",
                 label = bslib::tooltip(
                   trigger = list(
                     "Standardise by horizon length?",
@@ -136,24 +137,50 @@ app_ui <- function(request) {
                 step = 1
               )
             ),
-            shiny::plotOutput("p"),
+            shiny::plotOutput("pointrange"),
           )
         )
       ),
       bslib::nav_panel(
         title = "Heatmaps",
-        bslib::navset_card_underline(
-          bslib::nav_panel(
-            "Binary",
-            htmltools::p("Placeholder for heatmap.")
-          ),
-          bslib::nav_panel(
-            "Midpoints",
-            htmltools::p("Placeholder for heatmap.")
-          ),
-          bslib::nav_panel(
-            "Ranges",
-            htmltools::p("Placeholder for heatmap.")
+        bslib::card(
+          full_screen = TRUE,
+          bslib::layout_sidebar(
+            sidebar = bslib::sidebar(
+              title = "Heatmap settings",
+              open = TRUE,
+              shiny::selectInput(
+                inputId = "heatmap_type",
+                label = bslib::tooltip(
+                  trigger = list(
+                    "Value type",
+                    bsicons::bs_icon("info-circle")
+                  ),
+                  "Schemes' low or high 80% confidence internal selection in the NHP inputs app, or the range or midpoint of these."
+                ),
+                choices = c(
+                  Binary = "binary",
+                  Midpoint = "mid",
+                  Range = "range",
+                  Low = "lo",
+                  High = "hi"
+                ),
+                selected = "mid",
+                multiple = FALSE
+              ),
+              shiny::checkboxInput(
+                inputId = "toggle_horizon_heatmap",
+                label = bslib::tooltip(
+                  trigger = list(
+                    "Standardise by horizon length?",
+                    bsicons::bs_icon("info-circle")
+                  ),
+                  "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
+                ),
+                value = FALSE
+              )
+            ),
+            shiny::plotOutput("heatmap"),
           )
         )
       ),
