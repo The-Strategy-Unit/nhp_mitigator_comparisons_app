@@ -13,57 +13,108 @@ app_ui <- function(request) {
       title = "NHP mitigator comparisons",
       window_title = "NHP mitigator comparisons",
       sidebar = bslib::sidebar(
-        shiny::selectInput(
-          inputId = "schemes",
-          label = bslib::tooltip(
-            trigger = list(
-              "Select schemes",
-              bsicons::bs_icon("info-circle")
+        bslib::accordion(
+          open = TRUE,
+          bslib::accordion_panel(
+            "Schemes",
+            icon = bsicons::bs_icon("hospital"),
+            shiny::selectInput(
+              inputId = "schemes",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Select schemes",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Select one or more schemes"
+              ),
+              choices = NULL,
+              selected = NULL,
+              multiple = TRUE
             ),
-            "Select one or more schemes"
+            shiny::selectInput(
+              inputId = "focus_scheme",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Select focal scheme",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "The scheme to highlight in plots. Must be one of the schemes selected for display."
+              ),
+              choices = NULL,
+              selected = NULL,
+              multiple = FALSE
+            )
           ),
-          choices = NULL,
-          selected = NULL,
-          multiple = TRUE
-        ),
-        shiny::selectInput(
-          inputId = "focus_scheme",
-          label = "Select focal scheme",
-          choices = NULL,
-          selected = NULL,
-          multiple = FALSE
-        ),
-        shiny::selectInput(
-          inputId = "mitigator_groups",
-          label = "Select mitigator group",
-          choices = NULL,
-          selected = NULL,
-          multiple = FALSE
-        ),
-        shiny::selectInput(
-          inputId = "mitigators",
-          label = "Select mitigators",
-          choices = NULL,
-          selected = NULL,
-          multiple = TRUE
-        ),
-        shiny::checkboxInput(
-          inputId = "toggle_horizon",
-          label = "Standardise by horizon length?",
-          value = FALSE
-        ),
-        shiny::checkboxInput(
-          inputId = "toggle_invert_facets",
-          label = "Facet by scheme?",
-          value = FALSE
-        ),
-        shiny::numericInput(
-          inputId = "facet_rows",
-          label = "Number of facet rows",
-          value = 1,
-          min = 1,
-          max = 5,
-          step = 1
+          bslib::accordion_panel(
+            "Mitigators",
+            icon = bsicons::bs_icon("sliders"),
+            shiny::selectInput(
+              inputId = "mitigator_groups",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Select mitigator group",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Select a group to pre-populate the mitigator selection box."
+              ),
+              choices = NULL,
+              selected = NULL,
+              multiple = FALSE
+            ),
+            shiny::selectInput(
+              inputId = "mitigators",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Select mitigators",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Prepopulated given the mitigator group selection, but you can add or remove individual mitigators."
+              ),
+              choices = NULL,
+              selected = NULL,
+              multiple = TRUE
+            )
+          ),
+          bslib::accordion_panel(
+            "Plot",
+            icon = bsicons::bs_icon("bar-chart"),
+            shiny::checkboxInput(
+              inputId = "toggle_horizon",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Standardise by horizon length?",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
+              ),
+              value = FALSE
+            ),
+            shiny::checkboxInput(
+              inputId = "toggle_invert_facets",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Facet by scheme?",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Invert the pointrange plots to show mitigators on the y axis and scheme as the faceting variable."
+              ),
+              value = FALSE
+            ),
+            shiny::numericInput(
+              inputId = "facet_rows",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Number of facet rows",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Choose the number of rows over which to break the faceted pointrange charts."
+              ),
+              value = 1,
+              min = 1,
+              max = 5,
+              step = 1
+            )
+          )
         )
       ),
       bslib::nav_panel(
