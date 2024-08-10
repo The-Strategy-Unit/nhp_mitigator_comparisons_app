@@ -1,6 +1,8 @@
 #' Generate a Simple Demo Dataset
 #' @param n_schemes Integer.
 #' @param n_mitigators Integer.
+#' @param n_mitigator_groups Integer.
+#' @param prop_selected Numeric.
 #' @param seed Integer.
 #' @return A data.frame.
 #' @noRd
@@ -8,6 +10,7 @@ generate_test_dataset <- function(
     n_schemes = 10,
     n_mitigators = 50,
     n_mitigator_groups = 8,
+    prop_selected = 0.6,
     seed = 123
 ) {
 
@@ -46,7 +49,8 @@ generate_test_dataset <- function(
           hi = pmin(lo + runif(nrows, 0.25, 0.5), 1),
           mid = (lo + hi) / 2,
           years = sample(20:30, nrows, replace = TRUE)
-        )
+        ) |>
+        dplyr::slice_sample(prop = prop_selected)
     }
   )
 
