@@ -7,7 +7,7 @@
 #' @return A data.frame.
 #' @noRd
 generate_test_dataset <- function(
-    n_schemes = 10,
+    n_schemes = 20,
     n_mitigators = 50,
     n_mitigator_groups = 8,
     prop_selected = 0.6,
@@ -53,5 +53,36 @@ generate_test_dataset <- function(
         dplyr::slice_sample(prop = prop_selected)
     }
   )
+
+}
+
+#' Generate a Lookup of Schemes to Peer set
+#' @param test_dataset A data.frame
+#' @param n_peers Integer.
+#' @return A data.frame.
+#' @noRd
+generate_peer_set <- function(test_dataset, n_peers = 5) {
+
+  schemes <- test_dataset |>
+    dplyr::distinct(scheme) |>
+    dplyr::arrange(scheme) |>
+    dplyr::pull(scheme)
+
+  peer_set <- vector("list", length = length(schemes)) |>
+    setNames(schemes)
+
+  for (i in seq_along(schemes)) {
+    schemes_to_sample <- schemes[schemes != schemes[i]]
+    peer_set[[i]] <- sample(schemes_to_sample, n_peers, replace = FALSE)
+  }
+
+  peer_set |>
+    tibble::as_tibble() |>
+    tidyr::pivot_longer(
+      tidyselect::everything(),
+      names_to = "scheme",
+      values_to = "peer"
+    ) |>
+    dplyr::arrange(scheme, peer)
 
 }
