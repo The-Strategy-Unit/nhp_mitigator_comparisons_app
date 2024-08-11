@@ -21,30 +21,30 @@ app_ui <- function(request) {
             "Select schemes",
             icon = bsicons::bs_icon("hospital"),
             shiny::selectInput(
-              inputId = "schemes",
-              label = bslib::tooltip(
-                trigger = list(
-                  "Schemes to visualise",
-                  bsicons::bs_icon("info-circle")
-                ),
-                "Select one or more schemes"
-              ),
-              choices = NULL,
-              selected = NULL,
-              multiple = TRUE
-            ),
-            shiny::selectInput(
               inputId = "focus_scheme",
               label = bslib::tooltip(
                 trigger = list(
                   "Focal scheme",
                   bsicons::bs_icon("info-circle")
                 ),
-                "The scheme to highlight in plots. Must be one of the schemes selected for display."
+                "The scheme to highlight in plots. Causes autoselection of peers."
               ),
               choices = NULL,
               selected = NULL,
               multiple = FALSE
+            ),
+            shiny::selectInput(
+              inputId = "schemes",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Schemes to visualise.",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Defaults to peers to the selected scheme."
+              ),
+              choices = NULL,
+              selected = NULL,
+              multiple = TRUE
             )
           ),
           bslib::accordion_panel(

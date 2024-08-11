@@ -12,6 +12,16 @@ app_server <- function(input, output, session) {
     generate_test_dataset()
   })
 
+  peers <- shiny::reactive({
+    generate_peer_set(dat())
+  })
+
+  peer_set <- shiny::reactive({
+    peers() |>
+      dplyr::filter(scheme == input$focus_scheme) |>
+      dplyr::pull(peer)
+  })
+
   all_schemes <- shiny::reactive({
     dat() |>
       shiny::req() |>
@@ -108,9 +118,18 @@ app_server <- function(input, output, session) {
   shiny::observe({
     shiny::updateSelectInput(
       session,
+      "focus_scheme",
+      choices = all_schemes(),
+      selected = all_schemes()[1]
+    )
+  })
+
+  shiny::observe({
+    shiny::updateSelectInput(
+      session,
       "schemes",
       choices = all_schemes(),
-      selected = all_schemes()[1:5]
+      selected = c(input$focus_scheme, peer_set()) |> sort()
     )
   })
 
@@ -123,14 +142,6 @@ app_server <- function(input, output, session) {
     )
   })
 
-  shiny::observe({
-    shiny::updateSelectInput(
-      session,
-      "focus_scheme",
-      choices = input$schemes,
-      selected = input$schemes[1]
-    )
-  })
 
   shiny::observe({
 
