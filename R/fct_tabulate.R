@@ -75,9 +75,10 @@ prepare_skeleton_table <- function(extracted_params) {
 populate_table <- function(
     skeleton_table,
     extracted_params,
+    trust_code_lookup,
     mitigator_lookup,
     mitigator_groups,
-    nee
+    nee_results
 ) {
 
   data_joined <- skeleton_table |>
@@ -86,11 +87,20 @@ populate_table <- function(
       by = dplyr::join_by(peer_year, activity_type, parameter, strategy)
     ) |>
     dplyr::left_join(
+      trust_code_lookup |>
+        dplyr::mutate(
+          scheme = `Trust ODS Code`,
+          scheme_name = paste0(`Name of Hospital site`, " (", scheme, ")"),
+          .keep = "none"
+        ),
+      by = dplyr::join_by(peer == scheme)
+    ) |>
+    dplyr::left_join(
       mitigator_lookup,
       by = dplyr::join_by(strategy == "Strategy variable")
     ) |>
     dplyr::left_join(
-      nee,
+      nee_results,
       by = dplyr::join_by(strategy == param_name)
     ) |>
     dplyr::left_join(
@@ -98,12 +108,13 @@ populate_table <- function(
       by = dplyr::join_by("Mitigator code")
     )
 
-  data_joined |>
+  data_augmented <- data_joined |>
     dplyr::filter(
       (value_1 <= 1 & value_2 <= 1) |
         is.na(value_1) & is.na(value_2)
     ) |>
     dplyr::mutate(
+      years = horizon_year - baseline_year,
       midpoint = value_1 + (value_2 - value_1) / 2,
       percentile50 = percentile10 - (percentile10 - percentile90) / 2,
       point_or_range = dplyr::if_else(
@@ -117,14 +128,52 @@ populate_table <- function(
         .default = peer_year
       )
     ) |>
-    dplyr::arrange(`Mitigator code`) |>
-    dplyr::filter(!is.na(value_1))  # only show rows where mitigator was used
+    dplyr::mutate(
+      dplyr::across(
+        c(
+          value_1,
+          value_2,
+          midpoint,
+          percentile10,
+          percentile50,
+          percentile90,
+          mean
+        ),
+        \(x) janitor::round_half_up(x, 3)
+      )
+    )
+
+  data_augmented |>
+    dplyr::select(
+      # schemes
+      scheme_name,
+      scheme_code = peer,
+      peer_year,
+      # run
+      scenario,
+      run_stage,
+      # mitigators
+      mitigator_code = `Mitigator code`,
+      mitigator = strategy,
+      mitigator_group = Grouping,
+      parameter,
+      activity_type,
+      # mitigator selections
+      lo = value_1,
+      hi = value_2,
+      mid = midpoint,
+      point_or_range,
+      time_profile,
+      # years
+      baseline_year,
+      horizon_year,
+      years,
+      # NEE
+      nee_p10 = percentile10,
+      nee_p50 = percentile50,
+      nee_p90 = percentile90,
+      nee_mean = mean
+    ) |>
+    dplyr::arrange(scheme_name, mitigator_code)
 
 }
-
-
-
-
-
-
-
