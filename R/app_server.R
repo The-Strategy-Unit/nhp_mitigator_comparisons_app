@@ -6,7 +6,9 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-  # Reactives (Azure) ----
+  # Reactives ----
+
+  ## Azure ----
 
   if (getOption("golem.app.prod")) {  # avoids Azure calls in dev
 
@@ -28,7 +30,7 @@ app_server <- function(input, output, session) {
 
   }
 
-  # Reactives (data read) ----
+  ## Read data ----
 
   all_params <- reactive({
     app_sys("app", "data", "all_params.json") |> jsonlite::fromJSON()
@@ -44,7 +46,7 @@ app_server <- function(input, output, session) {
       read_mitigator_groups()
   })
 
-  nee <- reactive({
+  nee_results <- reactive({
     app_sys("app", "data", "nee_table.rds") |> read_nee()
   })
 
@@ -53,7 +55,7 @@ app_server <- function(input, output, session) {
   })
 
 
-  # Reactives (data prep) ----
+  ## Prep data ----
 
   if (getOption("golem.app.prod")) {  # avoids Azure calls in dev
 
@@ -62,31 +64,14 @@ app_server <- function(input, output, session) {
     })
 
     dat <- reactive({
-      # TODO: probably update populate_table() with the extra wrangling below?
       populate_table(
         skeleton_table(),
         extracted_params(),
+        trust_code_lookup(),
         mitigator_lookup(),
         mitigator_groups(),
-        nee()
-      ) |>
-        dplyr::left_join(
-          trust_code_lookup() |>
-            dplyr::mutate(
-              scheme = `Trust ODS Code`,
-              scheme_name = paste0(`Name of Hospital site`, " (", scheme, ")"),
-              .keep = "none"
-            ),
-          by = "scheme"
-        ) |>
-        dplyr::rename(
-          mitigator = strategy,
-          mitigator_group = Grouping,
-          lo = value_1,
-          hi = value_2,
-          mid = midpoint,
-        ) |>
-        dplyr::mutate(years = horizon_year - baseline_year)
+        nee_results()
+      )
     })
 
   } else if (!getOption("golem.app.prod")) {  # read demo data in dev
@@ -111,7 +96,7 @@ app_server <- function(input, output, session) {
   all_schemes <- shiny::reactive({
     dat() |>
       shiny::req() |>
-      dplyr::distinct(scheme_name, scheme) |>
+      dplyr::distinct(scheme_name, scheme_code) |>
       dplyr::arrange(scheme_name) |>
       tibble::deframe()  # named vector: value is code, name is scheme name
   })
@@ -132,7 +117,7 @@ app_server <- function(input, output, session) {
       sort()
   })
 
-  # Reactives (data selection) ----
+  ## Select data ----
 
   dat_selected_pointrange <- shiny::reactive({
 
@@ -153,7 +138,7 @@ app_server <- function(input, output, session) {
 
     dat |>
       dplyr::filter(
-        scheme %in% input$schemes,
+        scheme_code %in% input$schemes,
         mitigator %in% input$mitigators
       )
 
@@ -194,7 +179,7 @@ app_server <- function(input, output, session) {
       ) |>
       dplyr::filter(
         type == input$heatmap_type,
-        scheme %in%  input$schemes,
+        scheme_code %in%  input$schemes,
         mitigator %in% input$mitigators,
       )
 
@@ -229,7 +214,6 @@ app_server <- function(input, output, session) {
     )
   })
 
-
   shiny::observe({
 
     if (input$heatmap_type == "binary") {
@@ -258,98 +242,26 @@ app_server <- function(input, output, session) {
 
   })
 
-  # Renders
+  # Renders ----
+
+  ## Plots ----
 
   output$pointrange <- shiny::renderPlot({
-
-    pointrange <- dat_selected_pointrange() |>
-      dplyr::mutate(
-        point_colour = dplyr::if_else(
-          scheme == input$focus_scheme,
-          TRUE,
-          FALSE
-        )
-      ) |>
-      ggplot2::ggplot()
-
-    if (!input$toggle_invert_facets) {
-      pointrange <- pointrange +
-        ggplot2::geom_pointrange(
-          ggplot2::aes(
-            x = mid, y = scheme_name,
-            xmin = lo, xmax = hi,
-            colour = point_colour
-          )
-        ) +
-        ggplot2::facet_wrap(~mitigator, nrow = input$facet_rows)
-    }
-
-    if (input$toggle_invert_facets) {
-      pointrange <- pointrange +
-        ggplot2::geom_pointrange(
-          ggplot2::aes(
-            x = mid, y = mitigator,
-            xmin = lo, xmax = hi,
-            colour = point_colour
-          )
-        ) +
-        ggplot2::facet_wrap(~scheme, nrow = input$facet_rows)
-    }
-
-    if (!input$toggle_horizon_pointrange) {
-      pointrange <- pointrange + ggplot2::xlim(0, 1)  # should be fixed if raw
-    }
-
-    pointrange +
-      ggplot2::scale_color_manual(
-        values = c("FALSE" = "black", "TRUE" = "red")
-      ) +
-      ggplot2::labs(x = "80% Prediction Interval") +
-      ggplot2::theme_bw(base_size = 20) +
-      ggplot2::theme(
-        axis.title.y = ggplot2::element_blank(),
-        legend.position = "none"
-      )
-
+    dat_selected_pointrange() |> plot_pointrange(input)
   })
 
   output$heatmap <- shiny::renderPlot({
+    dat_selected_heatmap() |> plot_heatmap(input)
+  })
 
-    heatmap <-  dat_selected_heatmap() |>
-      ggplot2::ggplot(
-        ggplot2::aes(
-          x = scheme_name,
-          y = mitigator,
-          fill = value
-        )
-      ) +
-      ggplot2::geom_tile() +
-      ggplot2::scale_x_discrete(
-        position = "top",
-        labels = \(x) stringr::str_wrap(x, width = 10)
-      ) +
-      ggplot2::theme_minimal(base_size = 20) +
-      ggplot2::theme(
-        axis.title.x = ggplot2::element_blank(),
-        axis.title.y = ggplot2::element_blank(),
-        legend.title = ggplot2::element_blank()
-      )
+  ## Tables ----
 
-    if (input$heatmap_type != "binary") {
-      heatmap <- heatmap +
-        ggplot2::geom_text(
-          ggplot2::aes(label = value),
-          color = "white",
-          size = 6
-        )
-    }
+  output$raw_data_table <- DT::renderDT({
+    dat() |> make_raw_dt()
+  })
 
-    if (input$heatmap_type == "binary") {
-      heatmap <- heatmap + ggplot2::theme(legend.position = "none")
-    }
-
-    heatmap
-
+  output$mitigator_lookup <- DT::renderDT({
+    mitigator_groups() |> make_mitigator_dt()
   })
 
 }

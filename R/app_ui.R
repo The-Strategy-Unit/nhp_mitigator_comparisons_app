@@ -190,11 +190,11 @@ app_ui <- function(request) {
         bslib::navset_card_underline(
           bslib::nav_panel(
             "Raw data",
-            htmltools::p("Placeholder for table.")
+            DT::DTOutput("raw_data_table")
           ),
           bslib::nav_panel(
             "Mitigator lookup",
-            htmltools::p("Placeholder for table.")
+            DT::DTOutput("mitigator_lookup")
           ),
           bslib::nav_panel(
             "Scheme lookup",
