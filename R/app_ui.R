@@ -15,6 +15,7 @@ app_ui <- function(request) {
       window_title = "NHP mitigator comparisons",
       sidebar = bslib::sidebar(
         title = "Global settings",
+        width = 400,
         bslib::accordion(
           open = FALSE,
           bslib::accordion_panel(
@@ -37,10 +38,10 @@ app_ui <- function(request) {
               inputId = "schemes",
               label = bslib::tooltip(
                 trigger = list(
-                  "Schemes to visualise.",
+                  "Schemes to visualise",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Defaults to peers to the selected scheme."
+                "Defaults to peers of the selected scheme."
               ),
               choices = NULL,
               selected = NULL,
@@ -131,7 +132,7 @@ app_ui <- function(request) {
                   ),
                   "Choose the number of rows over which to break the faceted pointrange charts."
                 ),
-                value = 1,
+                value = 2,
                 min = 1,
                 max = 5,
                 step = 1
