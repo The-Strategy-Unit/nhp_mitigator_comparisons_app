@@ -187,6 +187,8 @@ app_server <- function(input, output, session) {
 
   # Observers ----
 
+  ## Update inputs ----
+
   shiny::observe({
     shiny::updateSelectInput(
       session,
@@ -214,17 +216,7 @@ app_server <- function(input, output, session) {
     )
   })
 
-  shiny::observe({
-
-    if (input$heatmap_type == "binary") {
-      shinyjs::disable("toggle_horizon_heatmap")
-    }
-
-    if (input$heatmap_type != "binary") {
-      shinyjs::enable("toggle_horizon_heatmap")
-    }
-
-  })
+  ## Events ----
 
   shiny::observeEvent(input$mitigator_groups, {
 
@@ -239,6 +231,20 @@ app_server <- function(input, output, session) {
       choices = all_mitigators(),
       selected = mitigator_group_set
     )
+
+  })
+
+  ## Enablers ----
+
+  shiny::observe({
+
+    if (input$heatmap_type == "binary") {
+      shinyjs::disable("toggle_horizon_heatmap")
+    }
+
+    if (input$heatmap_type != "binary") {
+      shinyjs::enable("toggle_horizon_heatmap")
+    }
 
   })
 

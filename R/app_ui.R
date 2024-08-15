@@ -6,20 +6,23 @@
 #' @noRd
 app_ui <- function(request) {
   tagList(
-    # Leave this function for adding external resources
+    # External resources
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
-    # Your application UI logic
+    # Application UI logic
     bslib::page_navbar(
+      id = "page_navbar",
       title = "NHP mitigator comparisons",
-      window_title = "NHP mitigator comparisons",
       sidebar = bslib::sidebar(
+        id = "sidebar",
         title = "Global settings",
         width = 400,
         bslib::accordion(
+          id = "global_accordion",
           open = FALSE,
           bslib::accordion_panel(
-            "Select schemes",
+            id = "accordion_schemes",
+            title = "Select schemes",
             icon = bsicons::bs_icon("hospital"),
             shiny::selectInput(
               inputId = "focus_scheme",
@@ -49,7 +52,8 @@ app_ui <- function(request) {
             )
           ),
           bslib::accordion_panel(
-            "Select mitigators",
+            id = "accordion_mitigators",
+            title = "Select mitigators",
             icon = bsicons::bs_icon("sliders"),
             shiny::selectInput(
               inputId = "mitigator_groups",
@@ -81,8 +85,10 @@ app_ui <- function(request) {
         )
       ),
       bslib::nav_panel(
+        id = "nav_panel_info",
         title = "Information",
         bslib::navset_card_underline(
+          id = "navset",
           bslib::nav_panel(
             title = "Introduction",
             htmltools::p("Information about the app.")
@@ -94,6 +100,7 @@ app_ui <- function(request) {
         )
       ),
       bslib::nav_panel(
+        id = "nav_panel_pointrange",
         title = "Point-ranges",
         bslib::card(
           full_screen = TRUE,
@@ -136,6 +143,11 @@ app_ui <- function(request) {
                 min = 1,
                 max = 5,
                 step = 1
+              ),
+              shiny::bookmarkButton(
+                label = "Bookmark ",
+                icon = shiny::icon("bookmark", lib = "glyphicon"),
+                style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
               )
             ),
             shiny::plotOutput("pointrange"),
@@ -143,6 +155,7 @@ app_ui <- function(request) {
         )
       ),
       bslib::nav_panel(
+        id = "nav_panel_heatmaps",
         title = "Heatmaps",
         bslib::card(
           full_screen = TRUE,
@@ -179,6 +192,11 @@ app_ui <- function(request) {
                   "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
                 ),
                 value = FALSE
+              ),
+              shiny::bookmarkButton(
+                label = "Bookmark",
+                icon = shiny::icon("bookmark", lib = "glyphicon"),
+                style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
               )
             ),
             shiny::plotOutput("heatmap"),
@@ -186,6 +204,7 @@ app_ui <- function(request) {
         )
       ),
       bslib::nav_panel(
+        id = "nav_panel_data",
         title = "Data",
         bslib::navset_card_underline(
           full_screen = TRUE,

@@ -48,6 +48,11 @@ make_raw_dt <- function(dat) {
             text = "Download (CSV)"
           )
         )
+      ),
+      callback = DT::JS(
+        "$('button.buttons-csv').css('background','#337ab7');
+        $('button.buttons-csv').css('border','#2e6da4');
+        return table;"
       )
     )
 
@@ -81,6 +86,11 @@ make_mitigator_dt <- function(mitigator_groups) {
             text = "Download (CSV)"
           )
         )
+      ),
+      callback = DT::JS(
+        "$('button.buttons-csv').css('background','#337ab7');
+        $('button.buttons-csv').css('border','#2e6da4');
+        return table;"
       )
     )
 
@@ -114,6 +124,11 @@ make_scheme_dt <- function(trust_code_lookup) {
             text = "Download (CSV)"
           )
         )
+      ),
+      callback = DT::JS(
+        "$('button.buttons-csv').css('background','#337ab7');
+        $('button.buttons-csv').css('border','#2e6da4');
+        return table;"
       )
     )
 
