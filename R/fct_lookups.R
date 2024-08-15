@@ -35,10 +35,12 @@ make_raw_dt <- function(dat) {
 
   dat_prepared |>
     DT::datatable(
+      fillContainer = TRUE,
+      filter = "top",
+      rownames = FALSE,
       extensions = "Buttons",
       options = list(
         dom = "Bftp",
-        pageLength = 5,
         buttons = list(
           list(
             extend = "csv",
@@ -46,9 +48,7 @@ make_raw_dt <- function(dat) {
             text = "Download (CSV)"
           )
         )
-      ),
-      filter = "top",
-      rownames = FALSE
+      )
     )
 
 }
@@ -68,10 +68,12 @@ make_mitigator_dt <- function(mitigator_groups) {
 
   mitigator_groups_prepared |>
     DT::datatable(
+      fillContainer = TRUE,
+      filter = "top",
+      rownames = FALSE,
       extensions = "Buttons",
       options = list(
         dom = "Bftp",
-        pageLength = 10,
         buttons = list(
           list(
             extend = "csv",
@@ -79,18 +81,40 @@ make_mitigator_dt <- function(mitigator_groups) {
             text = "Download (CSV)"
           )
         )
-      ),
-      filter = "top",
-      rownames = FALSE
+      )
     )
 
 }
 
 
-make_scheme_dt <- function(dat, trust_code_lookup) {
+make_scheme_dt <- function(trust_code_lookup) {
 
-  # TODO
+  schemes_prepared <- trust_code_lookup |>
+    dplyr::mutate(
+      `Scheme name` = `Name of Hospital site`,
+      `Trust name` = `Name of Trust`,
+      `Scheme code` = `Trust ODS Code`,
+      across(c(`Scheme name`, `Trust name`, `Scheme code`), factor),
+      .keep = "none"
+    ) |>
+    dplyr::arrange(`Scheme name`)
+
+  schemes_prepared |>
+    DT::datatable(
+      fillContainer = TRUE,
+      filter = "top",
+      rownames = FALSE,
+      extensions = "Buttons",
+      options = list(
+        dom = "Bftp",
+        buttons = list(
+          list(
+            extend = "csv",
+            filename = paste0(Sys.Date(), "mitigator-comparison-data"),
+            text = "Download (CSV)"
+          )
+        )
+      )
+    )
 
 }
-
-

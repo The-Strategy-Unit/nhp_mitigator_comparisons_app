@@ -264,4 +264,8 @@ app_server <- function(input, output, session) {
     mitigator_groups() |> make_mitigator_dt()
   })
 
+  output$scheme_lookup <- DT::renderDT({
+    trust_code_lookup() |> make_scheme_dt()
+  })
+
 }

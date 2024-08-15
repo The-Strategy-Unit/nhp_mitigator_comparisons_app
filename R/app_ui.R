@@ -188,6 +188,7 @@ app_ui <- function(request) {
       bslib::nav_panel(
         title = "Data",
         bslib::navset_card_underline(
+          full_screen = TRUE,
           bslib::nav_panel(
             "Raw data",
             DT::DTOutput("raw_data_table")
@@ -198,7 +199,7 @@ app_ui <- function(request) {
           ),
           bslib::nav_panel(
             "Scheme lookup",
-            htmltools::p("Placeholder for table.")
+            DT::DTOutput("scheme_lookup")
           )
         )
       ),
