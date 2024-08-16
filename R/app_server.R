@@ -37,13 +37,8 @@ app_server <- function(input, output, session) {
   })
 
   mitigator_lookup <- reactive({
-    app_sys("app", "data", "mitigator_name_lookup.csv") |>
-      read_mitigator_lookup()
-  })
-
-  mitigator_groups <- reactive({
-    app_sys("app", "data", "mitigator groupings.xlsx") |>
-      read_mitigator_groups()
+    app_sys("app", "data", "mitigator-lookup.csv") |>
+      readr::read_csv(show_col_types = FALSE)
   })
 
   nee_results <- reactive({
@@ -51,9 +46,9 @@ app_server <- function(input, output, session) {
   })
 
   trust_code_lookup <- reactive({
-    app_sys("app", "data", "NHP_trust_code_lookup.xlsx") |> readxl::read_excel()
+    app_sys("app", "data", "nhp-scheme-lookup.csv") |>
+      readr::read_csv(show_col_types = FALSE)
   })
-
 
   ## Prep data ----
 
@@ -69,7 +64,6 @@ app_server <- function(input, output, session) {
         extracted_params(),
         trust_code_lookup(),
         mitigator_lookup(),
-        mitigator_groups(),
         nee_results()
       )
     })
@@ -82,7 +76,7 @@ app_server <- function(input, output, session) {
   }
 
   peers <- reactive({
-    app_sys("app", "data", "peers.rds") |>  # from 'Trust Peer Finder Tool' online
+    app_sys("app", "data", "trust-peers.rds") |>  # from 'Trust Peer Finder Tool' online
       readr::read_rds() |>
       dplyr::rename(scheme = procode)
   })
@@ -97,6 +91,8 @@ app_server <- function(input, output, session) {
     dat() |>
       shiny::req() |>
       dplyr::distinct(scheme_name, scheme_code) |>
+      dplyr::filter(!is.na(scheme_code)) |>
+      dplyr::mutate(scheme_name = paste0(scheme_name, " (", scheme_code, ")")) |>
       dplyr::arrange(scheme_name) |>
       tibble::deframe()  # named vector: value is code, name is scheme name
   })
@@ -104,9 +100,13 @@ app_server <- function(input, output, session) {
   all_mitigators <- shiny::reactive({
     dat() |>
       shiny::req() |>
-      dplyr::distinct(mitigator) |>
-      dplyr::pull() |>
-      sort()
+      dplyr::distinct(mitigator_name, mitigator_code) |>
+      dplyr::filter(!is.na(mitigator_code)) |>
+      dplyr::mutate(
+        mitigator_name = paste0(mitigator_code, ": ", mitigator_name)
+      ) |>
+      dplyr::arrange(mitigator_code) |>
+      tibble::deframe()
   })
 
   all_mitigator_groups <- shiny::reactive({
@@ -133,13 +133,18 @@ app_server <- function(input, output, session) {
 
     if (input$toggle_horizon_pointrange) {
       dat <- dat |>
-        dplyr::mutate(dplyr::across(c(lo, hi, mid), \(x) x / years))
+        dplyr::mutate(
+          dplyr::across(
+            c(value_lo, value_hi, value_mid),
+            \(x) x / year_range
+          )
+        )
     }
 
     dat |>
       dplyr::filter(
         scheme_code %in% input$schemes,
-        mitigator %in% input$mitigators
+        mitigator_code %in% input$mitigators
       )
 
   })
@@ -158,29 +163,30 @@ app_server <- function(input, output, session) {
 
     if (input$toggle_horizon_heatmap) {
       dat <- dat |>
-        dplyr::mutate(dplyr::across(c(lo, hi, mid), \(x) x / years))
+        dplyr::mutate(
+          dplyr::across(
+            c(value_lo, value_hi, value_mid),
+            \(x) x / year_range)
+        )
     }
 
     dat |>
       dplyr::mutate(
-        range = hi - lo,
-        binary = dplyr::if_else(!is.na(lo), 1, 0),
-      ) |>
-      dplyr::mutate(
-        across(
-          c(lo, hi, mid, range),
+        value_binary = dplyr::if_else(!is.na(value_lo), 1, 0),
+        dplyr::across(
+          c(value_lo, value_hi, value_mid, value_range),
           \(x) janitor::round_half_up(x, 3)
         )
       ) |>
       tidyr::pivot_longer(
-        c(lo, hi, mid, range, binary),
-        names_to = "type",
+        c(value_lo, value_hi, value_mid, value_range, value_binary),
+        names_to = "value_type",
         values_to = "value"
       ) |>
       dplyr::filter(
-        type == input$heatmap_type,
+        value_type == input$heatmap_type,
         scheme_code %in%  input$schemes,
-        mitigator %in% input$mitigators,
+        mitigator_code %in% input$mitigators,
       )
 
   })
@@ -222,7 +228,7 @@ app_server <- function(input, output, session) {
 
     mitigator_group_set <- dat() |>
       dplyr::filter(mitigator_group == input$mitigator_groups) |>
-      dplyr::distinct(mitigator) |>
+      dplyr::distinct(mitigator_code) |>
       dplyr::pull()
 
     shiny::updateSelectInput(
@@ -262,15 +268,15 @@ app_server <- function(input, output, session) {
 
   ## Tables ----
 
-  output$raw_data_table <- DT::renderDT({
+  output$raw_data_dt <- DT::renderDT({
     dat() |> make_raw_dt()
   })
 
-  output$mitigator_lookup <- DT::renderDT({
-    mitigator_groups() |> make_mitigator_dt()
+  output$mitigator_lookup_dt <- DT::renderDT({
+    mitigator_lookup() |> make_mitigator_dt()
   })
 
-  output$scheme_lookup <- DT::renderDT({
+  output$scheme_lookup_dt <- DT::renderDT({
     trust_code_lookup() |> make_scheme_dt()
   })
 

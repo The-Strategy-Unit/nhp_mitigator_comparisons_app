@@ -14,24 +14,24 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
     pointrange <- pointrange +
       ggplot2::geom_pointrange(
         ggplot2::aes(
-          x = mid,
+          x = value_mid,
           y = scheme_name,
-          xmin = lo,
-          xmax = hi,
+          xmin = value_lo,
+          xmax = value_hi,
           colour = point_colour
         )
       ) +
-      ggplot2::facet_wrap(~mitigator, nrow = input$facet_rows)
+      ggplot2::facet_wrap(~mitigator_code, nrow = input$facet_rows)
   }
 
   if (input$toggle_invert_facets) {
     pointrange <- pointrange +
       ggplot2::geom_pointrange(
         ggplot2::aes(
-          x = mid,
-          y = mitigator,
-          xmin = lo,
-          xmax = hi,
+          x = value_mid,
+          y = mitigator_code,
+          xmin = value_lo,
+          xmax = value_hi,
           colour = point_colour
         )
       ) +
@@ -62,7 +62,7 @@ plot_heatmap <- function(dat_selected_heatmap, input) {
     ggplot2::ggplot(
       ggplot2::aes(
         x = scheme_name,
-        y = mitigator,
+        y = mitigator_code,
         fill = value
       )
     ) +
@@ -78,7 +78,7 @@ plot_heatmap <- function(dat_selected_heatmap, input) {
       legend.title = ggplot2::element_blank()
     )
 
-  if (input$heatmap_type != "binary") {
+  if (input$heatmap_type != "value_binary") {
     heatmap <- heatmap +
       ggplot2::geom_text(
         ggplot2::aes(label = value),
@@ -87,7 +87,7 @@ plot_heatmap <- function(dat_selected_heatmap, input) {
       )
   }
 
-  if (input$heatmap_type == "binary") {
+  if (input$heatmap_type == "value_binary") {
     heatmap <- heatmap + ggplot2::theme(legend.position = "none")
   }
 

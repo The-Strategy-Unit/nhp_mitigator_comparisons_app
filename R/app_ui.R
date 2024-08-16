@@ -173,13 +173,13 @@ app_ui <- function(request) {
                   "Schemes' low or high 80% confidence internal selection in the NHP inputs app, or the range or midpoint of these."
                 ),
                 choices = c(
-                  Binary = "binary",
-                  Midpoint = "mid",
-                  Range = "range",
-                  Low = "lo",
-                  High = "hi"
+                  Binary = "value_binary",
+                  Midpoint = "value_mid",
+                  Range = "value_range",
+                  Low = "value_lo",
+                  High = "value_hi"
                 ),
-                selected = "mid",
+                selected = "value_mid",
                 multiple = FALSE
               ),
               shiny::checkboxInput(
@@ -210,15 +210,15 @@ app_ui <- function(request) {
           full_screen = TRUE,
           bslib::nav_panel(
             "Raw data",
-            DT::DTOutput("raw_data_table")
+            DT::DTOutput("raw_data_dt")
           ),
           bslib::nav_panel(
             "Mitigator lookup",
-            DT::DTOutput("mitigator_lookup")
+            DT::DTOutput("mitigator_lookup_dt")
           ),
           bslib::nav_panel(
             "Scheme lookup",
-            DT::DTOutput("scheme_lookup")
+            DT::DTOutput("scheme_lookup_dt")
           )
         )
       ),

@@ -21,7 +21,6 @@ Imports:
     jsonlite,
     purrr,
     readr,
-    readxl,
     scales,
     shiny (>= 1.7.4),
     shinyjs,
