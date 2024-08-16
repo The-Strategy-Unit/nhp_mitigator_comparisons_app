@@ -20,6 +20,9 @@
 *.svg
 *.tiff
 
+# Allow
+!golem-config.yml
+
 # History files
 .Rhistory
 .Rapp.history
