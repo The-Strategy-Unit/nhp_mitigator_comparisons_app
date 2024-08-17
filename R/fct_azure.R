@@ -22,7 +22,7 @@ get_container <- function(
     tenant = Sys.getenv("AZ_TENANT_ID"),
     app_id = Sys.getenv("AZ_APP_ID"),
     ep_uri = Sys.getenv("AZ_STORAGE_EP"),
-    container_name = Sys.getenv("AZ_STORAGE_CONTAINER")
+    container_name # "AZ_STORAGE_CONTAINER_RESULTS" or "_SUPPORT"
 ) {
 
   # if the app_id variable is empty, we assume that this is running on an Azure VM,

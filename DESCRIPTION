@@ -9,6 +9,8 @@ Description: An application to explore the mitigator values selected by
     Trusts in the NHP Inputs App.
 License: MIT + file LICENSE
 Imports: 
+    AzureAuth,
+    AzureStor,
     bsicons,
     bslib (>= 0.7.0),
     config (>= 0.3.1),

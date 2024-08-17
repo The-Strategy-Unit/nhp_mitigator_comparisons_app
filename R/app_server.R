@@ -8,51 +8,57 @@ app_server <- function(input, output, session) {
 
   # Reactives ----
 
-  ## Azure ----
+  ## Results (Azure) ----
 
-  if (getOption("golem.app.prod")) {  # avoids Azure calls in dev
+  if (getOption("golem.app.prod")) {
 
-    container <- reactive({
-      get_container()  # relies on .Renviron variables
+    # In production, files are read from Azure
+
+    container_results <- reactive({
+      get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"))
     })
 
     runs_meta <- reactive({
-      fetch_labelled_runs_meta(container())  # exposes run_stage metadata
+      fetch_labelled_runs_meta(container_results())
     })
 
     params <- reactive({
-      fetch_labelled_runs_params(runs_meta(), container())  # final, intermediate, initial
+      fetch_labelled_runs_params(runs_meta(), container_results())
     })
 
     extracted_params <- reactive({
       extract_params(params(), runs_meta())
     })
 
-  }
+    container_support <- reactive({
+      get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
+    })
 
-  ## Read data ----
+    # all_params <- reactive({
+    #   temp_file <- withr::local_tempfile(fileext = ".json")
+    #   AzureStor::download_blob(container_support(), "all_params.json", temp_file)
+    #   jsonlite::read_json(temp_file, simplifyVector = FALSE)
+    # })
 
-  all_params <- reactive({
-    app_sys("app", "data", "all_params.json") |> jsonlite::fromJSON()
-  })
+    mitigator_lookup <- reactive({
+      container_support() |>
+        AzureStor::storage_read_csv(
+          "mitigator-lookup.csv",
+          show_col_types = FALSE
+        )
+    })
 
-  mitigator_lookup <- reactive({
-    app_sys("app", "data", "mitigator-lookup.csv") |>
-      readr::read_csv(show_col_types = FALSE)
-  })
+    nee_results <- reactive({
+      container_support() |> AzureStor::storage_load_rds("nee_table.rds")
+    })
 
-  nee_results <- reactive({
-    app_sys("app", "data", "nee_table.rds") |> read_nee()
-  })
-
-  trust_code_lookup <- reactive({
-    app_sys("app", "data", "nhp-scheme-lookup.csv") |>
-      readr::read_csv(show_col_types = FALSE)
-  })
-
-  ## Prep data ----
-
-  if (getOption("golem.app.prod")) {  # avoids Azure calls in dev
+    trust_code_lookup <- reactive({
+      container_support() |>
+        AzureStor::storage_read_csv(
+          "nhp-scheme-lookup.csv",
+          show_col_types = FALSE
+        )
+    })
 
     skeleton_table <- reactive({
       extracted_params() |> prepare_skeleton_table()
@@ -68,18 +74,35 @@ app_server <- function(input, output, session) {
       )
     })
 
-  } else if (!getOption("golem.app.prod")) {  # read demo data in dev
+    peers <- reactive({
+      container_support() |>
+        AzureStor::storage_load_rds("trust-peers.rds") |>
+        dplyr::rename(scheme = procode)
+    })
+
+  }
+
+  ## Results (local) ----
+
+  if (!getOption("golem.app.prod")) {
+
+    # In dev, these files must be stored in inst/app/data/
+
     dat <- reactive({
       app_sys("app", "data", "demo-dat.csv") |>
         readr::read_csv(show_col_types = FALSE)
     })
+
+    peers <- reactive({
+      app_sys("app", "data", "trust-peers.rds") |>
+        readr::read_rds() |>
+        dplyr::rename(scheme = procode)
+    })
+
   }
 
-  peers <- reactive({
-    app_sys("app", "data", "trust-peers.rds") |>  # from 'Trust Peer Finder Tool' online
-      readr::read_rds() |>
-      dplyr::rename(scheme = procode)
-  })
+
+  ## Prep data ----
 
   peer_set <- shiny::reactive({
     peers() |>
