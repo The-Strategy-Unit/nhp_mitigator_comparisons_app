@@ -14,8 +14,10 @@ Imports:
     bsicons,
     bslib (>= 0.7.0),
     config (>= 0.3.1),
+    data.table,
     dplyr,
     DT,
+    forcats,
     ggplot2,
     golem (>= 0.4.1),
     htmltools,
@@ -23,12 +25,13 @@ Imports:
     jsonlite,
     purrr,
     readr,
-    scales,
     shiny (>= 1.7.4),
     shinyjs,
+    stringr,
     tibble,
     tidyr,
-    tidyselect
+    tidyselect,
+    withr
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
