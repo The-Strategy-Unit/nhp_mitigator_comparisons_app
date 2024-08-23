@@ -6,141 +6,57 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-  # Reactives ----
+  # Prepare data ----
 
-  ## Results (Azure) ----
+  ## Read data ----
 
-  if (getOption("golem.app.prod")) {
+  container_results <-
+    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"))
 
-    # In production, files are read from Azure
+  container_support <-
+    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
 
-    container_results <- reactive({
-      get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"))
-    })
+  board <- pins::board_connect()
+  params <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_params")
+  runs_meta <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_meta")
+  extracted_params <- extract_params(params, runs_meta)
 
-    runs_meta <- reactive({
-      fetch_labelled_runs_meta(container_results())
-    })
+  skeleton_table <- prepare_skeleton_table(extracted_params)
 
-    params <- reactive({
-      fetch_labelled_runs_params(runs_meta(), container_results())
-    })
+  trust_code_lookup <- container_support |>
+    AzureStor::storage_read_csv("nhp-scheme-lookup.csv", show_col_types = FALSE)
 
-    extracted_params <- reactive({
-      extract_params(params(), runs_meta())
-    })
+  mitigator_lookup <- container_support |>
+    AzureStor::storage_read_csv("mitigator-lookup.csv", show_col_types = FALSE)
 
-    container_support <- reactive({
-      get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
-    })
+  nee_results <- container_support |>
+    AzureStor::storage_load_rds("nee_table.rds")
 
-    # all_params <- reactive({
-    #   temp_file <- withr::local_tempfile(fileext = ".json")
-    #   AzureStor::download_blob(container_support(), "all_params.json", temp_file)
-    #   jsonlite::read_json(temp_file, simplifyVector = FALSE)
-    # })
-
-    mitigator_lookup <- reactive({
-      container_support() |>
-        AzureStor::storage_read_csv(
-          "mitigator-lookup.csv",
-          show_col_types = FALSE
-        )
-    })
-
-    nee_results <- reactive({
-      container_support() |> AzureStor::storage_load_rds("nee_table.rds")
-    })
-
-    trust_code_lookup <- reactive({
-      container_support() |>
-        AzureStor::storage_read_csv(
-          "nhp-scheme-lookup.csv",
-          show_col_types = FALSE
-        )
-    })
-
-    skeleton_table <- reactive({
-      extracted_params() |> prepare_skeleton_table()
-    })
-
-    dat <- reactive({
-      populate_table(
-        skeleton_table(),
-        extracted_params(),
-        trust_code_lookup(),
-        mitigator_lookup(),
-        nee_results()
-      )
-    })
-
-    peers <- reactive({
-      container_support() |>
-        AzureStor::storage_load_rds("trust-peers.rds") |>
-        dplyr::rename(scheme = procode)
-    })
-
-  }
-
-  ## Results (local) ----
-
-  if (!getOption("golem.app.prod")) {
-
-    # In dev, these files must be stored in inst/app/data/
-
-    dat <- reactive({
-      app_sys("app", "data", "demo-dat.csv") |>
-        readr::read_csv(show_col_types = FALSE)
-    })
-
-    peers <- reactive({
-      app_sys("app", "data", "trust-peers.rds") |>
-        readr::read_rds() |>
-        dplyr::rename(scheme = procode)
-    })
-
-  }
-
+  peers <- container_support |>
+    AzureStor::storage_load_rds("trust-peers.rds") |>
+    dplyr::rename(scheme = procode)
 
   ## Prep data ----
 
+  dat <- populate_table(
+    skeleton_table,
+    extracted_params,
+    trust_code_lookup,
+    mitigator_lookup,
+    nee_results
+  )
+
+  all_schemes <- get_all_schemes(dat)
+  all_mitigators <- get_all_mitigators(dat)
+  all_mitigator_groups <- get_all_mitigator_groups(dat)
+
+  # Reactives ----
+
   peer_set <- shiny::reactive({
-    peers() |>
+    peers |>
       dplyr::filter(scheme == input$focus_scheme) |>
       dplyr::pull(peer)
   })
-
-  all_schemes <- shiny::reactive({
-    dat() |>
-      shiny::req() |>
-      dplyr::distinct(scheme_name, scheme_code) |>
-      dplyr::filter(!is.na(scheme_code)) |>
-      dplyr::mutate(scheme_name = paste0(scheme_name, " (", scheme_code, ")")) |>
-      dplyr::arrange(scheme_name) |>
-      tibble::deframe()  # named vector: value is code, name is scheme name
-  })
-
-  all_mitigators <- shiny::reactive({
-    dat() |>
-      shiny::req() |>
-      dplyr::distinct(mitigator_name, mitigator_code) |>
-      dplyr::filter(!is.na(mitigator_code)) |>
-      dplyr::mutate(
-        mitigator_name = paste0(mitigator_code, ": ", mitigator_name)
-      ) |>
-      dplyr::arrange(mitigator_code) |>
-      tibble::deframe()
-  })
-
-  all_mitigator_groups <- shiny::reactive({
-    dat() |>
-      shiny::req() |>
-      dplyr::distinct(mitigator_group) |>
-      dplyr::pull() |>
-      sort()
-  })
-
-  ## Select data ----
 
   dat_selected_pointrange <- shiny::reactive({
 
@@ -151,8 +67,6 @@ app_server <- function(input, output, session) {
     shiny::validate(
       need(input$mitigators, message = "Select at least one mitigator.")
     )
-
-    dat <- dat()
 
     if (input$toggle_horizon_pointrange) {
       dat <- dat |>
@@ -182,14 +96,13 @@ app_server <- function(input, output, session) {
       need(input$mitigators, message = "Select at least one mitigator.")
     )
 
-    dat <- dat()
-
     if (input$toggle_horizon_heatmap) {
       dat <- dat |>
         dplyr::mutate(
           dplyr::across(
             c(value_lo, value_hi, value_mid),
-            \(x) x / year_range)
+            \(x) x / year_range
+          )
         )
     }
 
@@ -216,14 +129,14 @@ app_server <- function(input, output, session) {
 
   # Observers ----
 
-  ## Update inputs ----
+  ## Updates ----
 
   shiny::observe({
     shiny::updateSelectInput(
       session,
       "focus_scheme",
-      choices = all_schemes(),
-      selected = all_schemes()[1]
+      choices = all_schemes,
+      selected = all_schemes[1]
     )
   })
 
@@ -231,7 +144,7 @@ app_server <- function(input, output, session) {
     shiny::updateSelectInput(
       session,
       "schemes",
-      choices = all_schemes(),
+      choices = all_schemes,
       selected = c(input$focus_scheme, peer_set()) |> sort()
     )
   })
@@ -240,8 +153,8 @@ app_server <- function(input, output, session) {
     shiny::updateSelectInput(
       session,
       "mitigator_groups",
-      choices = all_mitigator_groups(),
-      selected = all_mitigator_groups()[1]
+      choices = all_mitigator_groups,
+      selected = all_mitigator_groups[1]
     )
   })
 
@@ -249,7 +162,7 @@ app_server <- function(input, output, session) {
 
   shiny::observeEvent(input$mitigator_groups, {
 
-    mitigator_group_set <- dat() |>
+    mitigator_group_set <- dat |>
       dplyr::filter(mitigator_group == input$mitigator_groups) |>
       dplyr::distinct(mitigator_code) |>
       dplyr::pull()
@@ -257,7 +170,7 @@ app_server <- function(input, output, session) {
     shiny::updateSelectInput(
       session,
       "mitigators",
-      choices = all_mitigators(),
+      choices = all_mitigators,
       selected = mitigator_group_set
     )
 
@@ -292,15 +205,15 @@ app_server <- function(input, output, session) {
   ## Tables ----
 
   output$raw_data_dt <- DT::renderDT({
-    dat() |> make_raw_dt()
+    dat |> make_raw_dt()
   })
 
   output$mitigator_lookup_dt <- DT::renderDT({
-    mitigator_lookup() |> make_mitigator_dt()
+    mitigator_lookup |> make_mitigator_dt()
   })
 
   output$scheme_lookup_dt <- DT::renderDT({
-    trust_code_lookup() |> make_scheme_dt()
+    trust_code_lookup |> make_scheme_dt()
   })
 
 }
