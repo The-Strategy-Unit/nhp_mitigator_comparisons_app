@@ -161,3 +161,33 @@ populate_table <- function(
     dplyr::arrange(scheme_name, mitigator_code)
 
 }
+
+get_all_schemes <- function(dat) {
+  dat |>
+    shiny::req() |>
+    dplyr::distinct(scheme_name, scheme_code) |>
+    dplyr::filter(!is.na(scheme_code)) |>
+    dplyr::mutate(scheme_name = paste0(scheme_name, " (", scheme_code, ")")) |>
+    dplyr::arrange(scheme_name) |>
+    tibble::deframe()
+}
+
+get_all_mitigators <- function(dat) {
+  dat |>
+    shiny::req() |>
+    dplyr::distinct(mitigator_name, mitigator_code) |>
+    dplyr::filter(!is.na(mitigator_code)) |>
+    dplyr::mutate(
+      mitigator_name = paste0(mitigator_code, ": ", mitigator_name)
+    ) |>
+    dplyr::arrange(mitigator_code) |>
+    tibble::deframe()
+}
+
+get_all_mitigator_groups <- function(dat) {
+  dat |>
+    shiny::req() |>
+    dplyr::distinct(mitigator_group) |>
+    dplyr::pull() |>
+    sort()
+}

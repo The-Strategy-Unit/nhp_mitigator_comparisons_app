@@ -95,9 +95,9 @@ make_scheme_dt <- function(trust_code_lookup) {
       `Scheme name` = `Name of Hospital site`,
       `Trust name` = `Name of Trust`,
       `Scheme code` = `Trust ODS Code`,
-      across(tidyselect::everything(), factor),
       .keep = "none"
     ) |>
+    dplyr::mutate(across(tidyselect::everything(), factor)) |>
     dplyr::arrange(`Scheme name`)
 
   schemes_prepared |>
