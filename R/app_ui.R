@@ -44,7 +44,7 @@ app_ui <- function(request) {
                   "Schemes to visualise",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Defaults to peers of the selected scheme."
+                "Defaults to peers of the selected scheme if 'Select all schemes?' is unchecked."
               ),
               choices = NULL,
               selected = NULL,

@@ -1,45 +1,29 @@
 plot_pointrange <- function(dat_selected_pointrange, input) {
 
   pointrange <- dat_selected_pointrange |>
-    dplyr::mutate(
-      point_colour = dplyr::if_else(
-        scheme_code == input$focus_scheme,
-        TRUE,
-        FALSE
+    ggplot2::ggplot(
+      ggplot2::aes(
+        x = value_mid,
+        xmin = value_lo,
+        xmax = value_hi,
+        colour = point_colour
       )
-    ) |>
-    ggplot2::ggplot()
+    )
 
   if (!input$toggle_invert_facets) {
     pointrange <- pointrange +
-      ggplot2::geom_pointrange(
-        ggplot2::aes(
-          x = value_mid,
-          y = scheme_name,
-          xmin = value_lo,
-          xmax = value_hi,
-          colour = point_colour
-        )
-      ) +
+      ggplot2::geom_pointrange(ggplot2::aes(y = scheme_name)) +
       ggplot2::facet_wrap(~mitigator_code, nrow = input$facet_rows)
   }
 
   if (input$toggle_invert_facets) {
     pointrange <- pointrange +
-      ggplot2::geom_pointrange(
-        ggplot2::aes(
-          x = value_mid,
-          y = mitigator_code,
-          xmin = value_lo,
-          xmax = value_hi,
-          colour = point_colour
-        )
-      ) +
+      ggplot2::geom_pointrange(ggplot2::aes(y = mitigator_code)) +
       ggplot2::facet_wrap(~scheme_code, nrow = input$facet_rows)
   }
 
   if (!input$toggle_horizon_pointrange) {
-    pointrange <- pointrange + ggplot2::xlim(0, 1)  # should be fixed if raw
+    pointrange <- pointrange + ggplot2::xlim(0, 1)
   }
 
   pointrange +
@@ -54,7 +38,6 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
     )
 
 }
-
 
 plot_heatmap <- function(dat_selected_heatmap, input) {
 

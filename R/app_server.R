@@ -78,10 +78,26 @@ app_server <- function(input, output, session) {
         )
     }
 
+    if (!input$toggle_invert_facets) {
+      dat <- dat |> dplyr::mutate(scheme_name = forcats::fct_rev(scheme_name))
+    }
+
+    if (input$toggle_invert_facets) {
+      dat <- dat |>
+        dplyr::mutate(mitigator_code = forcats::fct_rev(mitigator_code))
+    }
+
     dat |>
       dplyr::filter(
         scheme_code %in% input$schemes,
         mitigator_code %in% input$mitigators
+      ) |>
+      dplyr::mutate(
+        point_colour = dplyr::if_else(
+          scheme_code == input$focus_scheme,
+          TRUE,
+          FALSE
+        )
       )
 
   })
@@ -112,7 +128,8 @@ app_server <- function(input, output, session) {
         dplyr::across(
           c(value_lo, value_hi, value_mid, value_range),
           \(x) janitor::round_half_up(x, 3)
-        )
+        ),
+        mitigator_code = forcats::fct_rev(mitigator_code)
       ) |>
       tidyr::pivot_longer(
         c(value_lo, value_hi, value_mid, value_range, value_binary),
