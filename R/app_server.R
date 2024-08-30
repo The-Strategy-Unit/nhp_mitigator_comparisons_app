@@ -141,12 +141,20 @@ app_server <- function(input, output, session) {
   })
 
   shiny::observe({
+
+    selected_schemes <- c(input$focus_scheme, peer_set()) |> sort()
+
+    if (input$toggle_all_schemes) {
+      selected_schemes <- all_schemes
+    }
+
     shiny::updateSelectInput(
       session,
       "schemes",
       choices = all_schemes,
-      selected = c(input$focus_scheme, peer_set()) |> sort()
+      selected = selected_schemes
     )
+
   })
 
   shiny::observe({

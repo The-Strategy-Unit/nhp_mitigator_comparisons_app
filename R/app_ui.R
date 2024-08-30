@@ -49,6 +49,17 @@ app_ui <- function(request) {
               choices = NULL,
               selected = NULL,
               multiple = TRUE
+            ),
+            shiny::checkboxInput(
+              inputId = "toggle_all_schemes",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Select all schemes?",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Automatically select all schemes at once."
+              ),
+              value = FALSE
             )
           ),
           bslib::accordion_panel(
