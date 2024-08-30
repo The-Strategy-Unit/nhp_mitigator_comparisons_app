@@ -19,7 +19,7 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   if (input$toggle_invert_facets) {
     pointrange <- pointrange +
       ggplot2::geom_pointrange(ggplot2::aes(y = mitigator_code)) +
-      ggplot2::facet_wrap(~scheme_code, nrow = input$facet_rows)
+      ggplot2::facet_wrap(~scheme_name, nrow = input$facet_rows)
   }
 
   if (!input$toggle_horizon_pointrange) {
