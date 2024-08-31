@@ -59,7 +59,7 @@ app_ui <- function(request) {
                 ),
                 "Automatically select all schemes at once."
               ),
-              value = FALSE
+              value = TRUE
             )
           ),
           bslib::accordion_panel(
@@ -127,6 +127,17 @@ app_ui <- function(request) {
                     bsicons::bs_icon("info-circle")
                   ),
                   "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
+                ),
+                value = FALSE
+              ),
+              shiny::checkboxInput(
+                inputId = "toggle_mitigator_code_pointrange",
+                label = bslib::tooltip(
+                  trigger = list(
+                    "Show mitigator code?",
+                    bsicons::bs_icon("info-circle")
+                  ),
+                  "Replaces the full mitigator name with the mitigator code."
                 ),
                 value = FALSE
               ),

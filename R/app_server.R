@@ -93,7 +93,6 @@ app_server <- function(input, output, session) {
         mitigator_code %in% input$mitigators
       ) |>
       dplyr::mutate(
-        scheme_name = glue::glue("{scheme_name} ({scheme_code})"),
         point_colour = dplyr::if_else(
           scheme_code == input$focus_scheme,
           TRUE,
@@ -125,7 +124,6 @@ app_server <- function(input, output, session) {
 
     dat |>
       dplyr::mutate(
-        scheme_name = glue::glue("{scheme_name} ({scheme_code})"),
         value_binary = dplyr::if_else(!is.na(value_lo), 1, 0),
         dplyr::across(
           c(value_lo, value_hi, value_mid, value_range),
@@ -181,7 +179,7 @@ app_server <- function(input, output, session) {
       session,
       "mitigator_groups",
       choices = all_mitigator_groups,
-      selected = all_mitigator_groups[1]
+      selected = all_mitigator_groups[2]
     )
   })
 

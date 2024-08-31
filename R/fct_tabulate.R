@@ -167,7 +167,7 @@ get_all_schemes <- function(dat) {
     shiny::req() |>
     dplyr::distinct(scheme_name, scheme_code) |>
     dplyr::filter(!is.na(scheme_code)) |>
-    dplyr::mutate(scheme_name = paste0(scheme_name, " (", scheme_code, ")")) |>
+    dplyr::mutate(scheme_name = glue::glue("{scheme_name} ({scheme_code})")) |>
     dplyr::arrange(scheme_name) |>
     tibble::deframe()
 }
