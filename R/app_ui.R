@@ -67,6 +67,19 @@ app_ui <- function(request) {
             title = "Select mitigators",
             icon = bsicons::bs_icon("sliders"),
             shiny::selectInput(
+              inputId = "activity_type",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Activity type",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Select an activity type to filter the mitigators by."
+              ),
+              choices = c("All", "Inpatients", "Outpatients", "Accident and Emergency"),
+              selected = "All",
+              multiple = FALSE
+            ),
+            shiny::selectInput(
               inputId = "mitigator_groups",
               label = bslib::tooltip(
                 trigger = list(
@@ -86,7 +99,7 @@ app_ui <- function(request) {
                   "Mitigators to visualise",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Prepopulated given the mitigator group selection, but you can add or remove individual mitigators."
+                "Prepopulated given the activity type and mitigator-group selections, but you can add or remove individual mitigators."
               ),
               choices = NULL,
               selected = NULL,
