@@ -12,7 +12,7 @@ app_ui <- function(request) {
     # Application UI logic
     bslib::page_navbar(
       id = "page_navbar",
-      title = "NHP mitigator comparisons",
+      title = "NHP mitigator comparisons [WIP]",
       sidebar = bslib::sidebar(
         id = "sidebar",
         title = "Global settings",
@@ -115,11 +115,11 @@ app_ui <- function(request) {
           id = "navset",
           bslib::nav_panel(
             title = "Introduction",
-            htmltools::p("Information about the app.")
+            md_file_to_html("app", "text", "information.md")
           ),
           bslib::nav_panel(
             title = "Notes",
-            htmltools::p("Notes about use of the app.")
+            htmltools::p("Placeholder text")
           )
         )
       ),

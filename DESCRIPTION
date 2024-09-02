@@ -23,6 +23,7 @@ Imports:
     htmltools,
     janitor,
     jsonlite,
+    markdown,
     purrr,
     readr,
     shiny (>= 1.7.4),
