@@ -12,7 +12,7 @@ app_ui <- function(request) {
     # Application UI logic
     bslib::page_navbar(
       id = "page_navbar",
-      title = "NHP mitigator comparisons",
+      title = "NHP mitigator comparisons [WIP]",
       sidebar = bslib::sidebar(
         id = "sidebar",
         title = "Global settings",
@@ -44,17 +44,41 @@ app_ui <- function(request) {
                   "Schemes to visualise",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Defaults to peers of the selected scheme."
+                "Defaults to peers of the selected scheme if 'Select all schemes?' is unchecked."
               ),
               choices = NULL,
               selected = NULL,
               multiple = TRUE
+            ),
+            shiny::checkboxInput(
+              inputId = "toggle_all_schemes",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Select all schemes?",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Automatically select all schemes at once."
+              ),
+              value = TRUE
             )
           ),
           bslib::accordion_panel(
             id = "accordion_mitigators",
             title = "Select mitigators",
             icon = bsicons::bs_icon("sliders"),
+            shiny::selectInput(
+              inputId = "activity_type",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Activity type",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Select an activity type to filter the mitigators by."
+              ),
+              choices = c("All", "Inpatients", "Outpatients", "Accident and Emergency"),
+              selected = "All",
+              multiple = FALSE
+            ),
             shiny::selectInput(
               inputId = "mitigator_groups",
               label = bslib::tooltip(
@@ -75,7 +99,7 @@ app_ui <- function(request) {
                   "Mitigators to visualise",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Prepopulated given the mitigator group selection, but you can add or remove individual mitigators."
+                "Prepopulated given the activity type and mitigator-group selections, but you can add or remove individual mitigators."
               ),
               choices = NULL,
               selected = NULL,
@@ -91,11 +115,11 @@ app_ui <- function(request) {
           id = "navset",
           bslib::nav_panel(
             title = "Introduction",
-            htmltools::p("Information about the app.")
+            md_file_to_html("app", "text", "information.md")
           ),
           bslib::nav_panel(
             title = "Notes",
-            htmltools::p("Notes about use of the app.")
+            htmltools::p("Placeholder text")
           )
         )
       ),
@@ -116,6 +140,17 @@ app_ui <- function(request) {
                     bsicons::bs_icon("info-circle")
                   ),
                   "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
+                ),
+                value = FALSE
+              ),
+              shiny::checkboxInput(
+                inputId = "toggle_mitigator_code_pointrange",
+                label = bslib::tooltip(
+                  trigger = list(
+                    "Show mitigator code?",
+                    bsicons::bs_icon("info-circle")
+                  ),
+                  "Replaces the full mitigator name with the mitigator code."
                 ),
                 value = FALSE
               ),

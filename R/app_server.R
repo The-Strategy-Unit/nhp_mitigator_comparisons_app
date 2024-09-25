@@ -29,8 +29,7 @@ app_server <- function(input, output, session) {
   mitigator_lookup <- container_support |>
     AzureStor::storage_read_csv("mitigator-lookup.csv", show_col_types = FALSE)
 
-  nee_results <- container_support |>
-    AzureStor::storage_load_rds("nee_table.rds")
+  nee_results <- container_support |> read_nee("nee_table.rds")
 
   peers <- container_support |>
     AzureStor::storage_load_rds("trust-peers.rds") |>
@@ -47,8 +46,6 @@ app_server <- function(input, output, session) {
   )
 
   all_schemes <- get_all_schemes(dat)
-  all_mitigators <- get_all_mitigators(dat)
-  all_mitigator_groups <- get_all_mitigator_groups(dat)
 
   # Reactives ----
 
@@ -56,6 +53,32 @@ app_server <- function(input, output, session) {
     peers |>
       dplyr::filter(scheme == input$focus_scheme) |>
       dplyr::pull(peer)
+  })
+
+  dat_filtered <- reactive({
+
+    if (input$activity_type != "All") {
+      dat <- dat |>
+        dplyr::filter(mitigator_activity_type == input$activity_type)
+    }
+
+    dat
+
+  })
+
+  available_mitigators <- reactive({
+    dat_filtered() |> get_all_mitigators()
+  })
+
+  available_mitigator_groups <- reactive({
+    dat_filtered() |> get_all_mitigator_groups()
+  })
+
+  mitigator_group_set <- reactive({
+    dat_filtered() |>
+      dplyr::filter(mitigator_group == input$mitigator_groups) |>
+      dplyr::distinct(mitigator_code) |>
+      dplyr::pull()
   })
 
   dat_selected_pointrange <- shiny::reactive({
@@ -68,6 +91,8 @@ app_server <- function(input, output, session) {
       need(input$mitigators, message = "Select at least one mitigator.")
     )
 
+    dat <- dat_filtered()
+
     if (input$toggle_horizon_pointrange) {
       dat <- dat |>
         dplyr::mutate(
@@ -78,10 +103,26 @@ app_server <- function(input, output, session) {
         )
     }
 
+    if (!input$toggle_invert_facets) {
+      dat <- dat |> dplyr::mutate(scheme_name = forcats::fct_rev(scheme_name))
+    }
+
+    if (input$toggle_invert_facets) {
+      dat <- dat |>
+        dplyr::mutate(mitigator_code = forcats::fct_rev(mitigator_code))
+    }
+
     dat |>
       dplyr::filter(
         scheme_code %in% input$schemes,
         mitigator_code %in% input$mitigators
+      ) |>
+      dplyr::mutate(
+        point_colour = dplyr::if_else(
+          scheme_code == input$focus_scheme,
+          TRUE,
+          FALSE
+        )
       )
 
   })
@@ -95,6 +136,8 @@ app_server <- function(input, output, session) {
     shiny::validate(
       need(input$mitigators, message = "Select at least one mitigator.")
     )
+
+    dat <- dat_filtered()
 
     if (input$toggle_horizon_heatmap) {
       dat <- dat |>
@@ -112,7 +155,8 @@ app_server <- function(input, output, session) {
         dplyr::across(
           c(value_lo, value_hi, value_mid, value_range),
           \(x) janitor::round_half_up(x, 3)
-        )
+        ),
+        mitigator_code = forcats::fct_rev(mitigator_code)
       ) |>
       tidyr::pivot_longer(
         c(value_lo, value_hi, value_mid, value_range, value_binary),
@@ -141,39 +185,38 @@ app_server <- function(input, output, session) {
   })
 
   shiny::observe({
+
+    selected_schemes <- c(input$focus_scheme, peer_set()) |> sort()
+
+    if (input$toggle_all_schemes) {
+      selected_schemes <- all_schemes
+    }
+
     shiny::updateSelectInput(
       session,
       "schemes",
       choices = all_schemes,
-      selected = c(input$focus_scheme, peer_set()) |> sort()
+      selected = selected_schemes
     )
+
   })
 
   shiny::observe({
     shiny::updateSelectInput(
       session,
       "mitigator_groups",
-      choices = all_mitigator_groups,
-      selected = all_mitigator_groups[1]
+      choices = available_mitigator_groups(),
+      selected = available_mitigator_groups()[1]
     )
   })
 
-  ## Events ----
-
-  shiny::observeEvent(input$mitigator_groups, {
-
-    mitigator_group_set <- dat |>
-      dplyr::filter(mitigator_group == input$mitigator_groups) |>
-      dplyr::distinct(mitigator_code) |>
-      dplyr::pull()
-
+  shiny::observe({
     shiny::updateSelectInput(
       session,
       "mitigators",
-      choices = all_mitigators,
-      selected = mitigator_group_set
+      choices = available_mitigators(),
+      selected = mitigator_group_set()
     )
-
   })
 
   ## Enablers ----
@@ -205,7 +248,7 @@ app_server <- function(input, output, session) {
   ## Tables ----
 
   output$raw_data_dt <- DT::renderDT({
-    dat |> make_raw_dt()
+    dat_filtered() |> make_raw_dt()
   })
 
   output$mitigator_lookup_dt <- DT::renderDT({

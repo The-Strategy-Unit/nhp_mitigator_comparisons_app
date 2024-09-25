@@ -15,6 +15,14 @@ extract_params <- function(params, runs_meta) {
   activity_avoidance |>
     dplyr::bind_rows(efficiencies) |>
     dplyr::mutate(
+      strategy = dplyr::case_match(
+        strategy,
+        "bads_daycase" ~ "day_procedures_usually_dc",
+        "bads_daycase_occasional" ~ "day_procedures_occasionally_dc",
+        "bads_outpatients" ~ "day_procedures_usually_op",
+        "bads_outpatients_or_daycase" ~ "day_procedures_occasionally_op",
+        .default = strategy
+      ),
       peer_year = paste0(
         peer,
         "_", stringr::str_sub(baseline_year, 3, 4),
@@ -167,7 +175,7 @@ get_all_schemes <- function(dat) {
     shiny::req() |>
     dplyr::distinct(scheme_name, scheme_code) |>
     dplyr::filter(!is.na(scheme_code)) |>
-    dplyr::mutate(scheme_name = paste0(scheme_name, " (", scheme_code, ")")) |>
+    dplyr::mutate(scheme_name = glue::glue("{scheme_name} ({scheme_code})")) |>
     dplyr::arrange(scheme_name) |>
     tibble::deframe()
 }
@@ -178,7 +186,7 @@ get_all_mitigators <- function(dat) {
     dplyr::distinct(mitigator_name, mitigator_code) |>
     dplyr::filter(!is.na(mitigator_code)) |>
     dplyr::mutate(
-      mitigator_name = paste0(mitigator_code, ": ", mitigator_name)
+      mitigator_name = glue::glue("{mitigator_code}: {mitigator_name}")
     ) |>
     dplyr::arrange(mitigator_code) |>
     tibble::deframe()

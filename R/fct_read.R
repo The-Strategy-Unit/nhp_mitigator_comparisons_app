@@ -1,9 +1,10 @@
-read_nee <- function(file, as_decimal = TRUE) {
+read_nee <- function(
+    container_support,
+    filename = "nee_table.rds",
+    as_decimal = TRUE
+) {
 
-  nee <- file |>
-    readr::read_rds() |>
-    dplyr::select(param_name, percentile10, percentile90, mean) |>
-    dplyr::filter(!stringr::str_detect(param_name, "bads"))
+  nee <- container_support |> AzureStor::storage_load_rds(filename)
 
   if (as_decimal) {
     nee <- nee |>
