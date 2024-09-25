@@ -1,21 +1,10 @@
 read_nee <- function(
     container_support,
-    filename = "trust-peers.rds",
+    filename = "nee_table.rds",
     as_decimal = TRUE
 ) {
 
-  nee <- container_support |>
-    AzureStor::storage_load_rds(filename) |>
-    dplyr::mutate(
-      param_name = dplyr::case_match(
-        param_name,
-        "bads_daycase" ~ "day_procedures_usually_dc",
-        "bads_daycase_occasional" ~ "day_procedures_occasionally_dc",
-        "bads_outpatients" ~ "day_procedures_usually_op",
-        "bads_outpatients_or_daycase" ~ "day_procedures_occasionally_op",
-        .default = param_name
-      )
-    )
+  nee <- container_support |> AzureStor::storage_load_rds(filename)
 
   if (as_decimal) {
     nee <- nee |>
