@@ -34,16 +34,3 @@ Schemes run many scenarios, but the app only displays data from a single json. T
 ### Supporting data
 
 Supporting data is fetched from Azure. This includes lookups for mitigators and schemes, as well as data from the National Elicitation Exercise (NEE).
-
-
-
-
-
-
-
-
-
-
-A Shiny app to compare schemes' mitigator selections.
-
-Follows [nhp_peers_params](https://github.com/The-Strategy-Unit/nhp_peers_params).
