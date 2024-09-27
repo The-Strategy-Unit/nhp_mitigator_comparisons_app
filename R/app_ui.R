@@ -114,12 +114,12 @@ app_ui <- function(request) {
         bslib::navset_card_underline(
           id = "navset",
           bslib::nav_panel(
-            title = "Introduction",
-            md_file_to_html("app", "text", "information.md")
+            title = "About",
+            md_file_to_html("app", "text", "about.md")
           ),
           bslib::nav_panel(
-            title = "Notes",
-            htmltools::p("Placeholder text")
+            title = "How to use",
+            md_file_to_html("app", "text", "how-to.md")
           )
         )
       ),
@@ -281,7 +281,7 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "nhp.inputs.report.app"
+      app_title = "NHP mitigator comparisons"
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()

@@ -10,7 +10,7 @@
 run_app <- function(
   onStart = NULL,
   options = list(),
-  enableBookmarking = "url",
+  enableBookmarking = "server",
   uiPattern = "/",
   ...
 ) {
