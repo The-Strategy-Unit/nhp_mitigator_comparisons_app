@@ -68,7 +68,7 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
   ## geoms ----
   # add nee as first geom (to put behind pointrange)
-  if (input$toggle_nee_reference_range) {
+  if (input$toggle_nee_reference_range & !input$toggle_horizon_pointrange) {
     pointrange <- pointrange +
       ggplot2::geom_crossbar(
         ggplot2::aes(
