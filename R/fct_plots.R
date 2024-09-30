@@ -1,5 +1,53 @@
+#' Pointrange plots
+#'
+#' Construct the point-range
+#'
+#' Options include:
+#' 1. Standardised horizon
+#'    Divides the mitigator by years from start to final year.
+#'
+#' 2. Mitigator code
+#'    Replaces the mitigator name with the mitigator code - to reduce visual
+#'    cutter.
+#'
+#' 3. Facet by scheme
+#'    By default the mitigators are faceted with schemes on the y-axis. This
+#'    option plots the mitigators on the y-axis instead and the plot is faceted
+#'    by scheme.
+#'
+#' 4. Facet rows
+#'    Allows the user to define how many rows to facet the plot over.
+#'
+#' @param dat_selected_pointrange Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param input Reference to the Shiny input widget that triggered this chart
+#'
+#' @return ggplot2 object showing point-range view
+#' @export
 plot_pointrange <- function(dat_selected_pointrange, input) {
 
+  ## logic ----
+  # decide what to show for the mitigator
+  if (input$toggle_mitigator_code_pointrange) {
+    var_mitigator <- 'mitigator_code'
+  } else {
+    var_mitigator <- 'mitigator_name'
+  }
+
+  # decide what to plot on the y-axis and facets
+  if (!input$toggle_invert_facets) {
+    var_y_axis <- 'scheme_name'
+    var_facet <- var_mitigator
+  } else {
+    var_y_axis <- var_mitigator
+    var_facet <- 'scheme_name'
+  }
+
+  # convert to symbols - so can be used as variables in ggplot
+  var_facet <- as.symbol(var_facet)
+  var_y_axis <- as.symbol(var_y_axis)
+
+  ## aesthetics ----
+  # set aesthetics for all plot variants
   pointrange <- dat_selected_pointrange |>
     ggplot2::ggplot(
       ggplot2::aes(
@@ -10,48 +58,41 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
       )
     )
 
-  if (!input$toggle_invert_facets) {
+  # add calculated vars to the plot aesthetics
+  pointrange <- pointrange +
+    ggplot2::aes(y = {{var_y_axis}}) +
+    ggplot2::facet_wrap(
+      facets = ggplot2::vars( {{var_facet}} ),
+      labeller = ggplot2::label_wrap_gen(width = 20)
+    )
 
+  ## geoms ----
+  # add nee as first geom (to put behind pointrange)
+  if (input$toggle_nee_reference_range) {
     pointrange <- pointrange +
-      ggplot2::geom_pointrange(ggplot2::aes(y = scheme_name))
-
-    if (!input$toggle_mitigator_code_pointrange) {
-      pointrange <- pointrange +
-        ggplot2::facet_wrap(
-          ~mitigator_name,
-          nrow = input$facet_rows,
-          labeller = ggplot2::label_wrap_gen(width = 20)
-        )
-    }
-
-    if (input$toggle_mitigator_code_pointrange) {
-      pointrange <- pointrange +
-        ggplot2::facet_wrap(~mitigator_code, nrow = input$facet_rows)
-    }
-
+      ggplot2::geom_crossbar(
+        ggplot2::aes(
+          x = nee_mean,
+          xmin = nee_p90,
+          xmax = nee_p10
+        ),
+        fill = "lightgrey",
+        colour = "grey85",
+        alpha = 0.2,
+        width = 0.4
+      )
   }
 
-  if (input$toggle_invert_facets) {
+  # add the point range
+  pointrange <- pointrange +
+    ggplot2::geom_pointrange()
 
-    if (!input$toggle_mitigator_code_pointrange) {
-      pointrange <- pointrange +
-        ggplot2::geom_pointrange(ggplot2::aes(y = mitigator_name))
-    }
-
-    if (input$toggle_mitigator_code_pointrange) {
-      pointrange <- pointrange +
-        ggplot2::geom_pointrange(ggplot2::aes(y = mitigator_code))
-    }
-
-    pointrange <- pointrange +
-      ggplot2::facet_wrap(~scheme_name, nrow = input$facet_rows)
-
-  }
-
+  # set limits from 0 to 100% if not horizon standardised
   if (!input$toggle_horizon_pointrange) {
     pointrange <- pointrange + ggplot2::xlim(0, 1)
   }
 
+  # formatting and labels
   pointrange +
     ggplot2::scale_color_manual(
       values = c("FALSE" = "black", "TRUE" = "red")
@@ -64,6 +105,7 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
     )
 
 }
+
 
 plot_heatmap <- function(dat_selected_heatmap, input) {
 
