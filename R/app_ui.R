@@ -13,6 +13,7 @@ app_ui <- function(request) {
     bslib::page_navbar(
       id = "page_navbar",
       title = "NHP mitigator comparisons [WIP]",
+      ## sidebar ----
       sidebar = bslib::sidebar(
         id = "sidebar",
         title = "Global settings",
@@ -20,6 +21,7 @@ app_ui <- function(request) {
         bslib::accordion(
           id = "global_accordion",
           open = FALSE,
+          ### scheme select ----
           bslib::accordion_panel(
             id = "accordion_schemes",
             title = "Select schemes",
@@ -62,6 +64,7 @@ app_ui <- function(request) {
               value = TRUE
             )
           ),
+          ### mitigator select ----
           bslib::accordion_panel(
             id = "accordion_mitigators",
             title = "Select mitigators",
@@ -108,6 +111,8 @@ app_ui <- function(request) {
           )
         )
       ),
+      ## navpanel ----
+      ### information ----
       bslib::nav_panel(
         id = "nav_panel_info",
         title = "Information",
@@ -123,6 +128,7 @@ app_ui <- function(request) {
           )
         )
       ),
+      ### point range plots ----
       bslib::nav_panel(
         id = "nav_panel_pointrange",
         title = "Point-ranges",
@@ -165,6 +171,17 @@ app_ui <- function(request) {
                 ),
                 value = FALSE
               ),
+              shiny::checkboxInput(
+                inputId = "toggle_nee_reference_range",
+                label = bslib::tooltip(
+                  trigger = list(
+                    "Show NEE range?",
+                    bsicons::bs_icon("info-circle")
+                  ),
+                  "Include reference results from the National Elicitation Exercise (NEE). These values are shown as horizontal grey bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                ),
+                value = TRUE
+              ),
               shiny::numericInput(
                 inputId = "facet_rows",
                 label = bslib::tooltip(
@@ -189,6 +206,7 @@ app_ui <- function(request) {
           )
         )
       ),
+      ### heatmap plots ----
       bslib::nav_panel(
         id = "nav_panel_heatmaps",
         title = "Heatmaps",
@@ -238,6 +256,7 @@ app_ui <- function(request) {
           )
         )
       ),
+      ### data -----
       bslib::nav_panel(
         id = "nav_panel_data",
         title = "Data",
