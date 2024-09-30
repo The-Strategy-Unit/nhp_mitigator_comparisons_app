@@ -223,11 +223,11 @@ app_server <- function(input, output, session) {
 
   shiny::observe({
 
-    if (input$heatmap_type == "binary") {
+    if (input$heatmap_type == "value_binary") {
       shinyjs::disable("toggle_horizon_heatmap")
     }
 
-    if (input$heatmap_type != "binary") {
+    if (input$heatmap_type != "value_binary") {
       shinyjs::enable("toggle_horizon_heatmap")
     }
 
