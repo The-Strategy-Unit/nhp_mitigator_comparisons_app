@@ -18,10 +18,14 @@
 #' 4. Facet rows
 #'    Allows the user to define how many rows to facet the plot over.
 #'
+#' 5. Show NEE reference range
+#'    Allows the user to display the range of values from the National Elicitation
+#'    Exercise (NEE) as context. Defaults to on.
+#'
 #' @param dat_selected_pointrange Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
 #' @param input Reference to the Shiny input widget that triggered this chart
 #'
-#' @return ggplot2 object showing point-range view
+#' @return ggplot2 object showing point-range view facetted by scheme or mitigator
 #' @export
 plot_pointrange <- function(dat_selected_pointrange, input) {
 
@@ -71,13 +75,14 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   if (input$toggle_nee_reference_range & !input$toggle_horizon_pointrange) {
     pointrange <- pointrange +
       ggplot2::geom_crossbar(
+        data = stats::na.omit(dat_selected_pointrange),
         ggplot2::aes(
           x = nee_mean,
           xmin = nee_p90,
           xmax = nee_p10
         ),
-        fill = "lightgrey",
-        colour = "grey85",
+        #fill = "lightgrey",
+        #colour = "grey85",
         alpha = 0.2,
         width = 0.4
       )
