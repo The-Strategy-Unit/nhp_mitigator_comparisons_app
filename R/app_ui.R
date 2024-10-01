@@ -178,7 +178,7 @@ app_ui <- function(request) {
                     "Show NEE range?",
                     bsicons::bs_icon("info-circle")
                   ),
-                  "Include reference results from the National Elicitation Exercise (NEE). These values are shown as horizontal grey bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                  "Include reference results from the National Elicitation Exercise (NEE). These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
                 ),
                 value = TRUE
               ),
