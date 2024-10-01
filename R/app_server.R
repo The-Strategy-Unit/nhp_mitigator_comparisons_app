@@ -231,6 +231,13 @@ app_server <- function(input, output, session) {
       shinyjs::enable("toggle_horizon_heatmap")
     }
 
+    # disable NEE reference range checkbox when viewing standardised horizon
+    if (input$toggle_horizon_pointrange) {
+      shinyjs::disable("toggle_nee_reference_range")
+    } else {
+      shinyjs::enable("toggle_nee_reference_range")
+    }
+
   })
 
   # Renders ----

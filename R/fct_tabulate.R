@@ -80,6 +80,20 @@ prepare_skeleton_table <- function(extracted_params) {
 
 }
 
+#' Populate dat table
+#'
+#' Creates a single fact table from `skeleton_table` by left-joining with
+#' `extracted_params`, `trust_code_lookup`, `mitigator_lookup` and
+#' `nee_results`.
+#'
+#' @param skeleton_table Tibble - output of `prepare_skeleton_table()`
+#' @param extracted_params Tibble - output of `extract_params()`
+#' @param trust_code_lookup Tibble - from Azure file `nhp-scheme-lookup.csv`
+#' @param mitigator_lookup Tibble - from Azure file `mitigator-lookup.csv`
+#' @param nee_results Tibble - from fct_read.R of `nee_table.rds`
+#'
+#' @return Tibble of data
+#' @export
 populate_table <- function(
     skeleton_table,
     extracted_params,
