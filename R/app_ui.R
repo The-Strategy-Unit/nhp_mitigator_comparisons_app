@@ -210,52 +210,90 @@ app_ui <- function(request) {
       bslib::nav_panel(
         id = "nav_panel_heatmaps",
         title = "Heatmaps",
-        bslib::card(
+
+        bslib::navset_card_underline(
+          id = 'nav_panel_heatmaps_tabs',
           full_screen = TRUE,
-          bslib::layout_sidebar(
-            sidebar = bslib::sidebar(
-              title = "Heatmap settings",
-              open = TRUE,
-              shiny::selectInput(
-                inputId = "heatmap_type",
-                label = bslib::tooltip(
-                  trigger = list(
-                    "Value type",
-                    bsicons::bs_icon("info-circle")
-                  ),
-                  "Schemes' low or high 80% confidence internal selection in the NHP inputs app, or the range or midpoint of these."
-                ),
-                choices = c(
-                  Binary = "value_binary",
-                  Midpoint = "value_mid",
-                  Range = "value_range",
-                  Low = "value_lo",
-                  High = "value_hi"
-                ),
-                selected = "value_mid",
-                multiple = FALSE
+
+          #### heatmaps ----
+          bslib::nav_panel(
+            title = bslib::tooltip(
+              trigger = list(
+                'Heatmaps',
+                bsicons::bs_icon('info-circle')
               ),
-              shiny::checkboxInput(
-                inputId = "toggle_horizon_heatmap",
-                label = bslib::tooltip(
-                  trigger = list(
-                    "Standardise by horizon length?",
-                    bsicons::bs_icon("info-circle")
-                  ),
-                  "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
-                ),
-                value = FALSE
-              ),
-              shiny::bookmarkButton(
-                label = "Bookmark",
-                icon = shiny::icon("bookmark", lib = "glyphicon"),
-                style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-              )
+              'Customisable heatmaps showing distributions of values by mitigator and scheme'
             ),
-            shiny::plotOutput("heatmap"),
-          )
-        )
+            bslib::layout_sidebar(
+              sidebar = bslib::sidebar(
+                title = "Heatmap settings",
+                open = TRUE,
+                shiny::selectInput(
+                  inputId = "heatmap_type",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Value type",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Schemes' low or high 80% confidence internal selection in the NHP inputs app, or the range or midpoint of these."
+                  ),
+                  choices = c(
+                    Binary = "value_binary",
+                    Midpoint = "value_mid",
+                    Range = "value_range",
+                    Low = "value_lo",
+                    High = "value_hi"
+                  ),
+                  selected = "value_mid",
+                  multiple = FALSE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_horizon_heatmap",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Standardise by horizon length?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
+                  ),
+                  value = FALSE
+                ),
+                shiny::bookmarkButton(
+                  label = "Bookmark",
+                  icon = shiny::icon("bookmark", lib = "glyphicon"),
+                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                )
+              ),
+              shiny::plotOutput("heatmap"),
+            )
+          ),
+
+          #### mitigator coverage ----
+          bslib::nav_panel(
+            title = bslib::tooltip(
+              trigger = list(
+                'Mitigator coverage',
+                bsicons::bs_icon('info-circle')
+              ),
+              'The proportion of schemes using each mitigator',
+            ),
+            DT::DTOutput("mitigator_uptake_dt")
+          ),
+
+          #### scheme coverage ----
+          bslib::nav_panel(
+            title = bslib::tooltip(
+              trigger = list(
+                'Scheme coverage',
+                bsicons::bs_icon('info-circle')
+              ),
+              'The proportion of mitigators in use by each scheme. Selected schemes are shown in bold, the focal scheme is highlighted in red.',
+            ),
+            DT::DTOutput("scheme_uptake_dt")
+          ),
+        ),
       ),
+
       ### data -----
       bslib::nav_panel(
         id = "nav_panel_data",
