@@ -266,4 +266,20 @@ app_server <- function(input, output, session) {
     trust_code_lookup |> make_scheme_dt()
   })
 
+  output$mitigator_uptake_dt <- DT::renderDT({
+    make_mitigator_uptake_dt(
+      dat = dat,
+      selected_schemes = input$schemes
+    )
+  })
+
+  output$scheme_uptake_dt <- DT::renderDT({
+    make_scheme_uptake_dt(
+      dat = dat,
+      selected_mitigators = input$mitigators,
+      selected_schemes = input$schemes,
+      focal_scheme = input$focus_scheme
+    )
+  })
+
 }
