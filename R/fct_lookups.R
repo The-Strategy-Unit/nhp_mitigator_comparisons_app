@@ -154,11 +154,11 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
     dplyr::summarise(
       n_schemes_using_all = dplyr::n_distinct(
         scheme_code,
-        na.rm = T
+        na.rm = TRUE
       ),
       n_schemes_using_selected = dplyr::n_distinct(
         scheme_code[scheme_code %in% selected_schemes],
-        na.rm = T
+        na.rm = TRUE
       ),
       .by = c(mitigator_activity_type, mitigator_group, mitigator_name)
     ) |>
@@ -167,11 +167,11 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
       # get denominators
       n_schemes_all = dplyr::n_distinct(
         dat$scheme_code,
-        na.rm = T
+        na.rm = TRUE
       ),
       n_schemes_selected = dplyr::n_distinct(
         dat$scheme_code[dat$scheme_code %in% selected_schemes],
-        na.rm = T
+        na.rm = TRUE
       ),
 
       # convert to rates
@@ -192,7 +192,7 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
     # display as DT
     DT::datatable(
       rownames = FALSE,
-      options = list(pageLength = 100),
+      options = list(pageLength = 100, dom = 'Bft'),
       fillContainer = TRUE,
       escape = TRUE,
       filter = 'top',
@@ -265,7 +265,7 @@ make_scheme_uptake_dt <- function(dat, selected_mitigators, selected_schemes, fo
     # display as DT
     DT::datatable(
       rownames = FALSE,
-      options = list(pageLength = 100),
+      options = list(pageLength = 100, dom = 'Bft'),
       fillContainer = TRUE,
       escape = TRUE,
       style = 'default', # needed to ensure formatStyle works as expected - due to clashes with bslib & bootstrap theme
