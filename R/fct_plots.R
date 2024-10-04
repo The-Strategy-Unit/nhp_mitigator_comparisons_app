@@ -111,38 +111,103 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
 }
 
-
 plot_heatmap <- function(dat_selected_heatmap, input) {
 
+  # gather information
+  y_max_char = dat_selected_heatmap$mitigator_name |>
+    as.character() |>
+    nchar() |>
+    max()
+
+  y_char_wrap = (y_max_char / 1.8) |>
+    ceiling()
+
+  x_scheme_count <- dat_selected_heatmap$scheme_name |>
+    unique() |>
+    length()
+
+  ## logic ----
+  # decide whether to plot the mitigator code or name on the y-xais
+  if (TRUE) {
+    var_y_axis <- 'mitigator_name'
+  } else {
+    var_y_axis <- 'mitigator_code'
+  }
+
+  # convert to symbols - so can be used as variables in ggplot
+  var_y_axis <- as.symbol(var_y_axis)
+
+  # decide how scheme names should be plotted on the x-axis
+  if (x_scheme_count < 6) {
+    x_scheme_text <- ggplot2::element_text(
+      angle = 0,
+      hjust = 0.5,
+      vjust = 0.5
+    )
+    x_scheme_wrap = 10
+  } else if (x_scheme_count < 12) {
+    x_scheme_text <- ggplot2::element_text(
+      angle = 45,
+      hjust = 0,
+      vjust = -1
+    )
+    x_scheme_wrap = 100
+  } else {
+    x_scheme_text <- ggplot2::element_text(
+      angle = 90,
+      hjust = 0,
+      vjust = -1
+    )
+    x_scheme_wrap = 100
+  }
+
+  # construct the heatmap plot
   heatmap <- dat_selected_heatmap |>
     ggplot2::ggplot(
       ggplot2::aes(
         x = scheme_name,
-        y = mitigator_code,
+        y = {{ var_y_axis }},
         fill = value
       )
     ) +
-    ggplot2::geom_tile() +
+    ggplot2::geom_tile(colour = 'white') +
     ggplot2::scale_x_discrete(
       position = "top",
-      labels = \(x) stringr::str_wrap(x, width = 10)
+      labels = \(x) stringr::str_wrap(x, width = x_scheme_wrap),
+      guide = ggplot2::guide_axis(angle = ggplot2::waiver())
+    ) +
+    ggplot2::scale_y_discrete(
+      labels = \(.y) stringr::str_wrap(
+        string = .y,
+        width = y_char_wrap,
+        whitespace_only = TRUE
+      )
+    ) +
+    ggplot2::scale_fill_gradient(
+      limits = c(0, 1),
+      labels = scales::label_percent()
     ) +
     ggplot2::theme_minimal(base_size = 20) +
     ggplot2::theme(
       axis.title.x = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_blank(),
-      legend.title = ggplot2::element_blank()
+      axis.text.x = x_scheme_text,
+      legend.title = ggplot2::element_blank(),
+      legend.position = 'bottom',
+      legend.key.width = ggplot2::unit(3, 'cm')
     )
 
+  # handle non-binary plots
   if (input$heatmap_type != "value_binary") {
     heatmap <- heatmap +
       ggplot2::geom_text(
-        ggplot2::aes(label = value),
+        ggplot2::aes(label = value |> scales::percent(accuracy = 1)),
         color = "white",
         size = 6
       )
   }
 
+  # handle binary plots
   if (input$heatmap_type == "value_binary") {
     heatmap <- heatmap + ggplot2::theme(legend.position = "none")
   }
