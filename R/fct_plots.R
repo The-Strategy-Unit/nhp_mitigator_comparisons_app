@@ -128,7 +128,7 @@ plot_heatmap <- function(dat_selected_heatmap, input) {
 
   ## logic ----
   # decide whether to plot the mitigator code or name on the y-xais
-  if (TRUE) {
+  if (input$toggle_mitigator_name) {
     var_y_axis <- 'mitigator_name'
   } else {
     var_y_axis <- 'mitigator_code'
