@@ -160,7 +160,8 @@ app_server <- function(input, output, session) {
           c(value_lo, value_hi, value_mid, value_range),
           \(x) janitor::round_half_up(x, 3)
         ),
-        mitigator_code = forcats::fct_rev(mitigator_code)
+        mitigator_code = forcats::fct_rev(mitigator_code),
+        mitigator_name = stats::reorder(mitigator_name, as.numeric(mitigator_code)) # order mitigator_name to match mitigator_code
       ) |>
       tidyr::pivot_longer(
         c(value_lo, value_hi, value_mid, value_range, value_binary),
