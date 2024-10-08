@@ -133,7 +133,15 @@ populate_table <- function(
     dplyr::mutate(
       .keep = "none",
       # schemes
-      scheme_name,
+      scheme_name = dplyr::case_when(
+        # identify schemes whose mitigators are not yet finalised
+        !is.na(scheme_name) & stringr::str_starts(
+          string = run_stage |> stringr::str_to_lower(),
+          pattern = 'final',
+          negate = TRUE
+        ) ~ glue::glue('{scheme_name} ✏️'),
+        .default = scheme_name
+      ),
       scheme_code = peer,
       scheme_year = dplyr::if_else(
         stringr::str_detect(run_stage, "Final"),
