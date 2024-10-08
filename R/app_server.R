@@ -47,6 +47,10 @@ app_server <- function(input, output, session) {
 
   all_schemes <- get_all_schemes(dat)
 
+  # Reactive Values
+  ra <- shiny::reactiveValues(heatmap_min_height = NA)
+  ra$heatmap_min_height <- 100
+
   # Reactives ----
 
   peer_set <- shiny::reactive({
@@ -156,7 +160,8 @@ app_server <- function(input, output, session) {
           c(value_lo, value_hi, value_mid, value_range),
           \(x) janitor::round_half_up(x, 3)
         ),
-        mitigator_code = forcats::fct_rev(mitigator_code)
+        mitigator_code = forcats::fct_rev(mitigator_code),
+        mitigator_name = stats::reorder(mitigator_name, as.numeric(mitigator_code)) # order mitigator_name to match mitigator_code
       ) |>
       tidyr::pivot_longer(
         c(value_lo, value_hi, value_mid, value_range, value_binary),
@@ -244,12 +249,54 @@ app_server <- function(input, output, session) {
 
   ## Plots ----
 
+  ### pointrange ----
   output$pointrange <- shiny::renderPlot({
     dat_selected_pointrange() |> plot_pointrange(input)
   })
 
-  output$heatmap <- shiny::renderPlot({
-    dat_selected_heatmap() |> plot_heatmap(input)
+
+  ### heatmap ----
+
+  # adjust heatmap height in response to the number of mitigators to display
+  shiny::observe({
+
+    dat <- dat_selected_heatmap()
+
+    # count the number of selected mitigators
+    temp_mitigator_count <- dat |>
+      dplyr::filter(mitigator_code %in% input$mitigators) |>
+      dplyr::pull(mitigator_code) |>
+      unique() |>
+      length()
+
+    # count the number of selected schemes
+    temp_scheme_count <- dat |>
+      dplyr::filter(scheme_code %in% input$schemes) |>
+      dplyr::pull(scheme_code) |>
+      unique() |>
+      length()
+
+    # decide the base height (the space taken up by scheme names and legend)
+    # NB, scheme names are rotated as the scheme count increases to fit them
+    # on screen, so they take up more vertical space
+    if (temp_scheme_count < 6) {
+      base_height <- 100
+    } else if (temp_scheme_count < 12) {
+      base_height <- 160
+    } else {
+      base_height <- 200
+    }
+
+    # update reactive values
+    # update the min_height to base + pro-rata for each mitigator
+    ra$heatmap_min_height <- base_height + (temp_mitigator_count * 55)
+  })
+
+  # wrap the plot call in an observer to enable the dynamic height setting
+  shiny::observe({
+    output$heatmap <- shiny::renderPlot({
+      dat_selected_heatmap() |> plot_heatmap(input)
+    }, height = ra$heatmap_min_height)
   })
 
   ## Tables ----

@@ -258,6 +258,17 @@ app_ui <- function(request) {
                   ),
                   value = FALSE
                 ),
+                shiny::checkboxInput(
+                  inputId = "toggle_mitigator_name",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show mitigator names?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Plots mitigator names on the y-axis (default) or switch off to display mitigator codes instead."
+                  ),
+                  value = TRUE
+                ),
                 shiny::bookmarkButton(
                   label = "Bookmark",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),

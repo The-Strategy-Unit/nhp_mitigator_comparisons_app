@@ -112,37 +112,135 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 }
 
 
+#' Heatmap plot
+#'
+#' Construct the heatmap showing values for mitigators when compared across
+#' schemes.
+#'
+#' Options include:
+#'
+#' 1. Mitigator name
+#'    Checkbox-controlled switch between mitigator code and mitigator name to
+#'    help interpret the plots.
+#'
+#' 2. Value to plot
+#'    Drop-down selection of binary (if a mitigator is used at all), value, low,
+#'    high and range
+#'
+#' x-axis responsivity:
+#' * <6 schemes selected - names are displayed vertically and wrapped at 20 char
+#' * 6 <= x <12 schemes - names are displayed at 45 degrees with no wrap
+#' * >= 12 schemes - names are rotated at 90 degrees
+#'
+#' y-axis:
+#' * string-wrapped at around half the length of the longest mitigator name
+#'
+#' @param dat_selected_pointrange Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param input Reference to the Shiny input widget that triggered this chart
+#'
+#' @return ggplot2 object showing heatmap
+#' @export
 plot_heatmap <- function(dat_selected_heatmap, input) {
 
+  # gather information
+  y_max_char = dat_selected_heatmap$mitigator_name |>
+    as.character() |>
+    nchar() |>
+    max()
+
+  y_char_wrap = (y_max_char / 1.8) |>
+    ceiling()
+
+  x_scheme_count <- dat_selected_heatmap$scheme_name |>
+    unique() |>
+    length()
+
+  ## logic ----
+  # decide whether to plot the mitigator code or name on the y-xais
+  if (input$toggle_mitigator_name) {
+    var_y_axis <- 'mitigator_name'
+  } else {
+    var_y_axis <- 'mitigator_code'
+  }
+
+  # convert to symbols - so can be used as variables in ggplot
+  var_y_axis <- as.symbol(var_y_axis)
+
+  # decide how scheme names should be plotted on the x-axis
+  if (x_scheme_count < 6) {
+    x_scheme_text <- ggplot2::element_text(
+      angle = 0,
+      hjust = 0.5,
+      vjust = 0.5
+    )
+    x_scheme_wrap = 10
+  } else if (x_scheme_count < 12) {
+    x_scheme_text <- ggplot2::element_text(
+      angle = 45,
+      hjust = 0,
+      vjust = -1
+    )
+    x_scheme_wrap = 100
+  } else {
+    x_scheme_text <- ggplot2::element_text(
+      angle = 90,
+      hjust = 0,
+      vjust = -1
+    )
+    x_scheme_wrap = 100
+  }
+
+  # construct the heatmap plot
   heatmap <- dat_selected_heatmap |>
     ggplot2::ggplot(
       ggplot2::aes(
         x = scheme_name,
-        y = mitigator_code,
+        y = {{ var_y_axis }},
         fill = value
       )
     ) +
-    ggplot2::geom_tile() +
+    ggplot2::geom_tile(colour = 'white') +
     ggplot2::scale_x_discrete(
       position = "top",
-      labels = \(x) stringr::str_wrap(x, width = 10)
+      labels = \(x) stringr::str_wrap(x, width = x_scheme_wrap),
+      guide = ggplot2::guide_axis(angle = ggplot2::waiver())
+    ) +
+    ggplot2::scale_y_discrete(
+      labels = \(.y) stringr::str_wrap(
+        string = .y,
+        width = y_char_wrap,
+        whitespace_only = TRUE
+      )
+    ) +
+    ggplot2::scale_fill_gradient(
+      limits = c(0, 1),
+      labels = scales::label_percent()
     ) +
     ggplot2::theme_minimal(base_size = 20) +
     ggplot2::theme(
       axis.title.x = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_blank(),
-      legend.title = ggplot2::element_blank()
-    )
+      axis.text.x = x_scheme_text,
+      legend.title = ggplot2::element_text(
+        size = 14,
+        margin = ggplot2::margin(0, 1, 0, 0, 'cm')
+      ),
+      legend.position = 'bottom',
+      legend.key.width = ggplot2::unit(3, 'cm')
+    ) +
+    ggplot2::labs(fill = '80% Prediction Interval')
 
+  # handle non-binary plots
   if (input$heatmap_type != "value_binary") {
     heatmap <- heatmap +
       ggplot2::geom_text(
-        ggplot2::aes(label = value),
+        ggplot2::aes(label = value |> scales::percent(accuracy = 1)),
         color = "white",
         size = 6
       )
   }
 
+  # handle binary plots
   if (input$heatmap_type == "value_binary") {
     heatmap <- heatmap + ggplot2::theme(legend.position = "none")
   }
