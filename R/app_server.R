@@ -23,8 +23,7 @@ app_server <- function(input, output, session) {
 
   skeleton_table <- prepare_skeleton_table(extracted_params)
 
-  trust_code_lookup <- container_support |>
-    AzureStor::storage_read_csv("nhp-scheme-lookup.csv", show_col_types = FALSE)
+  trust_code_lookup <- get_trust_lookup(container_support = container_support)
 
   mitigator_lookup <- container_support |>
     AzureStor::storage_read_csv("mitigator-lookup.csv", show_col_types = FALSE)
