@@ -111,6 +111,35 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
 }
 
+
+#' Heatmap plot
+#'
+#' Construct the heatmap showing values for mitigators when compared across
+#' schemes.
+#'
+#' Options include:
+#'
+#' 1. Mitigator name
+#'    Checkbox-controlled switch between mitigator code and mitigator name to
+#'    help interpret the plots.
+#'
+#' 2. Value to plot
+#'    Drop-down selection of binary (if a mitigator is used at all), value, low,
+#'    high and range
+#'
+#' x-axis responsivity:
+#' * <6 schemes selected - names are displayed vertically and wrapped at 20 char
+#' * 6 <= x <12 schemes - names are displayed at 45 degrees with no wrap
+#' * >= 12 schemes - names are rotated at 90 degrees
+#'
+#' y-axis:
+#' * string-wrapped at around half the length of the longest mitigator name
+#'
+#' @param dat_selected_pointrange Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param input Reference to the Shiny input widget that triggered this chart
+#'
+#' @return ggplot2 object showing heatmap
+#' @export
 plot_heatmap <- function(dat_selected_heatmap, input) {
 
   # gather information
@@ -192,10 +221,14 @@ plot_heatmap <- function(dat_selected_heatmap, input) {
       axis.title.x = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_blank(),
       axis.text.x = x_scheme_text,
-      legend.title = ggplot2::element_blank(),
+      legend.title = ggplot2::element_text(
+        size = 14,
+        margin = ggplot2::margin(0, 1, 0, 0, 'cm')
+      ),
       legend.position = 'bottom',
       legend.key.width = ggplot2::unit(3, 'cm')
-    )
+    ) +
+    ggplot2::labs(fill = '80% Prediction Interval')
 
   # handle non-binary plots
   if (input$heatmap_type != "value_binary") {
