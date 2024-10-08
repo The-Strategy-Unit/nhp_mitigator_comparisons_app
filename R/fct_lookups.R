@@ -88,6 +88,15 @@ make_mitigator_dt <- function(mitigator_lookup) {
 }
 
 
+#' Make the scheme lookup DT object
+#'
+#' Renders a DT object listing schemes represented in the app with filters and
+#' a CSV download button.
+#'
+#' @param trust_code_lookup Tibble of scheme data - as provided by the `get_trust_lookup()` function in `fct_tabulate.R`
+#'
+#' @return DT object listing schemes
+#' @export
 make_scheme_dt <- function(trust_code_lookup) {
 
   schemes_prepared <- trust_code_lookup |>
@@ -108,7 +117,8 @@ make_scheme_dt <- function(trust_code_lookup) {
       selection = "none",
       extensions = "Buttons",
       options = list(
-        dom = "Bftp",
+        pageLength = 100, # show all schemes
+        dom = "Bft", # excluding the paging buttons
         buttons = list(
           list(
             extend = "csv",
