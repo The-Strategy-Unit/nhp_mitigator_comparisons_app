@@ -213,3 +213,38 @@ get_all_mitigator_groups <- function(dat) {
     dplyr::pull() |>
     sort()
 }
+
+#' Get a lookup table of participating Trusts
+#'
+#' Read a csv lookup file from Azure storage and do some clean-up to ensure
+#' one row per Trust.
+#'
+#' @param container_support The Azure container for supporting information, as obtained by `get_container()` from `fct_tabulate.R`
+#'
+#' @return Tibble of data listing participating Trusts
+#' @export
+get_trust_lookup <- function(container_support) {
+
+  trust_lookup <-
+    # read the data from Azure
+    AzureStor::storage_read_csv(
+      container = container_support,
+      file = "nhp-scheme-lookup.csv",
+      show_col_types = FALSE
+    ) |>
+    # Imperial College (RYJ) appears three times due to different hospital
+    # sites, so simplify to one row
+    dplyr::mutate(
+      `Name of Hospital site` = dplyr::case_match(
+        `Trust ODS Code`,
+        'RYJ' ~ 'Imperial',
+        .default = `Name of Hospital site`
+      )
+    ) |>
+    # Ensure one row per trust - deals with Hampshire which appears twice
+    dplyr::distinct(`Trust ODS Code`, .keep_all = TRUE) |>
+    # Sort
+    dplyr::arrange(`Trust ODS Code`)
+
+  return(trust_lookup)
+}
