@@ -302,15 +302,15 @@ app_server <- function(input, output, session) {
 
   output$raw_data_dt <- DT::renderDT({
     dat_filtered() |> make_raw_dt()
-  })
+  }, server = FALSE) # to download all data via CSV button
 
   output$mitigator_lookup_dt <- DT::renderDT({
     mitigator_lookup |> make_mitigator_dt()
-  })
+  }, server = FALSE) # to download all data via CSV button
 
   output$scheme_lookup_dt <- DT::renderDT({
     trust_code_lookup |> make_scheme_dt()
-  })
+  }, server = FALSE) # to download all data via CSV button
 
   output$mitigator_uptake_dt <- DT::renderDT({
     make_mitigator_uptake_dt(

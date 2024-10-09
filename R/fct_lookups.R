@@ -27,7 +27,7 @@ make_raw_dt <- function(dat) {
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "mitigator-comparison-data"),
+            filename = paste0(Sys.Date(), "_mitigator-comparison-data"),
             text = "Download (CSV)"
           )
         )
@@ -73,7 +73,7 @@ make_mitigator_dt <- function(mitigator_lookup) {
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "mitigator-lookup"),
+            filename = paste0(Sys.Date(), "_mitigator-lookup"),
             text = "Download (CSV)"
           )
         )
@@ -88,6 +88,15 @@ make_mitigator_dt <- function(mitigator_lookup) {
 }
 
 
+#' Make the scheme lookup DT object
+#'
+#' Renders a DT object listing schemes represented in the app with filters and
+#' a CSV download button.
+#'
+#' @param trust_code_lookup Tibble of scheme data - as provided by the `get_trust_lookup()` function in `fct_tabulate.R`
+#'
+#' @return DT object listing schemes
+#' @export
 make_scheme_dt <- function(trust_code_lookup) {
 
   schemes_prepared <- trust_code_lookup |>
@@ -108,11 +117,12 @@ make_scheme_dt <- function(trust_code_lookup) {
       selection = "none",
       extensions = "Buttons",
       options = list(
-        dom = "Bftp",
+        pageLength = 100, # show all schemes
+        dom = "Bft", # excluding the paging buttons
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "mitigator-comparison-data"),
+            filename = paste0(Sys.Date(), "_mitigator-comparison-data"),
             text = "Download (CSV)"
           )
         )
@@ -192,7 +202,7 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
     # display as DT
     DT::datatable(
       rownames = FALSE,
-      options = list(pageLength = 100, dom = 'Bft'),
+      options = list(pageLength = 100, dom = 'ft'),
       fillContainer = TRUE,
       escape = TRUE,
       filter = 'top',
