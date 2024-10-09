@@ -27,7 +27,7 @@ make_raw_dt <- function(dat) {
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "mitigator-comparison-data"),
+            filename = paste0(Sys.Date(), "_mitigator-comparison-data"),
             text = "Download (CSV)"
           )
         )
@@ -73,7 +73,7 @@ make_mitigator_dt <- function(mitigator_lookup) {
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "mitigator-lookup"),
+            filename = paste0(Sys.Date(), "_mitigator-lookup"),
             text = "Download (CSV)"
           )
         )
@@ -122,7 +122,7 @@ make_scheme_dt <- function(trust_code_lookup) {
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "mitigator-comparison-data"),
+            filename = paste0(Sys.Date(), "_mitigator-comparison-data"),
             text = "Download (CSV)"
           )
         )
@@ -202,7 +202,7 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
     # display as DT
     DT::datatable(
       rownames = FALSE,
-      options = list(pageLength = 100, dom = 'Bft'),
+      options = list(pageLength = 100, dom = 'ft'),
       fillContainer = TRUE,
       escape = TRUE,
       filter = 'top',
