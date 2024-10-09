@@ -141,6 +141,7 @@ app_ui <- function(request) {
             sidebar = bslib::sidebar(
               title = "Point-range settings",
               open = TRUE,
+              width = 260,
               shiny::checkboxInput(
                 inputId = "toggle_horizon_pointrange",
                 label = bslib::tooltip(
@@ -185,19 +186,21 @@ app_ui <- function(request) {
                 ),
                 value = TRUE
               ),
-              shiny::numericInput(
-                inputId = "facet_rows",
+              shiny::sliderInput(
+                inputId = "facet_columns",
                 label = bslib::tooltip(
                   trigger = list(
-                    "Number of facet rows",
+                    "Number of facet columns",
                     bsicons::bs_icon("info-circle")
                   ),
-                  "Choose the number of rows over which to break the faceted pointrange charts."
+                  "Choose the number of columns over which to break the faceted pointrange charts."
                 ),
-                value = 2,
                 min = 1,
-                max = 5,
-                step = 1
+                max = 5, # will be reactively updated to match the number of facets
+                step = 1,
+                value = 5,
+                round = TRUE,
+                ticks = FALSE
               ),
               shiny::bookmarkButton(
                 label = "Bookmark ",
