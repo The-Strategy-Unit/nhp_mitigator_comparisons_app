@@ -41,9 +41,22 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   if (!input$toggle_invert_facets) {
     var_y_axis <- 'scheme_name'
     var_facet <- var_mitigator
+
+    # set char wrap to 100
+    y_char_wrap <- 100
+
   } else {
     var_y_axis <- var_mitigator
     var_facet <- 'scheme_name'
+
+    # where should character wrapping occur?
+    y_max_char <- dat_selected_pointrange$mitigator_name |>
+      as.character() |>
+      nchar() |>
+      max()
+
+    y_char_wrap <- (y_max_char / 1.8) |>
+      ceiling()
   }
 
   # convert to symbols - so can be used as variables in ggplot
@@ -67,8 +80,11 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
     ggplot2::aes(y = {{var_y_axis}}) +
     ggplot2::facet_wrap(
       facets = ggplot2::vars( {{var_facet}} ),
-      labeller = ggplot2::label_wrap_gen(width = 20)
+      labeller = ggplot2::label_wrap_gen(width = 20),
+      ncol = input$facet_columns,
+      scales = 'free_x' # add
     )
+
 
   ## geoms ----
   # add nee as first geom (to put behind pointrange)
@@ -94,11 +110,30 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
   # set limits from 0 to 100% if not horizon standardised
   if (!input$toggle_horizon_pointrange) {
-    pointrange <- pointrange + ggplot2::xlim(0, 1)
+    pointrange <- pointrange +
+      #ggplot2::xlim(0, 1)
+      ggplot2::scale_x_continuous(
+        labels = scales::label_percent(accuracy = 1),
+        breaks = c(0.25, 0.5, 0.75),
+        minor_breaks = c(0, 1),
+        limits = c(0, 1)
+      )
+  } else {
+    pointrange <- pointrange +
+      ggplot2::scale_x_continuous(
+        labels = scales::label_percent(accuracy = 1)
+      )
   }
 
   # formatting and labels
-  pointrange +
+  pointrange <- pointrange +
+    ggplot2::scale_y_discrete(
+      labels = \(.y) stringr::str_wrap(
+        string = .y,
+        width = y_char_wrap,
+        whitespace_only = TRUE
+      )
+    ) +
     ggplot2::scale_color_manual(
       values = c("FALSE" = "black", "TRUE" = "red")
     ) +
@@ -106,9 +141,11 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
     ggplot2::theme_bw(base_size = 20) +
     ggplot2::theme(
       axis.title.y = ggplot2::element_blank(),
-      legend.position = "none"
+      axis.text.x = ggplot2::element_text(size = 12),
+      legend.position = "none",
     )
 
+  return(pointrange)
 }
 
 
