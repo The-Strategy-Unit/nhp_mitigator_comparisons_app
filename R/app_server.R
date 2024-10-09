@@ -47,8 +47,12 @@ app_server <- function(input, output, session) {
   all_schemes <- get_all_schemes(dat)
 
   # Reactive Values
-  ra <- shiny::reactiveValues(heatmap_min_height = NA)
+  ra <- shiny::reactiveValues(
+    heatmap_min_height = NA,
+    pointrange_min_height = NA
+  )
   ra$heatmap_min_height <- 100
+  ra$pointrange_min_height <- 100
 
   # Reactives ----
 
@@ -112,7 +116,10 @@ app_server <- function(input, output, session) {
 
     if (input$toggle_invert_facets) {
       dat <- dat |>
-        dplyr::mutate(mitigator_code = forcats::fct_rev(mitigator_code))
+        dplyr::mutate(
+          mitigator_code = forcats::fct_rev(mitigator_code),
+          mitigator_name = stats::reorder(mitigator_name, as.numeric(mitigator_code)) # order mitigator_name to match mitigator_code
+        )
     }
 
     dat |>
@@ -249,8 +256,97 @@ app_server <- function(input, output, session) {
   ## Plots ----
 
   ### pointrange ----
-  output$pointrange <- shiny::renderPlot({
-    dat_selected_pointrange() |> plot_pointrange(input)
+
+  # adjust the 'number of facet columns' slider to match the number of facets
+  # i.e. so can select up to a minimum of one facet per row or list all on a
+  # single row
+  shiny::observe({
+
+    dat <- dat_selected_pointrange()
+
+    # what is the maximum number of columns to facet over?
+    max_facet_cols <- if (input$toggle_invert_facets) {
+      # count the number of selected schemes
+      dat |>
+        dplyr::filter(scheme_code %in% input$schemes) |>
+        dplyr::pull(scheme_code) |>
+        unique() |>
+        length()
+
+    } else {
+      # count the number of selected mitigators
+      dat |>
+        dplyr::filter(mitigator_code %in% input$mitigators) |>
+        dplyr::pull(mitigator_code) |>
+        unique() |>
+        length()
+    }
+
+    # update the ui
+    shiny::updateSliderInput(
+      inputId = 'facet_columns',
+      max = max_facet_cols
+    )
+
+  })
+
+  # adjust pointrange height in response to the number of facet rows
+  # this will be base_height + (y_rows * facet_rows)
+  shiny::observe({
+
+    dat <- dat_selected_pointrange()
+
+    # how many columns are specified?
+    facet_cols <- input$facet_columns
+
+    # how many mitigators are shown
+    n_mitigators <- dat |>
+      dplyr::filter(mitigator_code %in% input$mitigators) |>
+      dplyr::pull(mitigator_code) |>
+      unique() |>
+      length()
+
+    # how many schemes are shown
+    n_schemes <- dat |>
+      dplyr::filter(scheme_code %in% input$schemes) |>
+      dplyr::pull(scheme_code) |>
+      unique() |>
+      length()
+
+    # determine the number of rows and facet rows
+    if (input$toggle_invert_facets) {
+      # facetted on scheme with mitigator in the y-axis
+
+      n_rows <- n_mitigators
+      n_facets <- n_schemes
+
+    } else {
+      # facetted on mitigator with schemes in the y-axis
+
+      n_rows <- n_schemes
+      n_facets <- n_mitigators
+
+    }
+
+    # estimate facet rows
+    n_facet_rows <- ceiling(n_facets / facet_cols)
+
+    # specify the height for the pointrange plot
+    base_height <- 150
+
+    # update reactive values
+    # update the min_height to base + pro-rata for each row and facet row
+    ra$pointrange_min_height <- base_height +
+      (n_facet_rows * n_rows * 35) + # add room for each row on each facet
+      (n_facet_rows * 100) # add room for facet labels on each row
+
+  })
+
+  # wrap the plot call in an observer to enable the dynamic height setting
+  shiny::observe({
+    output$pointrange <- shiny::renderPlot({
+      dat_selected_pointrange() |> plot_pointrange(input)
+    }, height = ra$pointrange_min_height)
   })
 
 
