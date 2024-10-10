@@ -3,6 +3,11 @@ make_raw_dt <- function(dat) {
   dat_prepared <- dat |>
     dplyr::filter(!is.na(value_lo)) |>  # only want mitigators selected by schemes
     dplyr::mutate(
+      # remove any pencil emojis from scheme names
+      scheme_name = stringr::str_remove(
+        string = scheme_name,
+        pattern = ' ✏️'
+      ),
       dplyr::across(
         c(
           tidyselect::starts_with("scheme"),
@@ -12,7 +17,7 @@ make_raw_dt <- function(dat) {
           value_time_profile
         ),
         factor  # enables discrete selection in interactive table
-      )
+      ),
     )
 
   dat_prepared |>
