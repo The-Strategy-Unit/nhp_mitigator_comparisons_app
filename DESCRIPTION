@@ -1,9 +1,10 @@
 Package: nhp.inputs.report.app
 Title: NHP Mitigator Comparison App
-Version: 0.0.0.9000
+Version: 0.3.1
 Authors@R: c(
-    person("Ozayr", "Mohammed", , "ozayr.mohammed@nhs.net", role = c("cre", "aut")),
-    person("Matt", "Dray", , "matt.dray@nhs.net", role = "aut")
+    person("Matt", "Dray", , "matt.dray@nhs.net", role = c("cre", "aut")),
+    person("Craig", "Parylo", role = "aut"),
+    person("Ozayr", "Mohammed", role = "ctb")
   )
 Description: An application to explore the mitigator values selected by
     Trusts in the NHP Inputs App.
