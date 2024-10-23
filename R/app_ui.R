@@ -247,7 +247,7 @@ app_ui <- function(request) {
                       "Show ECDF?",
                       bsicons::bs_icon("info-circle")
                     ),
-                    "Plot the Empirical Cumulative Distribution Function (ECDF), leave unchecked for the Probability Density Function (PDF)."
+                    "Plot the Empirical Cumulative Distribution Function (ECDF), or leave unchecked for the Probability Density Function (PDF)."
                   ),
                   value = FALSE
                 ),
