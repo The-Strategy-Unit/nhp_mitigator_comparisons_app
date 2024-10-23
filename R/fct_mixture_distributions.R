@@ -20,7 +20,7 @@ get_distribution_characteristics <- function(normal_dists,
   peer_agg_p10_p50_p90 <- get_p10_p50_p90(mix_dists, mitigators)
 
   peer_agg_dist_summary <- peer_agg_mu_sigma_n |>
-    dplyr::left_join(peer_agg_p10_p50_p90, dplyr::join_by(mitigator))
+    dplyr::left_join(peer_agg_p10_p50_p90, dplyr::join_by(mitigator_code))
 
   return(peer_agg_dist_summary)
 
@@ -71,31 +71,6 @@ get_mixture_distributions <- function(data, mitigators){
   return(mix_dists)
 }
 
-#' Create mixture distributions for each mitigator:
-#'
-#' Aggregates over the peers to create a mixture distribution for each activity
-#' subset.
-#'
-#' @param data A dataframe of with the mu and sigma of the normal distribution
-#' for each peer and mitigator.
-#'
-#' @return A list of mixture distributions for each mitigator.
-get_mixture_distributions_v2 <- function(data){
-
-  # ensure only one row per mitigator:scheme combo
-  data <- data |>
-    dplyr::distinct(mitigator_code, scheme_code, .keep_all = TRUE)
-
-  # map over each row and generate a Norm density object
-  mix_dists <- purrr::map2(
-    .x = data$mu,
-    .y = data$sigma,
-    .f = \(.mu, .sigma) distr::Norm(mean = .mu, sd = .sigma)
-  )
-
-  return(mix_dists)
-}
-
 
 #' Get mu and sigma from aggregating over normal distributions.
 #'
@@ -118,7 +93,7 @@ get_mu_sigma <- function(data){
       mu = mean(mu),
       sd = (mean(mu ^ 2 + sigma ^ 2)) ^ (1 / 2),
       peers = dplyr::n(),
-      .by = mitigator
+      .by = mitigator_code
     )
 
   return(summary)
@@ -137,6 +112,8 @@ get_mu_sigma <- function(data){
 #'  row.
 get_normal_distribution_parameters <- function(data) {
   normal_dists <- data |>
+    # ensure distinct combinations of mitigator and scheme
+    dplyr::distinct(mitigator_code, scheme_code, .keep_all = TRUE) |>
     # convert hi and lo to numerator of percentage - e.g. 90 instead of 0.9
     dplyr::mutate(
       value_lo = value_lo * 100,
@@ -164,7 +141,7 @@ get_normal_distribution_parameters <- function(data) {
 get_p10_p50_p90 <- function(data, mitigators){
 
   peer_agg_p10_p50_p90 <- data.frame(
-    mitigator = character(),
+    mitigator_code = character(),
     p10 = numeric(),
     p50 = numeric(),
     p90 = numeric()
@@ -172,7 +149,7 @@ get_p10_p50_p90 <- function(data, mitigators){
 
   for (i in (1:length(mitigators))) {
     mitigator_p10_p50_p90 <- data.frame(
-      mitigator = mitigators[i],
+      mitigator_code = mitigators[i],
       p10 = data[[i]]@q(p = 0.1),
       p50 = data[[i]]@q(p = 0.5),
       p90 = data[[i]]@q(p = 0.9)
@@ -201,7 +178,7 @@ get_p10_p50_p90 <- function(data, mitigators){
 get_percentiles <- function(data, mitigators){
 
   peer_agg_ecdf_pdf <- data.frame(
-    mitigator = character(),
+    mitigator_code = character(),
     q = numeric(),
     ecdf_value = numeric(),
     pdf_value = numeric()
@@ -209,11 +186,11 @@ get_percentiles <- function(data, mitigators){
 
   for (i in (1:length(mitigators))) {
     mitigator_ecdf_pdf <- data.frame(
-      mitigator = mitigators[i],
+      mitigator_code = mitigators[i],
       q = seq(0, 100, 1),
       ecdf_value = data[[i]]@p(q = seq(0, 100, 1))
     ) |>
-      dplyr::mutate(pdf_value = ecdf_value - lag(ecdf_value, 1))
+      dplyr::mutate(pdf_value = ecdf_value - dplyr::lag(ecdf_value, 1))
 
     peer_agg_ecdf_pdf <- peer_agg_ecdf_pdf |>
       dplyr::bind_rows(mitigator_ecdf_pdf)
@@ -225,6 +202,7 @@ get_percentiles <- function(data, mitigators){
   return(peer_agg_ecdf_pdf)
 
 }
+
 
 #' Probability plot.
 #'
@@ -300,18 +278,83 @@ modify_theme <- function(plot, type) {
 #' @param strategy_lookup A dataframe of labels, types and groups for each
 #' strategy.
 #'
-#' @return
+#' @return Tibble of data showing mixture distributions
 wrangle_data_for_density_plots <- function(peer_agg_ecdf_pdf,
                                            peer_agg_dist_summary,
                                            strategy_lookup) {
+
+  # make strategy lookup names tidy
+  strategy_lookup <- strategy_lookup |> janitor::clean_names()
+
   data_wrangled <- peer_agg_ecdf_pdf |>
-    dplyr::left_join(peer_agg_dist_summary, dplyr::join_by(mitigator)) |>
-    dplyr::left_join(strategy_lookup,
-                     dplyr::join_by(mitigator == strategy)) |>
-    dplyr::mutate(mitigator_label = paste(strategyLabel,
+    dplyr::left_join(peer_agg_dist_summary, dplyr::join_by(mitigator_code)) |>
+    dplyr::left_join(strategy_lookup, dplyr::join_by(mitigator_code)) |>
+    dplyr::mutate(mitigator_label = paste(mitigator_name,
                                           ' (n = ', peers, ')',
                                           sep = ''))
 
   return(data_wrangled)
 
+}
+
+
+#' Get mixture distribution data
+#'
+#' Co-ordinates the production of mixture distribution data from the various
+#' functions above.
+#'
+#' @param dat Tibble - of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#'
+#' @return Tibble of mixture distribution data for each mitigator
+#' @export
+get_mixture_distributions_dat <- function(dat) {
+
+  # prepare input data
+  # ensure distinct combinations of mitigator and scheme to tackle an
+  # issue with multiple values by the same scheme for the same mitigator
+  dat <- dat |>
+    dplyr::distinct(
+      mitigator_code,
+      scheme_code,
+      .keep_all = TRUE
+    )
+
+  # get a vector of mitigator codes
+  mitigators <- dat |>
+    dplyr::distinct(mitigator_code) |>
+    dplyr::pull()
+
+  # estimate mean and sd for each mitigator
+  normal_dists <- get_normal_distribution_parameters(data = dat)
+
+  # extract mitigator details from dat
+  strategy_lookup <- dat |>
+    dplyr::select(dplyr::starts_with('mitigator')) |>
+    dplyr::distinct()
+
+  # get mixture distributions for each mitigator
+  mix_dists <- get_mixture_distributions(
+    data = normal_dists,
+    mitigators = mitigators
+  )
+
+  # capture percentiles for ecdfs and pdfs
+  peer_agg_ecdf_pdf <- get_percentiles(
+    data = mix_dists,
+    mitigators = mitigators
+  )
+
+  # capture distribution characteristics
+  peer_agg_dist_summary <- get_distribution_characteristics(
+    normal_dists = normal_dists,
+    mix_dists = mix_dists,
+    mitigators = mitigators
+  )
+
+  # get data for plotting
+  data_for_plotting <- wrangle_data_for_density_plots(
+    peer_agg_ecdf_pdf = peer_agg_ecdf_pdf,
+    peer_agg_dist_summary = peer_agg_dist_summary,
+    strategy_lookup = strategy_lookup
+  )
 }
