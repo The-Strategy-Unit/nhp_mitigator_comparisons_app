@@ -285,3 +285,140 @@ plot_heatmap <- function(dat_selected_heatmap, input) {
   heatmap
 
 }
+
+
+#' Mixture distribution / density plot
+#'
+#' Plot
+#'
+#' @param dat_selected_mixture_distributions Tibble - mixture distributions for all schemes for the selected mitigators - as produced by `dat_selected_mixture_distributions()` in  `app_server.R`
+#' @param dat_filtered Tibble - of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat_focal_scheme_code String - the `scheme_code` of the focal scheme
+#' @param input Reference to the Shiny input widget that triggered this chart
+#'
+#' @return ggplot2 object showing the pointrange for the focal scheme in contrast with the mixture distributions for all schemes combined.
+#' @export
+plot_mixture_distributions <- function(
+    dat_selected_mixture_distributions, # the pre-calculated mixture distributions for each mitigator (based on all schemes)
+    dat_filtered, # the data filtered for scheme and mitigators
+    dat_focal_scheme_code, # the focal scheme code
+    input) {
+
+  # logic ----
+  # decide what to plot on the y-axis
+  if (!input$toggle_mixture_distribution_ecdf) {
+    var_y_axis <- 'pdf_value'
+
+  } else {
+    var_y_axis <- 'ecdf_value'
+
+  }
+
+  # convert to symbols - so can be used as variables in ggplot
+  var_y_axis <- as.symbol(var_y_axis)
+
+  # pre-processing ----
+  # get reference lines from the mixture distributions
+  ref_lines <- dat_selected_mixture_distributions |>
+    dplyr::select(mitigator_name, mitigator_code, p10, p90, mu) |>
+    dplyr::distinct()
+
+  # get pointrange details
+  focal_pointrange <- dat_filtered |>
+    dplyr::filter(
+      scheme_code %in% dat_focal_scheme_code,
+      mitigator_name %in% ref_lines$mitigator_name
+    ) |>
+    # set the y-axis value to be half as high as the maximum pdf_value
+    dplyr::left_join(
+      y = dat_selected_mixture_distributions |>
+        dplyr::summarise(
+          y_mid_point = (max({{ var_y_axis }}, na.rm = TRUE) / 2),
+          .by = mitigator_name
+        ),
+      by = 'mitigator_name'
+    )
+
+  # construct the plot ----
+  plot <- dat_selected_mixture_distributions |>
+    stats::na.omit() |>
+    ggplot2::ggplot() +
+
+    # plot mixture distribution - either PDF or ECDF
+    ggplot2::geom_line(ggplot2::aes(x = q, y = {{ var_y_axis }}), colour = 'grey60') +
+    ggplot2::geom_area(ggplot2::aes(x = q, y = {{ var_y_axis }}), alpha = 0.1) +
+
+    # plot reference lines
+    ggplot2::geom_rect(
+      data = ref_lines,
+      ggplot2::aes(xmin = p10, xmax = p90, ymin = 0, ymax = Inf),
+      fill = 'turquoise', alpha = 0.08
+    ) +
+    ggplot2::geom_vline(
+      data = ref_lines,
+      ggplot2::aes(xintercept = mu),
+      linetype = 'dashed'
+    ) +
+    ggplot2::geom_vline(
+      data = ref_lines,
+      ggplot2::aes(xintercept = p10),
+      linetype = 'dotted'
+    ) +
+    ggplot2::geom_vline(
+      data = ref_lines,
+      ggplot2::aes(xintercept = p90),
+      linetype = 'dotted'
+    ) +
+
+    # plot the focal scheme's range
+    ggplot2::geom_pointrange(
+      data = focal_pointrange,
+      ggplot2::aes(
+        y = y_mid_point,
+        x = value_mid * 100,
+        xmin = value_lo * 100,
+        xmax = value_hi * 100
+      ),
+      colour = 'red', size = 1, linewidth = 1.5, alpha = 0.75
+    ) +
+
+    # produce the rest of the plot
+    ggplot2::facet_wrap(
+      facets = ggplot2::vars(mitigator_name),
+      ncol = 1,
+      scales = 'free'
+    ) +
+    ggplot2::theme_minimal(base_size = 20) +
+    ggplot2::theme(
+      panel.grid.major.y = ggplot2::element_blank(),
+      panel.grid.minor.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank()
+    ) +
+    ggplot2::labs(
+      x = '80% Prediction Interval',
+      y = 'none'
+    )
+
+  ## geoms ----
+  # add nee as first geom (to put behind pointrange)
+  if (input$toggle_nee_reference_range_density) {
+    plot <- plot +
+      ggplot2::geom_crossbar(
+        data = stats::na.omit(focal_pointrange),
+        ggplot2::aes(
+          y = y_mid_point,
+          x = nee_mean * 100,
+          xmin = nee_p90 * 100,
+          xmax = nee_p10 * 100,
+          width = y_mid_point / 5, # set width based on highest point on density
+        ),
+        #fill = "lightgrey",
+        colour = "grey60",
+        #width = 0.015,
+        alpha = 0.6,
+      )
+  }
+
+  return(plot)
+
+}
