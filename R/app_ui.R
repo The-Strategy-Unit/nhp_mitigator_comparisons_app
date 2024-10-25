@@ -5,18 +5,32 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
-  tagList(
+  shiny::tagList(
     # External resources
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
     # Application UI logic
     bslib::page_navbar(
       id = "page_navbar",
-      title = "NHP mitigator comparisons [WIP]",
+      title = bslib::tooltip(
+        trigger = list(
+          "NHP mitigator comparisons",
+          bsicons::bs_icon("exclamation-triangle")
+        ),
+        md_file_to_html("app", "text", "warning.md")
+      ),
+      header = bslib::card(
+        fill = FALSE,
+        bslib::card_header(
+          class = "bg-warning",
+          bsicons::bs_icon("exclamation-triangle"),
+          "Warning"
+        ),
+        md_file_to_html("app", "text", "warning.md")
+      ),
       ## sidebar ----
       sidebar = bslib::sidebar(
         id = "sidebar",
-        title = "Global settings",
         width = 400,
         bslib::accordion(
           id = "global_accordion",
@@ -330,9 +344,7 @@ app_ui <- function(request) {
             DT::DTOutput("scheme_lookup_dt")
           )
         )
-      ),
-      bslib::nav_spacer(),
-      bslib::nav_item(bslib::input_dark_mode(mode = "light"))
+      )
     )
   )
 }
