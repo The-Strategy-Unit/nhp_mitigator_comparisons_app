@@ -133,14 +133,15 @@ app_ui <- function(request) {
       bslib::nav_panel(
         id = "nav_panel_info",
         title = "Information",
-        bslib::navset_card_underline(
-          id = "navset",
-          bslib::nav_panel(
-            title = "About",
+        bslib::layout_column_wrap(
+          bslib::card(
+            id = "card_about",
+            bslib::card_header("About"),
             md_file_to_html("app", "text", "about.md")
           ),
-          bslib::nav_panel(
-            title = "How to use",
+          bslib::card(
+            id = "card_how_to_use",
+            bslib::card_header("How to use"),
             md_file_to_html("app", "text", "how-to.md")
           )
         )
