@@ -392,11 +392,11 @@ plot_mixture_distributions <- function(
     ggplot2::theme(
       panel.grid.major.y = ggplot2::element_blank(),
       panel.grid.minor.y = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_blank()
+      axis.text.y = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank()
     ) +
     ggplot2::labs(
-      x = '80% Prediction Interval',
-      y = 'none'
+      x = '80% Prediction Interval'
     )
 
   ## geoms ----
