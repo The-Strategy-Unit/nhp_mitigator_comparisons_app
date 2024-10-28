@@ -5,18 +5,32 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
-  tagList(
+  shiny::tagList(
     # External resources
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
     # Application UI logic
     bslib::page_navbar(
       id = "page_navbar",
-      title = "NHP mitigator comparisons [WIP]",
+      title = bslib::tooltip(
+        trigger = list(
+          "NHP mitigator comparisons",
+          bsicons::bs_icon("exclamation-triangle")
+        ),
+        md_file_to_html("app", "text", "warning.md")
+      ),
+      header = bslib::card(
+        fill = FALSE,
+        bslib::card_header(
+          class = "bg-warning",
+          bsicons::bs_icon("exclamation-triangle"),
+          "Warning"
+        ),
+        md_file_to_html("app", "text", "warning.md")
+      ),
       ## sidebar ----
       sidebar = bslib::sidebar(
         id = "sidebar",
-        title = "Global settings",
         width = 400,
         bslib::accordion(
           id = "global_accordion",
@@ -119,14 +133,15 @@ app_ui <- function(request) {
       bslib::nav_panel(
         id = "nav_panel_info",
         title = "Information",
-        bslib::navset_card_underline(
-          id = "navset",
-          bslib::nav_panel(
-            title = "About",
+        bslib::layout_column_wrap(
+          bslib::card(
+            id = "card_about",
+            bslib::card_header("About"),
             md_file_to_html("app", "text", "about.md")
           ),
-          bslib::nav_panel(
-            title = "How to use",
+          bslib::card(
+            id = "card_how_to_use",
+            bslib::card_header("How to use"),
             md_file_to_html("app", "text", "how-to.md")
           )
         )
@@ -393,9 +408,7 @@ app_ui <- function(request) {
             DT::DTOutput("scheme_lookup_dt")
           )
         )
-      ),
-      bslib::nav_spacer(),
-      bslib::nav_item(bslib::input_dark_mode(mode = "light"))
+      )
     )
   )
 }
