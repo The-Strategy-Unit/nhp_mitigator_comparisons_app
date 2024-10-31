@@ -229,11 +229,13 @@ app_server <- function(input, output, session) {
 
   shiny::observe({
 
-    selected_schemes <- c(input$focus_scheme, peer_set()) |> sort()
+    scheme_and_peers <- c(input$focus_scheme, peer_set())
+    selected_schemes <- all_schemes[which(all_schemes %in% scheme_and_peers)] |>
+      tibble::enframe() |>
+      dplyr::arrange(name) |>  # sort on name, not code
+      tibble::deframe()
 
-    if (input$toggle_all_schemes) {
-      selected_schemes <- all_schemes
-    }
+    if (input$toggle_all_schemes) selected_schemes <- all_schemes
 
     shiny::updateSelectInput(
       session,
