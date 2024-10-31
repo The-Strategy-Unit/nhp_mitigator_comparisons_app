@@ -402,21 +402,27 @@ plot_mixture_distributions <- function(
   ## geoms ----
   # add nee as first geom (to put behind pointrange)
   if (input$toggle_nee_reference_range_density) {
-    plot <- plot +
-      ggplot2::geom_crossbar(
-        data = stats::na.omit(focal_pointrange),
-        ggplot2::aes(
-          y = y_mid_point,
-          x = nee_mean * 100,
-          xmin = nee_p90 * 100,
-          xmax = nee_p10 * 100,
-          width = y_mid_point / 5, # set width based on highest point on density
-        ),
-        #fill = "lightgrey",
-        colour = "grey60",
-        #width = 0.015,
-        alpha = 0.6,
-      )
+
+    # Note - suppressing a warning about width being an unknown aesthetic
+    # this is tracked in issue #82
+    suppressWarnings({
+      plot <- plot +
+        ggplot2::geom_crossbar(
+          data = stats::na.omit(focal_pointrange),
+          ggplot2::aes(
+            y = y_mid_point,
+            x = nee_mean * 100,
+            xmin = nee_p90 * 100,
+            xmax = nee_p10 * 100,
+            width = y_mid_point / 5, # set width based on highest point on density
+          ),
+          #fill = "lightgrey",
+          colour = "grey60",
+          #width = 0.015,
+          alpha = 0.6,
+        )
+    })
+
   }
 
   return(plot)
