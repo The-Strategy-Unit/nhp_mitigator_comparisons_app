@@ -46,13 +46,18 @@ app_server <- function(input, output, session) {
 
   all_schemes <- get_all_schemes(dat)
 
+  # pre-calculate mixture distributions (avoid re-calculating)
+  dat_mixture_distributions <- get_mixture_distributions_dat(dat = dat)
+
   # Reactive Values
   ra <- shiny::reactiveValues(
     heatmap_min_height = NA,
-    pointrange_min_height = NA
+    pointrange_min_height = NA,
+    mixturedist_min_height = NA
   )
   ra$heatmap_min_height <- 100
   ra$pointrange_min_height <- 100
+  ra$mixturedist_min_height <- 100
 
   # Reactives ----
 
@@ -181,6 +186,33 @@ app_server <- function(input, output, session) {
       )
 
   })
+
+
+  dat_selected_mixture_distributions <- shiny::reactive({
+
+    shiny::validate(
+      need(input$schemes, message = "Select at least one scheme.")
+    )
+
+    shiny::validate(
+      need(input$mitigators, message = "Select at least one mitigator.")
+    )
+
+    # dat <- dat_filtered() |>
+    #   dplyr::filter(
+    #     mitigator_code %in% input$mitigators
+    #   )
+    #
+    # dat <- get_mixture_distributions_dat(dat = dat)
+
+    # using pre-calculated mixture distributions, filtered for selected mitigators
+    dat <- dat_mixture_distributions |>
+      dplyr::filter(
+        mitigator_code %in% input$mitigators
+      )
+
+  })
+
 
   # Observers ----
 
@@ -393,6 +425,44 @@ app_server <- function(input, output, session) {
       dat_selected_heatmap() |> plot_heatmap(input)
     }, height = ra$heatmap_min_height)
   })
+
+  ### density functions ----
+  # adjust distribution height in response to the number of mitigators to display
+  shiny::observe({
+
+    #dat <- dat_selected_mixture_distributions()
+    dat <- dat_selected_heatmap()
+
+    # count the number of selected mitigators
+    temp_mitigator_count <- dat |>
+      dplyr::filter(mitigator_code %in% input$mitigators) |>
+      dplyr::pull(mitigator_code) |>
+      unique() |>
+      length()
+
+    # update reactive values
+    # update the min_height to base + pro-rata for each mitigator
+    ra$mixturedist_min_height <- (temp_mitigator_count * 200)
+  })
+
+  # wrap the plot call in an observer to enable the dynamic height setting
+  shiny::observe({
+    output$mixture_distributions <- shiny::renderPlot({
+
+        plot_mixture_distributions(
+          dat_selected_mixture_distributions = dat_selected_mixture_distributions(),
+          dat_filtered = dat_filtered(),
+          dat_focal_scheme_code = input$focus_scheme,
+          input = input
+        )
+    }, height = ra$mixturedist_min_height)
+  })
+
+  # output$mixture_distributions <- shiny::renderPlot({
+  #   dat_selected_mixture_distributions() |>
+  #     plot_mixture_distributions(input)
+  # }, height = 10000)
+
 
   ## Tables ----
 

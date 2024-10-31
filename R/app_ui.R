@@ -150,80 +150,143 @@ app_ui <- function(request) {
       bslib::nav_panel(
         id = "nav_panel_pointrange",
         title = "Point-ranges",
-        bslib::card(
+
+        bslib::navset_card_underline(
+          id = 'nav_panel_heatmaps_tabs',
           full_screen = TRUE,
-          bslib::layout_sidebar(
-            sidebar = bslib::sidebar(
-              title = "Point-range settings",
-              open = TRUE,
-              width = 260,
-              shiny::checkboxInput(
-                inputId = "toggle_horizon_pointrange",
-                label = bslib::tooltip(
-                  trigger = list(
-                    "Standardise by horizon length?",
-                    bsicons::bs_icon("info-circle")
-                  ),
-                  "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
-                ),
-                value = FALSE
+
+          #### pointrange ----
+          bslib::nav_panel(
+            title = bslib::tooltip(
+              trigger = list(
+                'Point-range',
+                bsicons::bs_icon('info-circle')
               ),
-              shiny::checkboxInput(
-                inputId = "toggle_mitigator_code_pointrange",
-                label = bslib::tooltip(
-                  trigger = list(
-                    "Show mitigator code?",
-                    bsicons::bs_icon("info-circle")
-                  ),
-                  "Replaces the full mitigator name with the mitigator code."
-                ),
-                value = FALSE
-              ),
-              shiny::checkboxInput(
-                inputId = "toggle_invert_facets",
-                label = bslib::tooltip(
-                  trigger = list(
-                    "Facet by scheme?",
-                    bsicons::bs_icon("info-circle")
-                  ),
-                  "Invert the pointrange plots to show mitigators on the y axis and scheme as the faceting variable."
-                ),
-                value = FALSE
-              ),
-              shiny::checkboxInput(
-                inputId = "toggle_nee_reference_range",
-                label = bslib::tooltip(
-                  trigger = list(
-                    "Show NEE range?",
-                    bsicons::bs_icon("info-circle")
-                  ),
-                  "Include reference results from the National Elicitation Exercise (NEE). These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
-                ),
-                value = TRUE
-              ),
-              shiny::sliderInput(
-                inputId = "facet_columns",
-                label = bslib::tooltip(
-                  trigger = list(
-                    "Number of facet columns",
-                    bsicons::bs_icon("info-circle")
-                  ),
-                  "Choose the number of columns over which to break the faceted pointrange charts."
-                ),
-                min = 1,
-                max = 5, # will be reactively updated to match the number of facets
-                step = 1,
-                value = 5,
-                round = TRUE,
-                ticks = FALSE
-              ),
-              shiny::bookmarkButton(
-                label = "Bookmark ",
-                icon = shiny::icon("bookmark", lib = "glyphicon"),
-                style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-              )
+              'Customisable point-ranges showing distributions of values by mitigator and scheme'
             ),
-            shiny::plotOutput("pointrange"),
+            bslib::layout_sidebar(
+              sidebar = bslib::sidebar(
+                title = "Point-range settings",
+                open = TRUE,
+                width = 260,
+                shiny::checkboxInput(
+                  inputId = "toggle_horizon_pointrange",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Standardise by horizon length?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
+                  ),
+                  value = FALSE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_mitigator_code_pointrange",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show mitigator code?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Replaces the full mitigator name with the mitigator code."
+                  ),
+                  value = FALSE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_invert_facets",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Facet by scheme?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Invert the pointrange plots to show mitigators on the y axis and scheme as the faceting variable."
+                  ),
+                  value = FALSE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_nee_reference_range",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show NEE range?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Include reference results from the National Elicitation Exercise (NEE). These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                  ),
+                  value = TRUE
+                ),
+                shiny::sliderInput(
+                  inputId = "facet_columns",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Number of facet columns",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Choose the number of columns over which to break the faceted pointrange charts."
+                  ),
+                  min = 1,
+                  max = 5, # will be reactively updated to match the number of facets
+                  step = 1,
+                  value = 5,
+                  round = TRUE,
+                  ticks = FALSE
+                ),
+                shiny::bookmarkButton(
+                  label = "Bookmark ",
+                  icon = shiny::icon("bookmark", lib = "glyphicon"),
+                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                )
+              ),
+              shiny::plotOutput("pointrange"),
+            )
+          ),
+
+          #### densities -----
+          bslib::nav_panel(
+            title = bslib::tooltip(
+              trigger = list(
+                'Distributions',
+                bsicons::bs_icon('info-circle')
+              ),
+              'Mixture distributions of values provided by schemes for mitigators'
+            ),
+
+            bslib::layout_sidebar(
+              sidebar = bslib::sidebar(
+                title = "Density settings",
+                open = TRUE,
+                width = 260,
+
+                shiny::checkboxInput(
+                  inputId = "toggle_mixture_distribution_ecdf",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show ECDF?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Plot the Empirical Cumulative Distribution Function (ECDF), or leave unchecked for the Probability Density Function (PDF)."
+                  ),
+                  value = FALSE
+                ),
+
+                shiny::checkboxInput(
+                  inputId = "toggle_nee_reference_range_density",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show NEE range?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Include reference results from the National Elicitation Exercise (NEE). These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                  ),
+                  value = TRUE
+                ),
+
+                shiny::bookmarkButton(
+                  label = "Bookmark ",
+                  icon = shiny::icon("bookmark", lib = "glyphicon"),
+                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                )
+              ),
+              shiny::plotOutput('mixture_distributions')
+            )
           )
         )
       ),
