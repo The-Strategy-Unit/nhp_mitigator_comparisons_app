@@ -96,11 +96,11 @@ app_server <- function(input, output, session) {
   dat_selected_pointrange <- shiny::reactive({
 
     shiny::validate(
-      need(input$schemes, message = "Select at least one scheme.")
+      shiny::need(input$schemes, message = "Select at least one scheme.")
     )
 
     shiny::validate(
-      need(input$mitigators, message = "Select at least one mitigator.")
+      shiny::need(input$mitigators, message = "Select at least one mitigator.")
     )
 
     dat <- dat_filtered()
@@ -145,11 +145,11 @@ app_server <- function(input, output, session) {
   dat_selected_heatmap <- shiny::reactive({
 
     shiny::validate(
-      need(input$schemes, message = "Select at least one scheme.")
+      shiny::need(input$schemes, message = "Select at least one scheme.")
     )
 
     shiny::validate(
-      need(input$mitigators, message = "Select at least one mitigator.")
+      shiny::need(input$mitigators, message = "Select at least one mitigator.")
     )
 
     dat <- dat_filtered()
@@ -191,11 +191,11 @@ app_server <- function(input, output, session) {
   dat_selected_mixture_distributions <- shiny::reactive({
 
     shiny::validate(
-      need(input$schemes, message = "Select at least one scheme.")
+      shiny::need(input$schemes, message = "Select at least one scheme.")
     )
 
     shiny::validate(
-      need(input$mitigators, message = "Select at least one mitigator.")
+      shiny::need(input$mitigators, message = "Select at least one mitigator.")
     )
 
     # dat <- dat_filtered() |>
@@ -379,7 +379,16 @@ app_server <- function(input, output, session) {
   # wrap the plot call in an observer to enable the dynamic height setting
   shiny::observe({
     output$pointrange <- shiny::renderPlot({
+
+      shiny::validate(
+        shiny::need(
+          nrow(dat_selected_pointrange()) > 0,
+          message = "Insufficient data for this plot."
+        )
+      )
+
       dat_selected_pointrange() |> plot_pointrange(input)
+
     }, height = ra$pointrange_min_height)
   })
 
@@ -424,7 +433,16 @@ app_server <- function(input, output, session) {
   # wrap the plot call in an observer to enable the dynamic height setting
   shiny::observe({
     output$heatmap <- shiny::renderPlot({
+
+      shiny::validate(
+        shiny::need(
+          nrow(dat_selected_heatmap()) > 0,
+          message = "Insufficient data for this plot."
+        )
+      )
+
       dat_selected_heatmap() |> plot_heatmap(input)
+
     }, height = ra$heatmap_min_height)
   })
 
@@ -450,13 +468,12 @@ app_server <- function(input, output, session) {
   # wrap the plot call in an observer to enable the dynamic height setting
   shiny::observe({
     output$mixture_distributions <- shiny::renderPlot({
-
-        plot_mixture_distributions(
-          dat_selected_mixture_distributions = dat_selected_mixture_distributions(),
-          dat_filtered = dat_filtered(),
-          dat_focal_scheme_code = input$focus_scheme,
-          input = input
-        )
+      plot_mixture_distributions(
+        dat_selected_mixture_distributions = dat_selected_mixture_distributions(),
+        dat_filtered = dat_filtered(),
+        dat_focal_scheme_code = input$focus_scheme,
+        input = input
+      )
     }, height = ra$mixturedist_min_height)
   })
 
