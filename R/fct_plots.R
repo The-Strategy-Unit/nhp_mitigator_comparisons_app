@@ -79,7 +79,7 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   pointrange <- pointrange +
     ggplot2::aes(y = {{var_y_axis}}) +
     ggplot2::facet_wrap(
-      facets = ggplot2::vars( {{var_facet}} ),
+      facets = ggplot2::vars( forcats::fct_rev( {{var_facet}} )),
       labeller = ggplot2::label_wrap_gen(width = 20),
       ncol = input$facet_columns,
       scales = 'free_x' # add
@@ -91,7 +91,9 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   if (input$toggle_nee_reference_range & !input$toggle_horizon_pointrange) {
     pointrange <- pointrange +
       ggplot2::geom_crossbar(
-        data = stats::na.omit(dat_selected_pointrange),
+        # limit to records with nee data
+        data = dat_selected_pointrange |>
+          dplyr::filter(!is.na(nee_mean) & !is.na(nee_p90) & !is.na(nee_p10)),
         ggplot2::aes(
           x = nee_mean,
           xmin = nee_p90,
@@ -135,7 +137,12 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
       )
     ) +
     ggplot2::scale_color_manual(
-      values = c("FALSE" = "black", "TRUE" = "red")
+      #values = c("FALSE" = "black", "TRUE" = "red")
+      values = c(
+        'black' = 'black',
+        'red' = 'red',
+        'blue' = '#337ab7'
+      )
     ) +
     ggplot2::labs(x = "80% Prediction Interval") +
     ggplot2::theme_bw(base_size = 20) +
