@@ -236,7 +236,7 @@ app_ui <- function(request) {
                       "Summary",
                       bsicons::bs_icon("info-circle")
                     ),
-                    "Add an aggregate summary of schemes' responses to the plot (includes all but the focal scheme)."
+                    "Add an aggregate summary of selected schemes' responses to the plot (includes all but the focal scheme)."
                   ),
                   value = FALSE,
                   status = "primary",
