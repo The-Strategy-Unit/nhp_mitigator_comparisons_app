@@ -123,8 +123,8 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   } else {
     pointrange <- pointrange +
       ggplot2::scale_x_continuous(
-        labels = scales::label_percent(accuracy = 1),
-        breaks = percent_breaks(n = 4)
+        labels = scales::label_percent(),
+        breaks = scales::pretty_breaks(n = 3)
       ) +
       ggplot2::theme(
         panel.grid.minor.x = ggplot2::element_blank()
