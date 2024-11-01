@@ -249,7 +249,7 @@ app_ui <- function(request) {
                       "Summary full range",
                       bsicons::bs_icon("info-circle")
                     ),
-                    "Show the full range of schemes' responses, i.e. the extreme upper and lower values, or switch off to view the average (mean) range."
+                    "Show the full range of selected schemes' responses, i.e. the extreme upper and lower values, or switch off to view the average (mean) range."
                   ),
                   value = FALSE
                 ),
