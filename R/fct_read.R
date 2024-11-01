@@ -4,7 +4,7 @@ read_nee <- function(
     as_decimal = TRUE
 ) {
 
-  nee <- container_support |> AzureStor::storage_load_rds(filename)
+  nee <- container_support |> AzureStor::storage_load_rds(filename, type = "none")
 
   if (as_decimal) {
     nee <- nee |>
