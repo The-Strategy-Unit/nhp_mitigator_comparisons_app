@@ -93,8 +93,10 @@ app_server <- function(input, output, session) {
       dplyr::pull()
   })
 
+  ## dat_selected_pointrange ----
   dat_selected_pointrange <- shiny::reactive({
 
+    # ensure at least one selection is made for scheme and mitigator
     shiny::validate(
       need(input$schemes, message = "Select at least one scheme.")
     )
@@ -103,8 +105,10 @@ app_server <- function(input, output, session) {
       need(input$mitigators, message = "Select at least one mitigator.")
     )
 
+    # get filtered data
     dat <- dat_filtered()
 
+    # standardise values if requested
     if (input$toggle_horizon_pointrange) {
       dat <- dat |>
         dplyr::mutate(
@@ -115,10 +119,12 @@ app_server <- function(input, output, session) {
         )
     }
 
+    # plot scheme names in reverse order so displayed correctly in ggplot
     if (!input$toggle_invert_facets) {
       dat <- dat |> dplyr::mutate(scheme_name = forcats::fct_rev(scheme_name))
     }
 
+    # plot mitigators in order
     if (input$toggle_invert_facets) {
       dat <- dat |>
         dplyr::mutate(
@@ -127,18 +133,102 @@ app_server <- function(input, output, session) {
         )
     }
 
-    dat |>
+    # further filtering
+    dat <- dat |>
       dplyr::filter(
         scheme_code %in% input$schemes,
         mitigator_code %in% input$mitigators
+      ) #|>
+      # dplyr::mutate(
+      #   point_colour = dplyr::if_else(
+      #     scheme_code == input$focus_scheme,
+      #     TRUE,
+      #     FALSE
+      #   )
+      # )
+
+    # show an aggregate summary where requested
+    if (input$toggle_aggregate_summary) {
+
+      # summarise all-but-the-focal scheme
+      if (input$toggle_aggregate_summary_minmaxrange) {
+
+        # use the full min/max range
+        dat_summary <-
+          dat |>
+          dplyr::filter(
+            !scheme_code %in% input$focus_scheme, # exclude focal scheme
+            !is.na(value_mid) # need at least a mid-point
+          ) |>
+          dplyr::summarise(
+            scheme_code = 'All',
+            scheme_name = 'Summary 🔵',
+            value_mid = mean(value_mid, na.rm = TRUE),
+            value_lo = min(value_lo, na.rm = TRUE),
+            value_hi = max(value_hi, na.rm = TRUE),
+            .by = c(mitigator_code, mitigator_name)
+          )
+
+      } else {
+
+        # use average values
+        dat_summary <-
+          dat |>
+          dplyr::filter(
+            !scheme_code %in% input$focus_scheme, # exclude focal scheme
+            !is.na(value_mid) # need at least a mid-point
+          ) |>
+          dplyr::summarise(
+            scheme_code = 'All',
+            scheme_name = 'Summary 🔵',
+            value_mid = mean(value_mid, na.rm = TRUE),
+            value_lo = mean(value_lo, na.rm = TRUE),
+            value_hi = mean(value_hi, na.rm = TRUE),
+            .by = c(mitigator_code, mitigator_name)
+          )
+      }
+
+      # add in nee data
+      dat_summary <-
+        dat_summary |>
+        dplyr::left_join(
+          y = dat |>
+            dplyr::select(mitigator_code, nee_mean, nee_p90, nee_p10) |>
+            dplyr::distinct(),
+          by = 'mitigator_code'
+        )
+
+      # add summary to dat as a new row
+      dat <- dplyr::bind_rows(
+        dat,
+        dat_summary
       ) |>
+        # sort schemes by name alphabetically and the summary placed last
+        dplyr::mutate(
+          scheme_name = scheme_name |>
+            base::factor() |>
+            forcats::fct_relevel('Summary 🔵', after = Inf) |>
+            forcats::fct_rev(),
+
+          # sort scheme codes to match scheme names
+          scheme_code = scheme_code |>
+            base::factor(levels = unique(scheme_code[order(scheme_name)]))
+        )
+    }
+
+    # add colour coding
+    dat <-
+      dat |>
       dplyr::mutate(
-        point_colour = dplyr::if_else(
-          scheme_code == input$focus_scheme,
-          TRUE,
-          FALSE
+        point_colour = dplyr::case_when(
+          scheme_code == input$focus_scheme ~ 'red',
+          scheme_code == 'All' ~ 'blue',
+          .default = 'black'
         )
       )
+
+    # return the result
+    return(dat)
 
   })
 
@@ -279,6 +369,13 @@ app_server <- function(input, output, session) {
       shinyjs::disable("toggle_nee_reference_range")
     } else {
       shinyjs::enable("toggle_nee_reference_range")
+    }
+
+    # disable 'summary full range' switch if 'summary' is disabled
+    if (input$toggle_aggregate_summary) {
+      shinyjs::enable("toggle_aggregate_summary_minmaxrange")
+    } else {
+      shinyjs::disable("toggle_aggregate_summary_minmaxrange")
     }
 
   })
