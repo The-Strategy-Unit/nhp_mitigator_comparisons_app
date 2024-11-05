@@ -259,7 +259,25 @@ app_ui <- function(request) {
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
                 )
               ),
-              shiny::plotOutput("pointrange"),
+              bslib::card_body(
+                shiny::plotOutput("pointrange")
+              ),
+
+              bslib::card_footer(
+                bsutils::offcanvas(
+                  bsutils::offcanvasButton(
+                    "About"
+                  ),
+                  bsutils::offcanvasContent(
+                    id = "about_pointrange_canvas",
+                    .position = "start",
+                    bsutils::offcanvasHeader(
+                      "Point-range plots"
+                    ),
+                    md_file_to_html("app", "text", "about_pointrange.md")
+                  )
+                )
+              )
             )
           ),
 
@@ -309,7 +327,24 @@ app_ui <- function(request) {
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
                 )
               ),
-              shiny::plotOutput('mixture_distributions')
+              bslib::card_body(
+                shiny::plotOutput('mixture_distributions')
+              ),
+              bslib::card_footer(
+                bsutils::offcanvas(
+                  bsutils::offcanvasButton(
+                    "About"
+                  ),
+                  bsutils::offcanvasContent(
+                    id = "about_distributions_canvas",
+                    .position = "start",
+                    bsutils::offcanvasHeader(
+                      "Distribution plots"
+                    ),
+                    md_file_to_html("app", "text", "about_distributions.md")
+                  )
+                )
+              )
             )
           )
         )
@@ -383,7 +418,24 @@ app_ui <- function(request) {
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
                 )
               ),
-              shiny::plotOutput("heatmap"),
+              bslib::card_body(
+                shiny::plotOutput("heatmap")
+              ),
+              bslib::card_footer(
+                bsutils::offcanvas(
+                  bsutils::offcanvasButton(
+                    "About"
+                  ),
+                  bsutils::offcanvasContent(
+                    id = "about_heatmap_canvas",
+                    .position = "start",
+                    bsutils::offcanvasHeader(
+                      "Heatmaps"
+                    ),
+                    md_file_to_html("app", "text", "about_heatmaps.md")
+                  )
+                )
+              )
             )
           ),
 
@@ -396,7 +448,24 @@ app_ui <- function(request) {
               ),
               'The proportion of schemes using each mitigator',
             ),
-            DT::DTOutput("mitigator_uptake_dt")
+            bslib::card_body(
+              DT::DTOutput("mitigator_uptake_dt")
+            ),
+            bslib::card_footer(
+              bsutils::offcanvas(
+                bsutils::offcanvasButton(
+                  "About"
+                ),
+                bsutils::offcanvasContent(
+                  id = "about_mitigator_coverage_canvas",
+                  .position = "start",
+                  bsutils::offcanvasHeader(
+                    "Mitigator coverage"
+                  ),
+                  md_file_to_html("app", "text", "about_mitigator_coverage.md")
+                )
+              )
+            )
           ),
 
           #### scheme coverage ----
@@ -408,7 +477,24 @@ app_ui <- function(request) {
               ),
               'The proportion of mitigators in use by each scheme. Selected schemes are shown in bold, the focal scheme is highlighted in red.',
             ),
-            DT::DTOutput("scheme_uptake_dt")
+            bslib::card_body(
+              DT::DTOutput("scheme_uptake_dt")
+            ),
+            bslib::card_footer(
+              bsutils::offcanvas(
+                bsutils::offcanvasButton(
+                  "About"
+                ),
+                bsutils::offcanvasContent(
+                  id = "about_scheme_coverage_canvas",
+                  .position = "start",
+                  bsutils::offcanvasHeader(
+                    "Scheme coverage"
+                  ),
+                  md_file_to_html("app", "text", "about_scheme_coverage.md")
+                )
+              )
+            )
           ),
         ),
       ),
