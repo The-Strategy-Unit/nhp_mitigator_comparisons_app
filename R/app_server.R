@@ -35,7 +35,6 @@ app_server <- function(input, output, session) {
     dplyr::rename(scheme = procode)
 
   ## Prep data ----
-
   dat <- populate_table(
     skeleton_table,
     extracted_params,
@@ -46,8 +45,6 @@ app_server <- function(input, output, session) {
 
   all_schemes <- get_all_schemes(dat)
 
-  # pre-calculate mixture distributions (avoid re-calculating)
-  dat_mixture_distributions <- get_mixture_distributions_dat(dat = dat)
 
   # Reactive Values
   ra <- shiny::reactiveValues(
@@ -61,6 +58,27 @@ app_server <- function(input, output, session) {
 
   # Reactives ----
 
+  # ensure dat reflects the user's preferred view
+  dat_reactive <- shiny::reactive({
+    dat_return <- update_dat_values(
+      dat = dat,
+      values_displayed = input$values_displayed
+    )
+
+    return(dat_return)
+  })
+
+  dat_mixture_distributions <- shiny::reactive({
+
+    dat_return <- dat_reactive() |>
+      get_mixture_distributions_dat()
+
+    return(dat_return)
+  })
+
+  # pre-calculate mixture distributions (avoid re-calculating)
+  #dat_mixture_distributions <- get_mixture_distributions_dat(dat = dat())
+
   peer_set <- shiny::reactive({
     peers |>
       dplyr::filter(scheme == input$focus_scheme) |>
@@ -70,11 +88,13 @@ app_server <- function(input, output, session) {
   dat_filtered <- reactive({
 
     if (input$activity_type != "All") {
-      dat <- dat |>
+      dat_return <- dat_reactive() |>
         dplyr::filter(mitigator_activity_type == input$activity_type)
+    } else {
+      dat_return <- dat_reactive()
     }
 
-    dat
+    return(dat_return)
 
   })
 
@@ -296,7 +316,7 @@ app_server <- function(input, output, session) {
     # dat <- get_mixture_distributions_dat(dat = dat)
 
     # using pre-calculated mixture distributions, filtered for selected mitigators
-    dat <- dat_mixture_distributions |>
+    dat <- dat_mixture_distributions() |>
       dplyr::filter(
         mitigator_code %in% input$mitigators
       )
