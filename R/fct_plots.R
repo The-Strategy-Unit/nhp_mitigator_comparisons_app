@@ -148,7 +148,7 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
         'blue' = '#337ab7'
       )
     ) +
-    ggplot2::labs(x = "80% Prediction Interval") +
+    ggplot2::labs(x = input$values_displayed) +
     ggplot2::theme_bw(base_size = 20) +
     ggplot2::theme(
       axis.title.y = ggplot2::element_blank(),
@@ -296,7 +296,7 @@ plot_heatmap <- function(dat_selected_heatmap, input) {
       legend.position = 'bottom',
       legend.key.width = ggplot2::unit(3, 'cm')
     ) +
-    ggplot2::labs(fill = '80% Prediction Interval')
+    ggplot2::labs(fill = input$values_displayed)
 
   # handle non-binary plots
   if (input$heatmap_type != "value_binary") {
@@ -427,7 +427,7 @@ plot_mixture_distributions <- function(
       axis.title.y = ggplot2::element_blank()
     ) +
     ggplot2::labs(
-      x = '80% Prediction Interval'
+      x = input$values_displayed
     )
 
   ## geoms ----
