@@ -9,6 +9,10 @@ app_ui <- function(request) {
     # External resources
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
+    shinybusy::add_busy_spinner(
+      spin = "double-bounce",
+      margins = c(10, 10)
+    ),
     # Application UI logic
     bslib::page_navbar(
       id = "page_navbar",
@@ -124,6 +128,28 @@ app_ui <- function(request) {
               choices = NULL,
               selected = NULL,
               multiple = TRUE
+            )
+          ),
+          ### other settings ----
+          bslib::accordion_panel(
+            id = "accordion_other_settings",
+            title = "Other settings",
+            icon = bsicons::bs_icon("gear"),
+            shinyWidgets::radioGroupButtons(
+              inputId = "values_displayed",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Values to display",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Select whether values are shown as the amount mitigated or the expected activity levels following mitigation."
+              ),
+              choices = c("Percent of activity mitigated", "80% prediction interval"),
+              selected = "Percent of activity mitigated",
+              direction = "vertical",
+              checkIcon = list(
+                yes = icon("ok", lib = "glyphicon")
+              )
             )
           )
         )
