@@ -166,9 +166,9 @@ app_ui <- function(request) {
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
-                title = "Point-range settings",
+                #title = "Point-range settings",
                 open = TRUE,
-                width = 260,
+                width = 350,
                 shiny::checkboxInput(
                   inputId = "toggle_horizon_pointrange",
                   label = bslib::tooltip(
@@ -257,9 +257,17 @@ app_ui <- function(request) {
                   label = "Bookmark ",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                ),
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "About",
+                    md_file_to_html("app", "text", "about_pointrange.md")
+                  )
                 )
-              ),
-              shiny::plotOutput("pointrange"),
+              ), # end sidebar
+              shiny::plotOutput("pointrange")
             )
           ),
 
@@ -275,9 +283,9 @@ app_ui <- function(request) {
 
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
-                title = "Density settings",
+                #title = "Density settings",
                 open = TRUE,
-                width = 260,
+                width = 350,
 
                 shiny::checkboxInput(
                   inputId = "toggle_mixture_distribution_ecdf",
@@ -307,8 +315,16 @@ app_ui <- function(request) {
                   label = "Bookmark ",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                ),
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "About",
+                    md_file_to_html("app", "text", "about_distributions.md")
+                  )
                 )
-              ),
+              ), # end sidebar
               shiny::plotOutput('mixture_distributions')
             )
           )
@@ -334,7 +350,7 @@ app_ui <- function(request) {
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
-                title = "Heatmap settings",
+                width = 350,
                 open = TRUE,
                 shiny::selectInput(
                   inputId = "heatmap_type",
@@ -381,9 +397,16 @@ app_ui <- function(request) {
                   label = "Bookmark",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                ),
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "About",
+                    md_file_to_html("app", "text", "about_heatmaps.md")
+                  )
                 )
-              ),
-              shiny::plotOutput("heatmap"),
+              ), # end sidebar
+              shiny::plotOutput("heatmap")
             )
           ),
 
@@ -396,7 +419,21 @@ app_ui <- function(request) {
               ),
               'The proportion of schemes using each mitigator',
             ),
-            DT::DTOutput("mitigator_uptake_dt")
+            bslib::layout_sidebar(
+              sidebar = bslib::sidebar(
+                open = TRUE,
+                width = 350,
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "About",
+                    md_file_to_html("app", "text", "about_mitigator_coverage.md")
+                  )
+                )
+              ), # end sidebar
+              DT::DTOutput("mitigator_uptake_dt"),
+            ),
           ),
 
           #### scheme coverage ----
@@ -408,7 +445,21 @@ app_ui <- function(request) {
               ),
               'The proportion of mitigators in use by each scheme. Selected schemes are shown in bold, the focal scheme is highlighted in red.',
             ),
-            DT::DTOutput("scheme_uptake_dt")
+            bslib::layout_sidebar(
+              sidebar = bslib::sidebar(
+                width = 350,
+                open = TRUE,
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "About",
+                    md_file_to_html("app", "text", "about_scheme_coverage.md")
+                  )
+                )
+              ), # end sidebar
+              DT::DTOutput("scheme_uptake_dt")
+            ),
           ),
         ),
       ),
