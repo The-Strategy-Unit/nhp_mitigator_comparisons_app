@@ -241,19 +241,19 @@ populate_table <- function(
       pi_value_lo = value_lo,
       pi_value_hi = value_hi,
       pi_value_mid = value_mid,
-      pi_nee_p10 = nee_p10,
-      pi_nee_p90 = nee_p90,
-      pi_nee_p50 = nee_p50,
-      pi_nee_mean = nee_mean,
+      pi_nee_p10 = round(nee_p10, 3),
+      pi_nee_p90 = round(nee_p90, 3),
+      pi_nee_p50 = round(nee_p50, 3),
+      pi_nee_mean = round(nee_mean, 3),
 
       # percent mitigated
-      pm_value_lo = 1 - value_lo,
-      pm_value_hi = 1 - value_hi,
-      pm_value_mid = 1 - value_mid,
-      pm_nee_p10 = 1 - nee_p10,
-      pm_nee_p90 = 1 - nee_p90,
-      pm_nee_p50 = 1 - nee_p50,
-      pm_nee_mean = 1 - nee_mean
+      pm_value_lo = round(1 - value_lo, 3),
+      pm_value_hi = round(1 - value_hi, 3),
+      pm_value_mid = round(1 - value_mid, 3),
+      pm_nee_p10 = round(1 - nee_p10, 3),
+      pm_nee_p90 = round(1 - nee_p90, 3),
+      pm_nee_p50 = round(1 - nee_p50, 3),
+      pm_nee_mean = round(1 - nee_mean, 3)
     )
 
   # organise ready for output
