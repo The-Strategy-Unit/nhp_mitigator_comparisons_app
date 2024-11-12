@@ -1,14 +1,14 @@
-These illustrate the combined distributions of all schemes' responses as either a density plot (PDF) or a cumulative density plot (ECDF) along with their 80% prediction intevals.
+These illustrate the combined distributions of all schemes' responses as either a density plot (PDF) or a cumulative density plot (ECDF).
 
 Use these to compare the focal scheme's response against an amalgam of all other schemes' responses.
 
 #### Structure
 
-Mitigators are listed in separate plots (facets) with the 80% prediction interval on the x-axes and the y-axis showing the density of the mixture distribution.
+Mitigators are listed in separate plots (facets), with either the 80% prediction interval or the percent of activity mitigated, on the x-axes and the y-axis showing the density of the mixture distribution.
 
-Overlaying the plots are dotted lines indicating the 80% prediction interval for the overall distributions, highlighted in turquoise, and a dashed line indicating the mid point.
+Overlaying the plots are dotted lines indicating the 80% range between low and high values for the overall distributions, highlighted in turquoise, and a dashed line indicating the mid point.
 
-The focal scheme's 80% prediction interval is shown as a point-range plot.
+The focal scheme's 80% prediction interval or percent of activity mitigated is shown as a point-range plot.
 
 Plots with a narrow bell-shaped curve indicate alignment in how schemes have responded to this mitigator.
 

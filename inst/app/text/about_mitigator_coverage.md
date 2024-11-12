@@ -1,4 +1,4 @@
-This table shows the proportion of schemes that have provided 80% prediction intervals for each selected mitigator.
+This table shows the proportion of schemes that have provided responses for each selected mitigator.
 
 Use this view to see which of the selected mitigators are more commonly used across schemes.
 

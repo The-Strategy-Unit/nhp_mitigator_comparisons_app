@@ -1,10 +1,10 @@
-Point-range plots show 80% prediction-interval ranges and midpoints estimated by schemes for their selected mitigators.
+Point-range plots show ranges and midpoints estimated by schemes for their selected mitigators.
 
 Use these plots to compare and contrast schemes' estimated predictions for mitigators.
 
 #### Structure
 
-Schemes are listed alphabetically on the y-axis by default and the 80% prediction-interval is shown on the x-axis.
+Schemes are listed alphabetically on the y-axis by default and either the 80% prediction-interval or the percent of activity mitigated is shown on the x-axis.
 
 Separate plots are provided for each of your selected mitigators. These separate plots are called 'facets'.
 
@@ -16,7 +16,9 @@ Responses for the *Focal scheme* are highlighted in red.
 
 ##### Standardise by horizon length
 
-The 80% prediction-interval ranges are estimates for reduced activity by a chosen horizon year. Schemes have chosen different horizon years, which may explain some of the variation between schemes.
+The 80% prediction-interval ranges are estimates for reduced activity by a chosen horizon year. The percent of activity mitigated are the inverse - an estimate for how much activity is mitigated against by the chosen horizon year.
+
+Schemes have chosen different horizon years, which may explain some of the variation between schemes.
 
 To compare the change **per year** you can enable this option to better compare schemes.
 
