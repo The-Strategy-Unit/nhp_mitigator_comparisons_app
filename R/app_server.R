@@ -603,7 +603,8 @@ app_server <- function(input, output, session) {
   ## Tables ----
 
   output$raw_data_dt <- DT::renderDT({
-    dat_filtered() |> make_raw_dt()
+    # NB, using the original dat tibble as want to present the un-edited data
+    dat |> make_raw_dt()
   }, server = FALSE) # to download all data via CSV button
 
   output$mitigator_lookup_dt <- DT::renderDT({
