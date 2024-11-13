@@ -128,14 +128,30 @@ app_server <- function(input, output, session) {
     # get filtered data
     dat <- dat_filtered()
 
-    # standardise values if requested
+    # standardise values to 2041 if requested
     if (input$toggle_horizon_pointrange) {
       dat <- dat |>
         dplyr::mutate(
-          dplyr::across(
-            c(value_lo, value_hi, value_mid),
-            \(x) x / year_range
-          )
+          # dplyr::across(
+          #   c(value_lo, value_hi, value_mid),
+          #   \(x) x / year_range
+          # )
+          value_lo = forecast_value(
+            year_baseline = year_baseline,
+            year_horizon = year_horizon,
+            year_forecast = 2041,
+            value_horizon = value_lo,
+            value_displayed = input$values_displayed
+          ),
+          value_hi = forecast_value(
+            year_baseline = year_baseline,
+            year_horizon = year_horizon,
+            year_forecast = 2041,
+            value_horizon = value_hi,
+            value_displayed = input$values_displayed
+          ),
+          value_mid = (value_hi - ((value_hi - value_lo) / 2)) |>
+            round(digits = 3)
         )
     }
 
@@ -384,13 +400,6 @@ app_server <- function(input, output, session) {
 
     if (input$heatmap_type != "value_binary") {
       shinyjs::enable("toggle_horizon_heatmap")
-    }
-
-    # disable NEE reference range checkbox when viewing standardised horizon
-    if (input$toggle_horizon_pointrange) {
-      shinyjs::disable("toggle_nee_reference_range")
-    } else {
-      shinyjs::enable("toggle_nee_reference_range")
     }
 
     # disable 'summary full range' switch if 'summary' is disabled
