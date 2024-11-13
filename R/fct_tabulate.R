@@ -233,6 +233,30 @@ populate_table <- function(
       nee_mean = mean
     )
 
+  # prepare the percent mitigated (pm) and prediction interval (pi) redundant columns
+  data_prepared <-
+    data_prepared |>
+    dplyr::mutate(
+      # prediction_interval
+      pi_value_lo = value_lo,
+      pi_value_hi = value_hi,
+      pi_value_mid = value_mid,
+      pi_nee_p10 = round(nee_p10, 3),
+      pi_nee_p90 = round(nee_p90, 3),
+      pi_nee_p50 = round(nee_p50, 3),
+      pi_nee_mean = round(nee_mean, 3),
+
+      # percent mitigated
+      pm_value_lo = round(1 - value_lo, 3),
+      pm_value_hi = round(1 - value_hi, 3),
+      pm_value_mid = round(1 - value_mid, 3),
+      pm_nee_p10 = round(1 - nee_p10, 3),
+      pm_nee_p90 = round(1 - nee_p90, 3),
+      pm_nee_p50 = round(1 - nee_p50, 3),
+      pm_nee_mean = round(1 - nee_mean, 3)
+    )
+
+  # organise ready for output
   data_prepared |>
     dplyr::select(
       tidyselect::starts_with("scheme"),
@@ -240,10 +264,53 @@ populate_table <- function(
       tidyselect::starts_with("mitigator"),
       tidyselect::starts_with("value"),
       tidyselect::starts_with("year"),
-      tidyselect::starts_with("nee")
+      tidyselect::starts_with("nee"),
+      tidyselect::starts_with("pi_"),
+      tidyselect::starts_with("pm_")
     ) |>
     dplyr::arrange(scheme_name, mitigator_code)
 
+}
+
+#' Update dat to reflect the user's preferred values
+#'
+#' Users are able to select from 'Percent of activity mitigated' and '80%
+#' prediction interval' in the global settings sidebar.
+#'
+#' This function updates dat to reflect the user's preferred values.
+#'
+#' @param dat Tibble of data - as produced from `populate_table` in `fct_tabulate.R`
+#' @param values_displayed Character - the value in `input$values_displayed` indicating the user's preferred view
+#'
+#' @return Tibble of data with the 'value_' and 'nee_' fields updated to match the user's preferred values
+update_dat_values <- function(dat, values_displayed) {
+  if (values_displayed == "Percent of activity mitigated") {
+    dat <-
+      dat |>
+      dplyr::mutate(
+        value_lo = pm_value_hi, # low becomes high if viewing percent mitigated
+        value_hi = pm_value_lo, # high becomes low if viewing percent mitigated
+        value_mid = pm_value_mid,
+        nee_p10 = pm_nee_p90, # low becomes high if viewing percent mitigated
+        nee_p90 = pm_nee_p10, # high becomes low if viewing percent mitigated
+        nee_p50 = pm_nee_p50,
+        nee_mean = pm_nee_mean
+      )
+  } else {
+    dat <-
+      dat |>
+      dplyr::mutate(
+        value_lo = pi_value_lo,
+        value_hi = pi_value_hi,
+        value_mid = pi_value_mid,
+        nee_p10 = pi_nee_p10,
+        nee_p90 = pi_nee_p90,
+        nee_p50 = pi_nee_p50,
+        nee_mean = pi_nee_mean
+      )
+  }
+
+  return(dat)
 }
 
 get_all_schemes <- function(dat) {

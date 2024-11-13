@@ -9,6 +9,10 @@ app_ui <- function(request) {
     # External resources
     golem_add_external_resources(),
     shinyjs::useShinyjs(),
+    shinybusy::add_busy_spinner(
+      spin = "double-bounce",
+      margins = c(10, 10)
+    ),
     # Application UI logic
     bslib::page_navbar(
       id = "page_navbar",
@@ -124,6 +128,28 @@ app_ui <- function(request) {
               choices = NULL,
               selected = NULL,
               multiple = TRUE
+            )
+          ),
+          ### other settings ----
+          bslib::accordion_panel(
+            id = "accordion_other_settings",
+            title = "Other settings",
+            icon = bsicons::bs_icon("gear"),
+            shinyWidgets::radioGroupButtons(
+              inputId = "values_displayed",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Values to display",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Select whether values are shown as the amount mitigated or the expected activity levels following mitigation."
+              ),
+              choices = c("Percent of activity mitigated", "80% prediction interval"),
+              selected = "Percent of activity mitigated",
+              direction = "vertical",
+              checkIcon = list(
+                yes = icon("ok", lib = "glyphicon")
+              )
             )
           )
         )
@@ -471,15 +497,21 @@ app_ui <- function(request) {
         bslib::navset_card_underline(
           full_screen = TRUE,
           bslib::nav_panel(
-            "Raw data",
+            title = bslib::tooltip(
+              trigger = list(
+                "Raw data",
+                bsicons::bs_icon('info-circle')
+              ),
+              "An interactive table of underlying data. Contains scheme, mitigator and model-run metadata; schemes' selected mitigator values; and results of the National Elicitation Exercise (NEE). Column-name prefixes are 'pm' for percent mitigated and 'pi' for 80% prediction interval. Suffixes include 'p10' to mean the 10th percentile.",
+            ),
             DT::DTOutput("raw_data_dt")
           ),
           bslib::nav_panel(
-            "Mitigator lookup",
+            title = "Mitigator lookup",
             DT::DTOutput("mitigator_lookup_dt")
           ),
           bslib::nav_panel(
-            "Scheme lookup",
+            title = "Scheme lookup",
             DT::DTOutput("scheme_lookup_dt")
           )
         )
