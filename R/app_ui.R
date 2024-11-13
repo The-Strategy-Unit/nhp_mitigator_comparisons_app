@@ -199,10 +199,10 @@ app_ui <- function(request) {
                   inputId = "toggle_horizon_pointrange",
                   label = bslib::tooltip(
                     trigger = list(
-                      "Standardise by horizon length?",
+                      "Standardise to 2041?",
                       bsicons::bs_icon("info-circle")
                     ),
-                    "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
+                    "Standardise values by extrapolating linearly to 2041, which makes a direct comparison easier."
                   ),
                   value = FALSE
                 ),
