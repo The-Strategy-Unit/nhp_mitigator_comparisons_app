@@ -2,7 +2,7 @@
 % Please edit documentation in R/fct_tabulate.R
 \name{forecast_value}
 \alias{forecast_value}
-\title{Predict a scheme's value for a given forecast year}
+\title{Forecast a scheme's value for a given forecast year}
 \usage{
 forecast_value(
   year_baseline = 2019,
@@ -34,6 +34,6 @@ Uses a simple linear model of a scheme's value - either `value_hi` or
 Many schemes have a horizon year of 2041, but some have other horizons, such
 as 2030 or 2035 which can make it tricky to compare schemes.
 
-This function predicts what the value would be at 2041, thus providing a
+This function predicts what the value would be at 2041, providing a
 standardised value that makes comparing schemes a little easier.
 }
