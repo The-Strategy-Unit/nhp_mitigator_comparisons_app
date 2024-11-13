@@ -16,7 +16,7 @@ Empty spaces indicate where a scheme has not set a value for a mitigator.
 
 Select a value from the drop-down list to be displayed in the heatmap. The default option is 'Midpoint', with options for:
 
--   'Range' - the range covered by the 80% prediction interval / 80% activity mitigated
+-   'Range' - the difference the low and high values of the selected 80% prediction interval / activity mitigated
 
 -   'Low' - the 10% value
 
