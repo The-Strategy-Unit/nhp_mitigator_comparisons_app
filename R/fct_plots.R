@@ -88,7 +88,7 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
   ## geoms ----
   # add nee as first geom (to put behind pointrange)
-  if (input$toggle_nee_reference_range & !input$toggle_horizon_pointrange) {
+  if (input$toggle_nee_reference_range) {
     pointrange <- pointrange +
       ggplot2::geom_crossbar(
         # limit to records with nee data
@@ -110,26 +110,14 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   pointrange <- pointrange +
     ggplot2::geom_pointrange()
 
-  # set limits from 0 to 100% if not horizon standardised
-  if (!input$toggle_horizon_pointrange) {
-    pointrange <- pointrange +
-      #ggplot2::xlim(0, 1)
-      ggplot2::scale_x_continuous(
-        labels = scales::label_percent(accuracy = 1),
-        breaks = c(0.25, 0.5, 0.75),
-        minor_breaks = c(0, 1),
-        limits = c(0, 1)
-      )
-  } else {
-    pointrange <- pointrange +
-      ggplot2::scale_x_continuous(
-        labels = scales::label_percent(),
-        breaks = scales::pretty_breaks(n = 3)
-      ) +
-      ggplot2::theme(
-        panel.grid.minor.x = ggplot2::element_blank()
-      )
-  }
+  # set limits from 0 to 100%
+  pointrange <- pointrange +
+    ggplot2::scale_x_continuous(
+      labels = scales::label_percent(accuracy = 1),
+      breaks = c(0.25, 0.5, 0.75),
+      minor_breaks = c(0, 1),
+      limits = c(0, 1)
+    )
 
   # formatting and labels
   pointrange <- pointrange +
