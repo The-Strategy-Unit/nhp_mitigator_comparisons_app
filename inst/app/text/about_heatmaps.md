@@ -16,7 +16,7 @@ Empty spaces indicate where a scheme has not set a value for a mitigator.
 
 Select a value from the drop-down list to be displayed in the heatmap. The default option is 'Midpoint', with options for:
 
--   'Range' - the range covered by the 80% prediction interval
+-   'Range' - the difference the low and high values of the selected 80% prediction interval / activity mitigated
 
 -   'Low' - the 10% value
 
@@ -26,7 +26,9 @@ Select a value from the drop-down list to be displayed in the heatmap. The defau
 
 ##### Standardise by horizon length
 
-The 80% prediction-interval ranges are estimates for reduced activity by a chosen horizon year. Schemes have chosen different horizon years, which may explain some of the variation between schemes.
+The 80% prediction-interval ranges are estimates for reduced activity by a chosen horizon year. The percent of activity mitigated are the inverse - an estimate for how much activity is mitigated against by the chosen horizon year.
+
+Schemes have chosen different horizon years, which may explain some of the variation between schemes.
 
 To compare the change **per year** you can enable this option to better compare schemes.
 
