@@ -150,7 +150,20 @@ app_ui <- function(request) {
               checkIcon = list(
                 yes = icon("ok", lib = "glyphicon")
               )
-            )
+            ),
+            shinyWidgets::materialSwitch(
+              inputId = "standardise_2041",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Standardise to 2041?",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Standardise values by extrapolating linearly to 2041, which makes a direct comparison easier."
+              ),
+              value = FALSE,
+              status = "primary",
+              right = TRUE
+            ),
           )
         )
       ),
@@ -195,17 +208,6 @@ app_ui <- function(request) {
                 title = "Point-range settings",
                 open = TRUE,
                 width = 260,
-                shiny::checkboxInput(
-                  inputId = "toggle_horizon_pointrange",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Standardise to 2041?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Standardise values by extrapolating linearly to 2041, which makes a direct comparison easier."
-                  ),
-                  value = FALSE
-                ),
                 shiny::checkboxInput(
                   inputId = "toggle_mitigator_code_pointrange",
                   label = bslib::tooltip(
