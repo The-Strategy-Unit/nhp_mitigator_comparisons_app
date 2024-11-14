@@ -94,6 +94,29 @@ app_server <- function(input, output, session) {
       dat_return <- dat_reactive()
     }
 
+    # standardise values to 2041 if requested
+    if (input$standardise_2041) {
+      dat_return <- dat_return |>
+        dplyr::mutate(
+          value_lo = forecast_value(
+            year_baseline = year_baseline,
+            year_horizon = year_horizon,
+            year_forecast = 2041,
+            value_horizon = value_lo,
+            value_displayed = input$values_displayed
+          ),
+          value_hi = forecast_value(
+            year_baseline = year_baseline,
+            year_horizon = year_horizon,
+            year_forecast = 2041,
+            value_horizon = value_hi,
+            value_displayed = input$values_displayed
+          ),
+          value_mid = (value_hi - ((value_hi - value_lo) / 2)) |>
+            round(digits = 3)
+        )
+    }
+
     return(dat_return)
 
   })
@@ -128,33 +151,6 @@ app_server <- function(input, output, session) {
     # get filtered data
     dat <- dat_filtered()
 
-    # standardise values to 2041 if requested
-    if (input$toggle_horizon_pointrange) {
-      dat <- dat |>
-        dplyr::mutate(
-          # dplyr::across(
-          #   c(value_lo, value_hi, value_mid),
-          #   \(x) x / year_range
-          # )
-          value_lo = forecast_value(
-            year_baseline = year_baseline,
-            year_horizon = year_horizon,
-            year_forecast = 2041,
-            value_horizon = value_lo,
-            value_displayed = input$values_displayed
-          ),
-          value_hi = forecast_value(
-            year_baseline = year_baseline,
-            year_horizon = year_horizon,
-            year_forecast = 2041,
-            value_horizon = value_hi,
-            value_displayed = input$values_displayed
-          ),
-          value_mid = (value_hi - ((value_hi - value_lo) / 2)) |>
-            round(digits = 3)
-        )
-    }
-
     # plot scheme names in reverse order so displayed correctly in ggplot
     if (!input$toggle_invert_facets) {
       dat <- dat |> dplyr::mutate(scheme_name = forcats::fct_rev(scheme_name))
@@ -174,14 +170,7 @@ app_server <- function(input, output, session) {
       dplyr::filter(
         scheme_code %in% input$schemes,
         mitigator_code %in% input$mitigators
-      ) #|>
-      # dplyr::mutate(
-      #   point_colour = dplyr::if_else(
-      #     scheme_code == input$focus_scheme,
-      #     TRUE,
-      #     FALSE
-      #   )
-      # )
+      )
 
     # show an aggregate summary where requested
     if (input$toggle_aggregate_summary) {
