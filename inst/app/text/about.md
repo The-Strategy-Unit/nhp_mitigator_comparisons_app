@@ -19,7 +19,7 @@ From the navigation bar above you can visit the:
 -   A value of 100% assumes no reduction in activity, while a value of 0 assumes a total (100%) reduction.
 -   For example, a scheme may select 70 to 90% as their interval, from which we can define a midpoint of 80%. These are the values represented in the point-range and heatmap charts.
 -   In some cases, schemes have made a point estimate rather than a range.
--   For reference purposes, the point-range charts also include the results of the National Elicitation Exercise (NEE), but note that some mitigators were not part of that exercise.
+-   For reference purposes, the point-range charts also include the results of the National Elicitation Exercise (NEE), but note that some mitigators were not part of that exercise. NEE predictions were for 2039/40.
 
 ### Percent of activity mitigated
 
