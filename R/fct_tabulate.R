@@ -313,6 +313,55 @@ update_dat_values <- function(dat, values_displayed) {
   return(dat)
 }
 
+#' Forecast a scheme's value for a given forecast year
+#'
+#' Uses a simple linear model of a scheme's value - either `value_hi` or
+#' `value_lo` to predict the value at `year_forecast`.
+#'
+#' Many schemes have a horizon year of 2041, but some have other horizons, such
+#' as 2030 or 2035 which can make it tricky to compare schemes.
+#'
+#' This function predicts what the value would be at 2041, providing a
+#' standardised value that makes comparing schemes a little easier.
+#'
+#' @param year_baseline The year the activity starts from, defaults to 2019
+#' @param year_horizon The year the value is predicted for, often 2041 but can be different
+#' @param year_forecast The year to forecast for, defaults to 2041
+#' @param value_horizon The value at the horizon year
+#' @param value_displayed The content of `input$values_displayed` - whether values are displayed as prediction intervals or percent mitigated, as these require differnet calculation approaches
+#'
+#' @return numeric predicted value between 0 and 1 rounded to 3 decimal places at `year_forecast`
+forecast_value <- function(
+    year_baseline = 2019,
+    year_horizon,
+    year_forecast = 2041,
+    value_horizon,
+    value_displayed
+) {
+
+  # gather some details
+  horizon_length <- (year_horizon - year_baseline)
+  forecast_length <- (year_forecast - year_baseline)
+
+  # calculate linear prediction for year_forecast - adjust to whether pm or pi in use
+  if (value_displayed == 'Percent of activity mitigated') {
+    value_forecast <- ((value_horizon / horizon_length) * forecast_length)
+  } else {
+    value_forecast <- 1 - (((1 - value_horizon) / horizon_length) * forecast_length)
+  }
+
+  # bound value to within 0 or 1
+  value_forecast <- dplyr::case_when(
+    value_forecast > 1 ~ 1,
+    value_forecast < 0 ~ 0,
+    .default = value_forecast
+  )
+
+  # limit to 3 d.p.
+  value_forecast <- round(value_forecast, digits = 3)
+
+}
+
 get_all_schemes <- function(dat) {
   dat |>
     shiny::req() |>

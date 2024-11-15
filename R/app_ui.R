@@ -150,7 +150,20 @@ app_ui <- function(request) {
               checkIcon = list(
                 yes = icon("ok", lib = "glyphicon")
               )
-            )
+            ),
+            shinyWidgets::materialSwitch(
+              inputId = "standardise_2041",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Standardise to 2041?",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Standardise values by extrapolating linearly to 2041, which makes a direct comparison easier."
+              ),
+              value = FALSE,
+              status = "primary",
+              right = TRUE
+            ),
           )
         )
       ),
@@ -196,17 +209,6 @@ app_ui <- function(request) {
                 open = TRUE,
                 width = 350,
                 shiny::checkboxInput(
-                  inputId = "toggle_horizon_pointrange",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Standardise by horizon length?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
-                  ),
-                  value = FALSE
-                ),
-                shiny::checkboxInput(
                   inputId = "toggle_mitigator_code_pointrange",
                   label = bslib::tooltip(
                     trigger = list(
@@ -235,7 +237,7 @@ app_ui <- function(request) {
                       "Show NEE range?",
                       bsicons::bs_icon("info-circle")
                     ),
-                    "Include reference results from the National Elicitation Exercise (NEE). These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                    "Include reference results from the National Elicitation Exercise (NEE) for 2039/40. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
                   ),
                   value = TRUE
                 ),
@@ -332,7 +334,7 @@ app_ui <- function(request) {
                       "Show NEE range?",
                       bsicons::bs_icon("info-circle")
                     ),
-                    "Include reference results from the National Elicitation Exercise (NEE). These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                    "Include reference results from the National Elicitation Exercise (NEE) for 2039/40. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
                   ),
                   value = TRUE
                 ),
