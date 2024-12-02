@@ -28,6 +28,8 @@ app_server <- function(input, output, session) {
   mitigator_lookup <- container_support |>
     AzureStor::storage_read_csv("mitigator-lookup.csv", show_col_types = FALSE)
 
+  mitigator_reference <- mitigator_lookup |> prepare_mitigators()
+
   nee_results <- container_support |> read_nee("nee_table.rds")
 
   peers <- container_support |>
@@ -55,6 +57,13 @@ app_server <- function(input, output, session) {
   ra$heatmap_min_height <- 100
   ra$pointrange_min_height <- 100
   ra$mixturedist_min_height <- 100
+
+  # Mitigator selections
+  mitigator_server <- select_group_server(
+    id = 'mitigator_filters',
+    data = mitigator_reference,
+    vars = c('mitigator_type', 'activity_type', 'grouping', 'strategy_subset', 'mitigator_name')
+  )
 
   # Reactives ----
 
@@ -87,12 +96,14 @@ app_server <- function(input, output, session) {
 
   dat_filtered <- reactive({
 
-    if (input$activity_type != "All") {
-      dat_return <- dat_reactive() |>
-        dplyr::filter(mitigator_activity_type == input$activity_type)
-    } else {
-      dat_return <- dat_reactive()
-    }
+    # if (input$activity_type != "All") {
+    #   dat_return <- dat_reactive() |>
+    #     dplyr::filter(mitigator_activity_type == input$activity_type)
+    # } else {
+    #   dat_return <- dat_reactive()
+    # }
+
+    dat_return <- dat_reactive()
 
     # standardise values to 2041 if requested
     if (input$standardise_2041) {
@@ -121,20 +132,20 @@ app_server <- function(input, output, session) {
 
   })
 
-  available_mitigators <- reactive({
-    dat_filtered() |> get_all_mitigators()
-  })
+  # available_mitigators <- reactive({
+  #   dat_filtered() |> get_all_mitigators()
+  # })
 
-  available_mitigator_groups <- reactive({
-    dat_filtered() |> get_all_mitigator_groups()
-  })
+  # available_mitigator_groups <- reactive({
+  #   dat_filtered() |> get_all_mitigator_groups()
+  # })
 
-  mitigator_group_set <- reactive({
-    dat_filtered() |>
-      dplyr::filter(mitigator_group == input$mitigator_groups) |>
-      dplyr::distinct(mitigator_code) |>
-      dplyr::pull()
-  })
+  # mitigator_group_set <- reactive({
+  #   dat_filtered() |>
+  #     dplyr::filter(mitigator_group == input$mitigator_groups) |>
+  #     dplyr::distinct(mitigator_code) |>
+  #     dplyr::pull()
+  # })
 
   ## dat_selected_pointrange ----
   dat_selected_pointrange <- shiny::reactive({
@@ -361,21 +372,38 @@ app_server <- function(input, output, session) {
 
   })
 
-  shiny::observe({
-    shiny::updateSelectInput(
-      session,
-      "mitigator_groups",
-      choices = available_mitigator_groups(),
-      selected = available_mitigator_groups()[1]
-    )
-  })
+  # shiny::observe({
+  #   shiny::updateSelectInput(
+  #     session,
+  #     "mitigator_groups",
+  #     choices = available_mitigator_groups(),
+  #     selected = available_mitigator_groups()[1]
+  #   )
+  # })
 
-  shiny::observe({
-    shiny::updateSelectInput(
-      session,
-      "mitigators",
-      choices = available_mitigators(),
-      selected = mitigator_group_set()
+  # shiny::observe({
+  #   shiny::updateSelectInput(
+  #     session,
+  #     "mitigators",
+  #     choices = available_mitigators(),
+  #     selected = mitigator_group_set()
+  #   )
+  # })
+
+  shiny::observeEvent(input$mitigators_add_to_selected, {
+
+    # compile a list of selected mitigators
+    mitigators_selected <- add_to_selected_mitigators(
+      df = mitigator_reference,
+      selected_currently = input$mitigators,
+      new_selections = mitigator_server()$mitigator_code
+    )
+
+    # add the selected mitigators to the selected list
+    shiny::updateSelectizeInput(
+      inputId = 'mitigators',
+      selected = mitigators_selected,
+      choices = mitigators_selected
     )
   })
 
