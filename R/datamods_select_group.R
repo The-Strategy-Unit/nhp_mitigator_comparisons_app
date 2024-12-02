@@ -25,7 +25,6 @@
 #' @importFrom shiny NS actionLink icon singleton
 #' @importFrom shinyWidgets virtualSelectInput
 #'
-#' @example examples/select-group-default.R
 select_group_ui <- function(id,
                             params,
                             label = NULL,
