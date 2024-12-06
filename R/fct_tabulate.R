@@ -425,6 +425,7 @@ prepare_mitigators <- function(mitigator_lookup) {
     mitigator_lookup |>
     dplyr::select(dplyr::any_of(mit_order$name)) |>
     dplyr::rename(mitigator_name = strategy_name) |>
+    dplyr::mutate(mitigator_name = glue::glue('{mitigator_name} [{mitigator_code}]')) |>
     dplyr::select(-strategy_variable)
 
   return(mitigator_lookup)
@@ -444,9 +445,6 @@ add_to_selected_mitigators <- function(df, selected_currently, new_selections) {
   df |>
     dplyr::filter(mitigator_code %in% c(selected_currently, new_selections)) |>
     dplyr::select(mitigator_name, mitigator_code) |>
-    dplyr::mutate(
-      mitigator_name = glue::glue("{mitigator_code}: {mitigator_name}")
-    ) |>
     tibble::deframe()
 
 }
