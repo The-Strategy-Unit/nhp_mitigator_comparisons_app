@@ -139,14 +139,17 @@ app_ui <- function(request) {
                 )
               ),
 
+              # add some separation between 'reset filters' and below button
+              shiny::br(),
+              shiny::br(),
+
               # button to add mitigators to the selection box (🍫)
-              shinyWidgets::actionBttn(
+              shiny::actionButton(
                 inputId = 'mitigators_add_to_selected',
                 label = 'Add to selection',
-                icon = bsicons::bs_icon('arrow-down'),
-                color = 'default',
-                style = 'fill'
-              ),
+                icon = shiny::icon('arrow-down', lib = 'font-awesome'),
+                class = 'btn-light'
+              )
             ),
 
             # list mitigators
@@ -157,7 +160,19 @@ app_ui <- function(request) {
               selected = NULL,
               multiple = TRUE,
               options = list('plugins' = list('remove_button'))
-            )
+            ),
+
+            # clear selected mitigators
+            shiny::actionLink(
+              inputId = 'clear_selected_mitigators',
+              label = bslib::tooltip(
+                trigger = list(
+                  bsicons::bs_icon("x-lg"),
+                  "Clear selected"
+                ),
+                "Remove all mitigators from the current selection."
+              ),
+            ),
           ),
           ### other settings ----
           bslib::accordion_panel(
