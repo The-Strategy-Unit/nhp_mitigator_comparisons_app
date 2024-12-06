@@ -132,21 +132,6 @@ app_server <- function(input, output, session) {
 
   })
 
-  # available_mitigators <- reactive({
-  #   dat_filtered() |> get_all_mitigators()
-  # })
-
-  # available_mitigator_groups <- reactive({
-  #   dat_filtered() |> get_all_mitigator_groups()
-  # })
-
-  # mitigator_group_set <- reactive({
-  #   dat_filtered() |>
-  #     dplyr::filter(mitigator_group == input$mitigator_groups) |>
-  #     dplyr::distinct(mitigator_code) |>
-  #     dplyr::pull()
-  # })
-
   ## dat_selected_pointrange ----
   dat_selected_pointrange <- shiny::reactive({
 
@@ -313,7 +298,7 @@ app_server <- function(input, output, session) {
 
   })
 
-
+  ## dat_selected_mixture_distributions -----
   dat_selected_mixture_distributions <- shiny::reactive({
 
     shiny::validate(
@@ -324,18 +309,19 @@ app_server <- function(input, output, session) {
       shiny::need(input$mitigators, message = "Select at least one mitigator.")
     )
 
-    # dat <- dat_filtered() |>
-    #   dplyr::filter(
-    #     mitigator_code %in% input$mitigators
-    #   )
-    #
-    # dat <- get_mixture_distributions_dat(dat = dat)
-
-    # using pre-calculated mixture distributions, filtered for selected mitigators
-    dat <- dat_mixture_distributions() |>
+    # calculating mixture distributions on-the-fly for selected mitigators
+    dat <- dat_filtered() |>
       dplyr::filter(
         mitigator_code %in% input$mitigators
       )
+
+    dat <- get_mixture_distributions_dat(dat = dat)
+
+    # using pre-calculated mixture distributions, filtered for all mitigators
+    # dat <- dat_mixture_distributions() |>
+    #   dplyr::filter(
+    #     mitigator_code %in% input$mitigators
+    #   )
 
   })
 
@@ -372,24 +358,21 @@ app_server <- function(input, output, session) {
 
   })
 
-  # shiny::observe({
-  #   shiny::updateSelectInput(
-  #     session,
-  #     "mitigator_groups",
-  #     choices = available_mitigator_groups(),
-  #     selected = available_mitigator_groups()[1]
-  #   )
-  # })
+  # indicate how many mitigators are available for selection
+  shiny::observe({
 
-  # shiny::observe({
-  #   shiny::updateSelectInput(
-  #     session,
-  #     "mitigators",
-  #     choices = available_mitigators(),
-  #     selected = mitigator_group_set()
-  #   )
-  # })
+    # how many mitigators are available
+    n_mit <- mitigator_server() |> nrow()
 
+    # update the button indicating how many mitigators are
+    shiny::updateActionButton(
+      inputId = 'mitigators_add_to_selected',
+      label = glue::glue('Add to selected [{n_mit}]'),
+      icon = shiny::icon('arrow-down', lib = 'font-awesome'),
+    )
+  })
+
+  # adding mitigator selections
   shiny::observeEvent(input$mitigators_add_to_selected, {
 
     # compile a list of selected mitigators
@@ -405,6 +388,11 @@ app_server <- function(input, output, session) {
       selected = mitigators_selected,
       choices = mitigators_selected
     )
+  })
+
+  # removing all mitigator selections
+  shiny::observeEvent(input$clear_selected_mitigators, {
+    shinyjs::reset('mitigators')
   })
 
   ## Enablers ----
@@ -565,7 +553,7 @@ app_server <- function(input, output, session) {
     } else if (temp_scheme_count < 12) {
       base_height <- 160
     } else {
-      base_height <- 200
+      base_height <- 300
     }
 
     # update reactive values
