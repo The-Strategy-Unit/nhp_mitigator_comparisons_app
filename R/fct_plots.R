@@ -308,7 +308,7 @@ plot_heatmap <- function(dat_selected_heatmap, input) {
 
 #' Mixture distribution / density plot
 #'
-#' Plot
+#' Plot the mixutre distribution plots.
 #'
 #' @param dat_selected_mixture_distributions Tibble - mixture distributions for all schemes for the selected mitigators - as produced by `dat_selected_mixture_distributions()` in  `app_server.R`
 #' @param dat_filtered Tibble - of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
@@ -443,6 +443,268 @@ plot_mixture_distributions <- function(
     })
 
   }
+
+  return(plot)
+
+}
+
+
+
+#' Plot the baseline comparison
+#'
+#' Show a scatter plot with baseline rate on the x-axis and mitigator value on
+#' the y-axis.
+#'
+#' @param dat Tibble
+#' @param rates_data Tibble -
+#' @param mitigator_codes Character vector - the mitigator codes
+#' @param focal_scheme_code Character vector - the scheme code for the focal scheme
+#' @param rate_title Character - the label for the x-axis
+#' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
+#' @param trendline Boolean (default = TRUE) show a trendline between mid-points
+#' @param range Boolean (default = TRUE) show the 10% and 90% range as points connected by a line
+#' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
+#' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
+#' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
+#' @param facet_height_px Integer (default = 250) the pixel height of each facet in the plot
+#'
+#' @returns {plotly} plot
+plot_baseline_comparison <- function(
+    dat, rates_data, mitigator_codes, focal_scheme_code,
+    rate_title = 'Baseline rate',
+    value_title = 'Percent mitigated',
+    trendline = TRUE,
+    range = TRUE,
+    scheme_label = TRUE,
+    quadrants = TRUE,
+    facet_columns = 1,
+    facet_height_px = 250
+) {
+
+  # prepare the rates data
+  rates_data <-
+    rates_data |>
+    dplyr::mutate(
+      baseline_year = stringr::str_sub(
+        string = fyear,
+        start = 1L,
+        end = 4L
+      ) |> as.integer()
+    ) |>
+    dplyr::select(procode, strategy, baseline_year, rate_baseline = rate)
+
+  # prepare the data for plotting
+  plot_dat <-
+    dat |>
+    # limit to the selected mitigators
+    dplyr::filter(
+      mitigator_code %in% mitigator_codes
+    ) |>
+    # add in the baseline rate
+    dplyr::left_join(
+      y = rates_data,
+      by = dplyr::join_by(
+        scheme_code == procode,
+        mitigator_variable == strategy,
+        year_baseline == baseline_year
+      )
+    ) |>
+    # avoid console errors by limiting to records with mitigator value AND rate values
+    dplyr::filter(
+      !is.na(value_mid),
+      !is.na(rate_baseline)
+    ) |>
+    # work out quadrant
+    dplyr::mutate(
+      y_mid = mean(value_mid, na.rm = TRUE),
+      x_mid = mean(rate_baseline, na.rm = TRUE),
+      quad_baseline = ifelse(rate_baseline <= x_mid, 'Low baseline', 'High baseline'),
+      quad_reduction = ifelse(value_mid <= y_mid, 'Low reduction', 'High reduction'),
+      .by = mitigator_code
+    ) |>
+    # prepare for use
+    dplyr::mutate(
+      # highlight the focal scheme
+      scheme_highlight = scheme_code == focal_scheme_code,
+
+      # set the tooltip text
+      tooltip_text = glue::glue(
+        '<b>{scheme_name}</b> ({scheme_code})\n',
+        '<i>low:</i> <b>{round(value_lo, 3)*100}</b>% ',
+        '<i>mid:</i> <b>{round(value_mid, 3)*100}</b>% ',
+        '<i>upp:</i> <b>{round(value_hi, 3)*100}</b>%\n',
+        '<i>Baseline rate:</i> {round(rate_baseline, 2)} in year {year_baseline}\n',
+        '{stringr::str_wrap(mitigator_activity_title, width = 50)}\n',
+        '<i>Quadrant:</i> {quad_baseline} / {quad_reduction}'
+      ) |>
+        as.character()
+    )
+
+  plot_quadrants <-
+    plot_dat |>
+    # divide into quadrants
+    dplyr::summarise(
+      # where are the mid-values?
+      y_mid = mean(value_mid, na.rm = TRUE),
+      x_mid = mean(rate_baseline, na.rm = TRUE),
+      # where are the bounds?
+      y_min = min(value_mid, na.rm = TRUE) |>
+        magrittr::multiply_by(10) |>
+        floor() |>
+        magrittr::divide_by(10),
+      x_min = min(rate_baseline, na.rm = TRUE) |>
+        magrittr::multiply_by(10) |>
+        floor() |>
+        magrittr::divide_by(10),
+      y_max = max(value_mid, na.rm = TRUE) |>
+        magrittr::multiply_by(10) |>
+        ceiling() |>
+        magrittr::divide_by(10),
+      x_max = max(rate_baseline, na.rm = TRUE) |>
+        magrittr::multiply_by(10) |>
+        ceiling() |>
+        magrittr::divide_by(10),
+      .by = mitigator_name
+    )
+
+  # create the plot ---
+  plot <-
+    plot_dat |>
+    ggplot2::ggplot(ggplot2::aes(x = rate_baseline, text = tooltip_text)) +
+    ggplot2::facet_wrap(
+      facets = ggplot2::vars(mitigator_name),
+      scales = 'free_x',
+      ncol = facet_columns
+    ) +
+    ggplot2::scale_y_continuous(
+      labels = scales::percent,
+      limits = c(0,1)
+    )
+
+  # add in quadrants?
+  if (quadrants) {
+    plot <-
+      plot +
+      ggplot2::geom_hline(
+        data = plot_quadrants,
+        ggplot2::aes(yintercept = y_mid),
+        linetype = 'dotted',
+        colour = 'grey80',
+        alpha = 0.8
+      ) +
+      ggplot2::geom_vline(
+        data = plot_quadrants,
+        ggplot2::aes(xintercept = x_mid),
+        linetype = 'dotted',
+        colour = 'grey80',
+        alpha = 0.8
+      )
+  }
+
+  # add in a trendline?
+  if (trendline) {
+    plot <-
+      plot +
+      ggplot2::geom_smooth(
+        ggplot2::aes(y = value_mid),
+        formula = y ~ x,
+        method = 'lm', se = FALSE, linetype = 'dotted', linewidth = 1
+      )
+  }
+
+  # add in a range?
+  if (range) {
+    plot <-
+      plot +
+      ggplot2::geom_segment(
+        ggplot2::aes(
+          xend = rate_baseline, # keep same x-position
+          y = value_lo,
+          yend = value_hi,
+          colour = scheme_highlight
+        ),
+        linewidth = 2, alpha = 0.1
+      ) +
+      ggplot2::geom_point(
+        ggplot2::aes(y = value_lo, colour = scheme_highlight),
+        alpha = 0.5
+      ) +
+      ggplot2::geom_point(
+        ggplot2::aes(y = value_hi, colour = scheme_highlight),
+        alpha = 0.5
+      )
+  }
+
+  # add in scheme code label?
+  if (scheme_label) {
+    plot <-
+      plot +
+      ggplot2::geom_text(
+        ggplot2::aes(y = value_mid, label = scheme_code),
+        check_overlap = TRUE, nudge_y = 0.04
+      )
+  }
+
+  # add in midpoints
+  plot <-
+    plot +
+    ggplot2::geom_point(ggplot2::aes(y = value_mid, colour = scheme_highlight)) +
+    ggplot2::scale_color_manual(
+      values = c(
+        'FALSE' = 'grey50',
+        'TRUE' = 'red'
+      )
+    )
+
+  # themes and decorations
+  plot <-
+    plot +
+    ggplot2::theme_minimal(base_size = 14) +
+    ggplot2::theme(
+      # need to adjust the margin to avoid the axis labels being 'pushed out' of the image
+      plot.margin = ggplot2::margin(t = 0, r = 0, b = 200, l = 15, unit = 'pt'),
+      # panel
+      panel.border = ggplot2::element_rect(colour = 'grey90', fill = NA),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      # legend
+      legend.position = 'none'
+    ) +
+    ggplot2::labs(
+      x = rate_title,
+      y = value_title
+    )
+
+  # work out how tall to make this plot
+  n_mitigators <-
+    plot_dat |>
+    dplyr::pull(mitigator_code) |>
+    unique() |>
+    length()
+
+  # e.g. 200px for the padding and pro-rata height for each chart
+  plot_height <-
+    200 + (n_mitigators * facet_height_px)
+
+  # convert to plotly and tweak settings
+  plot <-
+    plot |>
+    plotly::ggplotly(tooltip = c('text'), height = plot_height) |>
+    plotly::config(
+      displaylogo = FALSE,
+      modeBarButtons = list(list('toImage')),
+      toImageButtonOptions = list(
+        'format' = 'svg',
+        'filename' = glue::glue(
+          "nhp_baseline_comparison_", # name for this plot
+          "{paste0(focal_scheme_code, collapse = '_')}_", # focal scheme code
+          "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}") # datetime
+      )
+    ) |>
+    plotly::layout(
+      font = list(family = 'Arial, Helvetica, Droid Sans, sans'),
+      hoverlabel = list(font = list(size = 16))
+    )
 
   return(plot)
 
