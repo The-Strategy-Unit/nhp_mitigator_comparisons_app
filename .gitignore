@@ -22,6 +22,7 @@
 
 # Allow
 !golem-config.yml
+!ref_inputs-golem-config.yml
 
 # History files
 .Rhistory

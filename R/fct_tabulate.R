@@ -145,6 +145,7 @@ prepare_skeleton_table <- function(extracted_params) {
 #' @param trust_code_lookup Tibble - from Azure file `nhp-scheme-lookup.csv`
 #' @param mitigator_lookup Tibble - from Azure file `mitigator-lookup.csv`
 #' @param nee_results Tibble - from fct_read.R of `nee_table.rds`
+#' @param yaml_df Tibble - output of `get_mitigator_baseline_description()`
 #'
 #' @return Tibble of data
 #' @export
@@ -153,7 +154,8 @@ populate_table <- function(
     extracted_params,
     trust_code_lookup,
     mitigator_lookup,
-    nee_results
+    nee_results,
+    yaml_df
 ) {
 
   data_joined <- skeleton_table |>
@@ -177,6 +179,12 @@ populate_table <- function(
     dplyr::left_join(
       nee_results,
       by = dplyr::join_by(strategy == param_name)
+    ) |>
+    dplyr::left_join(
+      y = yaml_df |>
+        dplyr::select(strategy_variable, mitigator_activity_title = y_axis_title) |>
+        dplyr::distinct(),
+      by = dplyr::join_by(strategy == strategy_variable)
     )
 
   data_prepared <- data_joined |>
@@ -211,6 +219,7 @@ populate_table <- function(
       mitigator_activity_type = `Activity type`,
       mitigator_type = `Mitigator type`,
       mitigator_group = Grouping,
+      mitigator_activity_title = mitigator_activity_title,
       # mitigator value selections
       value_lo = value_1,
       value_hi = value_2,
@@ -425,4 +434,44 @@ get_trust_lookup <- function(container_support) {
     dplyr::arrange(`Trust ODS Code`)
 
   return(trust_lookup)
+}
+
+#' Get mitigator baseline descriptions
+#'
+#' The baseline activity for each mitigator is not specified in the `dat`, but
+#' is implicit. This function extracts the activity description, e.g.
+#' 'Admissions per 1,000 population' or '% of Appointments that are Face-to-Face'
+#' from the inputs app yaml file.
+#'
+#' Using Gabriel's code from here:#'
+#' https://github.com/The-Strategy-Unit/nhp_schemes_report/blob/55de2b1e67394a74eeef1e63ae3b88720c281c3d/R/mitigator%20credibility%20from%20historical%20data.R#L101-L137
+#'
+#' @param yaml List - the yaml file used in the inputs app
+#'
+#' @returns Tibble of mitigator details including the `y_axis_title` activity
+get_mitigator_baseline_description <- function(yaml) {
+
+  # abbreviate the path to the mitigators_config list
+  mitigator_yaml <- yaml$default$mitigators_config
+
+  # map over the categories and create a data frame
+  df_return <- purrr::map_dfr(
+    .x = names(mitigator_yaml),
+    function(category_name) {
+
+      # add to a data frame with category, element, and y_axis title
+      return(
+        tibble::tibble(
+          activity_type = mitigator_yaml[[category_name]]$activity_type,
+          mitigator_type = mitigator_yaml[[category_name]]$mitigators_type,
+          category = category_name,
+          strategy_variable = names(mitigator_yaml[[category_name]]$strategy_subset),
+          y_axis_title = mitigator_yaml[[category_name]]$y_axis_title
+        )
+      )
+    }
+  )
+
+  # return the result
+  return(df_return)
 }

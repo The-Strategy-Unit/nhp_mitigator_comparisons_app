@@ -492,6 +492,92 @@ app_ui <- function(request) {
         ),
       ),
 
+      ### contextual plots ----
+      bslib::nav_panel(
+        id = "nav_panel_contextual",
+        title = "Contextual",
+
+        bslib::navset_card_underline(
+          full_screen = TRUE,
+          bslib::nav_panel(
+            title = bslib::tooltip(
+              trigger = list(
+                "Baseline comparison",
+                bsicons::bs_icon("info-circle")
+              ),
+              "A scatter plot comparing schemes' baseline values on the x-axis and their mitigator value inputs on the y-axis."
+            ),
+            bslib::layout_sidebar(
+              sidebar = bslib::sidebar(
+                width = 350,
+                open = TRUE,
+
+                bslib::input_switch(
+                  id = "toggle_contextual_baseline_range",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show 80% range?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Shows the 80% range between upper and lower values as points connected by a line, disable to view just the mid-points."
+                  ),
+                  value = TRUE
+                ),
+                bslib::input_switch(
+                  id = "toggle_contextual_baseline_quadrants",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show quadrant lines?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Shows dotted lines indicating schemes' average (mean) values for each axis, dividing the plot into quadrants."
+                  ),
+                  value = TRUE
+                ),
+                bslib::input_switch(
+                  id = "toggle_contextual_baseline_schemecode",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show scheme codes?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Shows a label for each scheme code on the plot."
+                  ),
+                  value = FALSE
+                ),
+                shiny::sliderInput(
+                  inputId = "slider_contextual_baseline_height",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Plot height",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Set the height of each plot in pixels."
+                  ),
+                  value = 250,
+                  min = 150,
+                  max = 400,
+                  step = 50
+                ),
+                shiny::bookmarkButton(
+                  label = "Bookmark",
+                  icon = shiny::icon("bookmark", lib = "glyphicon"),
+                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                ),
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "About",
+                    md_file_to_html("app", "text", "about_baseline.md")
+                  )
+                )
+              ), # end sidebar
+              plotly::plotlyOutput("contextual_baseline")
+            )
+          )
+        )
+      ),
+
       ### data -----
       bslib::nav_panel(
         id = "nav_panel_data",

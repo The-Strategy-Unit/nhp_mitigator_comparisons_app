@@ -19,6 +19,7 @@ app_server <- function(input, output, session) {
   board <- pins::board_connect()
   params <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_params")
   runs_meta <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_meta")
+  rates_data <- pins::pin_read(board, name = "thomas.jemmett/inputs_app_rates_data_v2-1")
   extracted_params <- extract_params(params, runs_meta)
 
   skeleton_table <- prepare_skeleton_table(extracted_params)
@@ -34,13 +35,21 @@ app_server <- function(input, output, session) {
     AzureStor::storage_load_rds("trust-peers.rds") |>
     dplyr::rename(scheme = procode)
 
+  # inputs app yml (contains meta data)
+  yaml <- yaml::read_yaml(
+    file = here::here('inst', 'ref_inputs-golem-config.yml'),
+    eval.expr = FALSE
+  )
+  yaml_df <- get_mitigator_baseline_description(yaml)
+
   ## Prep data ----
   dat <- populate_table(
     skeleton_table,
     extracted_params,
     trust_code_lookup,
     mitigator_lookup,
-    nee_results
+    nee_results,
+    yaml_df
   )
 
   all_schemes <- get_all_schemes(dat)
@@ -597,6 +606,36 @@ app_server <- function(input, output, session) {
   #     plot_mixture_distributions(input)
   # }, height = 10000)
 
+  ### contextual baseline -----
+
+  output$contextual_baseline <- plotly::renderPlotly({
+
+    # notify user if no data is available
+    shiny::validate(
+      shiny::need(input$schemes, message = "Select at least one scheme.")
+    )
+
+    shiny::validate(
+      shiny::need(input$mitigators, message = "Select at least one mitigator.")
+    )
+
+    # plot the baseline contextual
+    dat_filtered() |>
+      plot_baseline_comparison(
+        rates_data = rates_data,
+        mitigator_codes = input$mitigators,
+        focal_scheme_code = input$focus_scheme,
+        rate_title = "Baseline rate",
+        value_title = input$values_displayed,
+        trendline = FALSE, # trendlines don't seem to work
+        range = input$toggle_contextual_baseline_range,
+        scheme_label = input$toggle_contextual_baseline_schemecode,
+        quadrants = input$toggle_contextual_baseline_quadrants,
+        facet_columns = 1, # not enabling this feature - feel it is best for one row per mitigator
+        facet_height_px = input$slider_contextual_baseline_height
+      )
+
+  })
 
   ## Tables ----
 
