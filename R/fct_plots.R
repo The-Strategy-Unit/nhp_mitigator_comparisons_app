@@ -810,7 +810,7 @@ plot_trendline_comparison <- function(
   return_data = FALSE
 ) {
 
-  # format y-axis
+  # wrap the y-axis labels to fit within facet_height_px
   plot_data <-
     plot_data |>
     dplyr::mutate(
@@ -1010,7 +1010,7 @@ plot_trendline_comparison <- function(
       )
   }
 
-  # add the focal scheme
+  # add the focal scheme's historical activity
   plot <-
     plot +
     ggplot2::geom_line(
@@ -1037,8 +1037,6 @@ plot_trendline_comparison <- function(
     plot +
     ggplot2::theme_minimal(base_size = 14) +
     ggplot2::theme(
-      # need to adjust the margin to avoid the axis labels being 'pushed out' of the image
-      #plot.margin = ggplot2::margin(t = 200, r = 0, b = 0, l = 0, unit = 'pt'),
       # panel
       panel.border = ggplot2::element_rect(colour = 'grey90', fill = NA),
       panel.grid.minor = ggplot2::element_blank(),
@@ -1051,23 +1049,17 @@ plot_trendline_comparison <- function(
   # convert to plotly object and tweak settings
   plot <-
     plot |>
-    plotly::ggplotly(
-      tooltip = c('text')
-      #height = facet_height_px * facet_count
-      #height = facet_height_px
-    ) |>
+    plotly::ggplotly(tooltip = c('text')) |>
     plotly::layout(
       font = list(family = 'Arial, Helvetica, Droid Sans, sans'),
       hoverlabel = list(font = list(size = 16)),
+      # label the y-axis
       yaxis = list(
         title = plot_data |>
           dplyr::slice_head(n = 1) |>
           dplyr::pull(mitigator_activity_title),
         titlefont = list(size = 14)
-      )#,
-      #margin = list(l = 0, r = 0, b = 100, t = 100)
-      #autosize = TRUE
-
+      )
     )
 
   # return plot or data
@@ -1100,6 +1092,7 @@ plot_trendline_comparison <- function(
 #' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted activity as an overlay over the historical time series plots
 #' @param show_prebaseline_average Boolean (default = TRUE) show the pre-baseline average (mean) with a range of two standard deviations above and below
 #' @param facet_height_px Integer (default = 400) the height of the plot
+#' @param return_data Boolean (default = FALSE) TRUE = return a list object of tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES ONLY
 #'
 #' @returns {plotly} plot combining individual trendline plots for each mitigator
 plot_faceted_trendlines <- function(
@@ -1248,7 +1241,7 @@ plot_faceted_trendlines <- function(
     ) |>
     plotly::layout(
       title = list(
-        # name the focal scheme
+        # name the focal scheme so available when exported as image
         text = plot_data |>
           dplyr::filter(scheme_code == focal_scheme_code) |>
           dplyr::slice_head(n = 1) |>
