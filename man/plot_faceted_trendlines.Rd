@@ -38,6 +38,8 @@ plot_faceted_trendlines(
 \item{show_prebaseline_average}{Boolean (default = TRUE) show the pre-baseline average (mean) with a range of two standard deviations above and below}
 
 \item{facet_height_px}{Integer (default = 400) the height of the plot}
+
+\item{return_data}{Boolean (default = FALSE) TRUE = return a list object of tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES ONLY}
 }
 \value{
 {plotly} plot combining individual trendline plots for each mitigator
