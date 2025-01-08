@@ -637,6 +637,35 @@ app_server <- function(input, output, session) {
 
   })
 
+  ### contextual trendline ----
+  output$contextual_trendline <- plotly::renderPlotly({
+
+    # notify user if no data is available
+    shiny::validate(
+      shiny::need(input$schemes, message = "Select at least one scheme.")
+    )
+
+    shiny::validate(
+      shiny::need(input$mitigators, message = "Select at least one mitigator.")
+    )
+
+    # plot the trendline contextual
+    dat_filtered() |>
+      dplyr::filter(mitigator_code %in% input$mitigators) |>
+      plot_faceted_trendlines(
+        rates_data = rates_data,
+        mitigator_codes = input$mitigators,
+        focal_scheme_code = input$focus_scheme,
+        scheme_codes = input$schemes,
+        show_other_schemes = input$toggle_contextual_trendline_otherschemes,
+        show_horizon_timeline = input$toggle_contextual_trendline_horizon_timeline,
+        show_horizon_overlay = input$toggle_contextual_trendline_horizon_overlay,
+        show_prebaseline_average = input$toggle_contextual_trendline_average,
+        facet_height_px = input$slider_contextual_trendline_height
+      )
+
+  })
+
   ## Tables ----
 
   output$raw_data_dt <- DT::renderDT({
