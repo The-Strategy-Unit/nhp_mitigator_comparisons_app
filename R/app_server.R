@@ -266,6 +266,7 @@ app_server <- function(input, output, session) {
 
   })
 
+  ## dat_selected_heatmap ----
   dat_selected_heatmap <- shiny::reactive({
 
     shiny::validate(
@@ -277,37 +278,21 @@ app_server <- function(input, output, session) {
     )
 
     dat <- dat_filtered()
-
-    if (input$toggle_horizon_heatmap) {
-      dat <- dat |>
-        dplyr::mutate(
-          dplyr::across(
-            c(value_lo, value_hi, value_mid),
-            \(x) x / year_range
-          )
-        )
-    }
-
-    dat |>
-      dplyr::mutate(
-        value_binary = dplyr::if_else(!is.na(value_lo), 1, 0),
-        dplyr::across(
-          c(value_lo, value_hi, value_mid, value_range),
-          \(x) janitor::round_half_up(x, 3)
-        ),
-        mitigator_code = forcats::fct_rev(mitigator_code),
-        mitigator_name = stats::reorder(mitigator_name, as.numeric(mitigator_code)) # order mitigator_name to match mitigator_code
-      ) |>
-      tidyr::pivot_longer(
-        c(value_lo, value_hi, value_mid, value_range, value_binary),
-        names_to = "value_type",
-        values_to = "value"
-      ) |>
-      dplyr::filter(
-        value_type == input$heatmap_type,
-        scheme_code %in%  input$schemes,
-        mitigator_code %in% input$mitigators,
+    dat <-
+      dat |>
+      prepare_heatmap_dat(
+        dat = _,
+        mitigator_codes = input$mitigators,
+        scheme_codes = input$schemes,
+        focal_scheme_code = input$focus_scheme,
+        heatmap_type = input$heatmap_type,
+        standardise_heatmap = input$toggle_horizon_heatmap,
+        scheme_order = input$heatmap_scheme_order,
+        mitigator_order = input$heatmap_mitigator_order,
+        values_displayed = input$values_displayed
       )
+
+    return(dat)
 
   })
 
@@ -393,11 +378,33 @@ app_server <- function(input, output, session) {
   shiny::observe({
 
     if (input$heatmap_type == "value_binary") {
+      # enable
+
+      # disable
       shinyjs::disable("toggle_horizon_heatmap")
+      shinyjs::disable("toggle_heatmap_scale_fill_by_mitigator")
+
+      # show
+      shinyjs::show("heatmap_binary_colour")
+
+      # hide
+      shinyjs::hide("heatmap_value_colour_low")
+      shinyjs::hide("heatmap_value_colour_high")
     }
 
     if (input$heatmap_type != "value_binary") {
+      # enable
       shinyjs::enable("toggle_horizon_heatmap")
+      shinyjs::enable("toggle_heatmap_scale_fill_by_mitigator")
+
+      # disable
+
+      # show
+      shinyjs::show("heatmap_value_colour_low")
+      shinyjs::show("heatmap_value_colour_high")
+
+      # hide
+      shinyjs::hide("heatmap_binary_colour")
     }
 
     # disable 'summary full range' switch if 'summary' is disabled
@@ -544,9 +551,9 @@ app_server <- function(input, output, session) {
     if (temp_scheme_count < 6) {
       base_height <- 100
     } else if (temp_scheme_count < 12) {
-      base_height <- 160
-    } else {
       base_height <- 200
+    } else {
+      base_height <- 300
     }
 
     # update reactive values
@@ -554,20 +561,34 @@ app_server <- function(input, output, session) {
     ra$heatmap_min_height <- base_height + (temp_mitigator_count * 55)
   })
 
-  # wrap the plot call in an observer to enable the dynamic height setting
-  shiny::observe({
-    output$heatmap <- shiny::renderPlot({
+  # produce the heatmap plot
+  output$heatmap <- plotly::renderPlotly({
 
-      shiny::validate(
-        shiny::need(
-          nrow(dat_selected_heatmap()) > 0,
-          message = "Insufficient data for this plot."
-        )
+    shiny::validate(
+      shiny::need(
+        nrow(dat_selected_heatmap()) > 0,
+        message = "Insufficient data for this plot."
+      )
+    )
+
+    dat_selected_heatmap() |>
+      plot_heatmap(
+        # data
+        focal_scheme_code = input$focus_scheme,
+
+        # options
+        toggle_mitigator_name = input$toggle_mitigator_name,
+        toggle_scale_fill_by_mitigator = input$toggle_heatmap_scale_fill_by_mitigator,
+        values_displayed = input$values_displayed,
+        heatmap_type = input$heatmap_type,
+
+        # formatting
+        colour_binary = input$heatmap_binary_colour,
+        colour_value_low = input$heatmap_value_colour_low,
+        colour_value_high = input$heatmap_value_colour_high,
+        plot_height = ra$heatmap_min_height
       )
 
-      dat_selected_heatmap() |> plot_heatmap(input)
-
-    }, height = ra$heatmap_min_height)
   })
 
   ### density functions ----
