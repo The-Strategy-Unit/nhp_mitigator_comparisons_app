@@ -399,19 +399,19 @@ app_ui <- function(request) {
                   selected = "value_mid",
                   multiple = FALSE
                 ),
-                shiny::checkboxInput(
-                  inputId = "toggle_horizon_heatmap",
+                bslib::input_switch(
+                  id = "toggle_horizon_heatmap",
                   label = bslib::tooltip(
                     trigger = list(
-                      "Standardise by horizon length?",
+                      "Standardise by horizon?",
                       bsicons::bs_icon("info-circle")
                     ),
                     "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
                   ),
                   value = FALSE
                 ),
-                shiny::checkboxInput(
-                  inputId = "toggle_mitigator_name",
+                bslib::input_switch(
+                  id = "toggle_mitigator_name",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show mitigator names?",
@@ -420,6 +420,96 @@ app_ui <- function(request) {
                     "Plots mitigator names on the y-axis (default) or switch off to display mitigator codes instead."
                   ),
                   value = TRUE
+                ),
+                bslib::input_switch(
+                  id = "toggle_heatmap_scale_fill_by_mitigator",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Fill by mitigator?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Controls whether the range of colours is set per mitigator or across the whole heatmap. Toggle on to colour the heatmap by each mitigator (default) or off to colour the heatmap by all values."
+                  ),
+                  value = TRUE
+                ),
+                shiny::selectInput(
+                  inputId = "heatmap_scheme_order",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Order schemes by",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Choose how schemes are ordered."
+                  ),
+                  choices = c(
+                    `Scheme name (asc)` = "scheme_name_asc",
+                    `Scheme name (desc)` = "scheme_name_desc",
+                    `Number of mitigators (asc)` = "scheme_mitigator_count_asc",
+                    `Number of mitigators (desc)` = "scheme_mitigator_count_desc",
+                    `Average mitigation (asc)` = "scheme_average_asc",
+                    `Average mitigation (desc)` = "scheme_average_desc"
+                  ),
+                  selected = "scheme_mitigator_count_desc",
+                  multiple = FALSE
+                ),
+                shiny::selectInput(
+                  inputId = "heatmap_mitigator_order",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Order mitigators by",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Choose how mitigators are ordered."
+                  ),
+                  choices = c(
+                    `Mitigator name (asc)` = "mitigator_name_asc",
+                    `Mitigator name (desc)` = "mitigator_name_desc",
+                    `Number of schemes (asc)` = "mitigator_scheme_count_asc",
+                    `Number of schemes (desc)` = "mitigator_scheme_count_desc",
+                    `Average mitigation (asc)` = "mitigator_average_asc",
+                    `Average mitigation (desc)` = "mitigator_average_desc"
+                  ),
+                  selected = "mitigator_scheme_count_desc",
+                  multiple = FALSE
+                ),
+                colourpicker::colourInput(
+                  inputId = "heatmap_binary_colour",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Colour for binary plot",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "The colour to use where a scheme has set a value for a mitigator - 'binary' plot types only."
+                  ),
+                  value = "#273c75",
+                  showColour = "both",
+                  palette = "square"
+                ),
+                colourpicker::colourInput(
+                  inputId = "heatmap_value_colour_low",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Colour for low values",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "The colour to use where a scheme has set a low value for a mitigator - non-'binary' plot types only."
+                  ),
+                  value = "#22A6B3",
+                  showColour = "both",
+                  palette = "square"
+                ),
+                colourpicker::colourInput(
+                  inputId = "heatmap_value_colour_high",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Colour for high values",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "The colour to use where a scheme has set a high value for a mitigator - non-'binary' plot types only."
+                  ),
+                  value = "#130F40",
+                  showColour = "both",
+                  palette = "square"
                 ),
                 shiny::bookmarkButton(
                   label = "Bookmark",
@@ -434,7 +524,7 @@ app_ui <- function(request) {
                   )
                 )
               ), # end sidebar
-              shiny::plotOutput("heatmap")
+              plotly::plotlyOutput("heatmap")
             )
           ),
 
