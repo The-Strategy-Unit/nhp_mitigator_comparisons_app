@@ -541,7 +541,7 @@ plot_heatmap <- function(
       toImageButtonOptions = list(
         'format' = 'svg',
         'filename' = glue::glue(
-          "nhp_baseline_comparison_", # name for this plot
+          "nhp_heatmap_", # name for this plot
           "{paste0(focal_scheme_code, collapse = '_')}_", # focal scheme code
           "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}") # datetime
       )
