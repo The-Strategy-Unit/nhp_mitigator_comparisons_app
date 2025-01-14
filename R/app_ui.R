@@ -499,6 +499,8 @@ app_ui <- function(request) {
 
         bslib::navset_card_underline(
           full_screen = TRUE,
+
+          #### baseline plot ----
           bslib::nav_panel(
             title = bslib::tooltip(
               trigger = list(
@@ -512,8 +514,8 @@ app_ui <- function(request) {
                 width = 350,
                 open = TRUE,
 
-                bslib::input_switch(
-                  id = "toggle_contextual_baseline_range",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_baseline_range",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show 80% range?",
@@ -523,8 +525,8 @@ app_ui <- function(request) {
                   ),
                   value = TRUE
                 ),
-                bslib::input_switch(
-                  id = "toggle_contextual_baseline_quadrants",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_baseline_quadrants",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show quadrant lines?",
@@ -534,8 +536,8 @@ app_ui <- function(request) {
                   ),
                   value = TRUE
                 ),
-                bslib::input_switch(
-                  id = "toggle_contextual_baseline_schemecode",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_baseline_schemecode",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show scheme codes?",
@@ -573,6 +575,95 @@ app_ui <- function(request) {
                 )
               ), # end sidebar
               plotly::plotlyOutput("contextual_baseline")
+            )
+          ),
+
+          #### trendline plot ----
+          bslib::nav_panel(
+            title = bslib::tooltip(
+              trigger = list(
+                "Trendline comparison",
+                bsicons::bs_icon("info-circle")
+              ),
+              "A timeseries plot showing historical rates of activity for the focal scheme enabling comparisons with their predicted activity."
+            ),
+            bslib::layout_sidebar(
+              sidebar = bslib::sidebar(
+                width = 350,
+                open = TRUE,
+
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_trendline_otherschemes",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show other schemes?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Shows trendline plots for schemes other than the focal scheme as grey traces."
+                  ),
+                  value = FALSE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_trendline_horizon_timeline",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show horizon on timeline?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Shows the predicted activity at the horizon year on the timeline. The predicted interval is shown as a point range on the horizon year with dotted lines connecting it with the baseline rate."
+                  ),
+                  value = TRUE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_trendline_horizon_overlay",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show horizon as overlay?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Shows the predicted activity as an overlay. The predicted interval is shown as three lines (low, mid and high) with a coloured ribbon across the historical activity timeline."
+                  ),
+                  value = FALSE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_trendline_average",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Show pre-baseline average?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Shows the average (mean) rate up to the baseline year along with a window of two standard deviations above and below to indicate the pre-baseline activity and range."
+                  ),
+                  value = FALSE
+                ),
+                shiny::sliderInput(
+                  inputId = "slider_contextual_trendline_height",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Plot height",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Set the height of each plot in pixels."
+                  ),
+                  value = 400,
+                  min = 250,
+                  max = 600,
+                  step = 50
+                ),
+                shiny::bookmarkButton(
+                  label = "Bookmark",
+                  icon = shiny::icon("bookmark", lib = "glyphicon"),
+                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                ),
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "About",
+                    md_file_to_html("app", "text", "about_trendline.md")
+                  )
+                )
+              ), # end sidebar
+              plotly::plotlyOutput("contextual_trendline")
             )
           )
         )

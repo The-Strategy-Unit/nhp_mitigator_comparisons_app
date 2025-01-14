@@ -14,7 +14,7 @@ Overlaying the plots are dotted lines indicating the mean scheme values, dividin
 
 Mousing-over each point reveals contextual information such as scheme name and code, percent mitigated / predicted, baseline rate and year and a textual description of the quadrant the scheme falls within.
 
-Click the plot's camera icon to download a copy of the plot as a high quality image (scaleable vector graphic).
+Click the plot's camera icon to download a copy of the plot as a high quality image (scalable vector graphic).
 
 #### Settings
 

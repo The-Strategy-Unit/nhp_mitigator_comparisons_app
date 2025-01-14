@@ -20,11 +20,11 @@ plot_baseline_comparison(
 )
 }
 \arguments{
-\item{dat}{Tibble}
+\item{dat}{Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`}
 
-\item{rates_data}{Tibble -}
+\item{rates_data}{Tibble - historical rates data for schemes / mitigators}
 
-\item{mitigator_codes}{Character vector - the mitigator codes}
+\item{mitigator_codes}{Character vector - the mitigator codes to visualise}
 
 \item{focal_scheme_code}{Character vector - the scheme code for the focal scheme}
 
