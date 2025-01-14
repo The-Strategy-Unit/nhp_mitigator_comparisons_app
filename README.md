@@ -10,7 +10,7 @@ An app built with [{shiny}](https://shiny.posit.co/), [{golem}](https://thinkr-o
 
 This tool is designed primarily for use by model-relationship managers (MRMs) in discussion with schemes so that the mitigator selections can be refined before being finalised.
 
-The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/mitigator-comparisons/) (login/permissions required)..
+The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/mitigator-comparisons/) (login/permissions required).
 
 ## Run the app
 
