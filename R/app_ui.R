@@ -514,8 +514,8 @@ app_ui <- function(request) {
                 width = 350,
                 open = TRUE,
 
-                bslib::input_switch(
-                  id = "toggle_contextual_baseline_range",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_baseline_range",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show 80% range?",
@@ -525,8 +525,8 @@ app_ui <- function(request) {
                   ),
                   value = TRUE
                 ),
-                bslib::input_switch(
-                  id = "toggle_contextual_baseline_quadrants",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_baseline_quadrants",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show quadrant lines?",
@@ -536,8 +536,8 @@ app_ui <- function(request) {
                   ),
                   value = TRUE
                 ),
-                bslib::input_switch(
-                  id = "toggle_contextual_baseline_schemecode",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_baseline_schemecode",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show scheme codes?",
@@ -592,8 +592,8 @@ app_ui <- function(request) {
                 width = 350,
                 open = TRUE,
 
-                bslib::input_switch(
-                  id = "toggle_contextual_trendline_otherschemes",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_trendline_otherschemes",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show other schemes?",
@@ -603,8 +603,8 @@ app_ui <- function(request) {
                   ),
                   value = FALSE
                 ),
-                bslib::input_switch(
-                  id = "toggle_contextual_trendline_horizon_timeline",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_trendline_horizon_timeline",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show horizon on timeline?",
@@ -614,8 +614,8 @@ app_ui <- function(request) {
                   ),
                   value = TRUE
                 ),
-                bslib::input_switch(
-                  id = "toggle_contextual_trendline_horizon_overlay",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_trendline_horizon_overlay",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show horizon as overlay?",
@@ -625,8 +625,8 @@ app_ui <- function(request) {
                   ),
                   value = FALSE
                 ),
-                bslib::input_switch(
-                  id = "toggle_contextual_trendline_average",
+                shiny::checkboxInput(
+                  inputId = "toggle_contextual_trendline_average",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show pre-baseline average?",
