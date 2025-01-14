@@ -399,8 +399,8 @@ app_ui <- function(request) {
                   selected = "value_mid",
                   multiple = FALSE
                 ),
-                bslib::input_switch(
-                  id = "toggle_horizon_heatmap",
+                shiny::checkboxInput(
+                  inputId = "toggle_horizon_heatmap",
                   label = bslib::tooltip(
                     trigger = list(
                       "Standardise by horizon?",
@@ -410,8 +410,8 @@ app_ui <- function(request) {
                   ),
                   value = FALSE
                 ),
-                bslib::input_switch(
-                  id = "toggle_mitigator_name",
+                shiny::checkboxInput(
+                  inputId = "toggle_mitigator_name",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show mitigator names?",
@@ -421,8 +421,8 @@ app_ui <- function(request) {
                   ),
                   value = TRUE
                 ),
-                bslib::input_switch(
-                  id = "toggle_heatmap_scale_fill_by_mitigator",
+                shiny::checkboxInput(
+                  inputId = "toggle_heatmap_scale_fill_by_mitigator",
                   label = bslib::tooltip(
                     trigger = list(
                       "Fill by mitigator?",
