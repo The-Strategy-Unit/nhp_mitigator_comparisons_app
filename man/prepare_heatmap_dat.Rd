@@ -13,7 +13,9 @@ prepare_heatmap_dat(
   standardise_heatmap = FALSE,
   scheme_order,
   mitigator_order,
-  values_displayed
+  values_displayed,
+  toggle_heatmap_nee = FALSE,
+  toggle_heatmap_aggregate_summaries = FALSE
 )
 }
 \arguments{
@@ -32,6 +34,10 @@ prepare_heatmap_dat(
 \item{mitigator_order}{String description of the display order for mitigators}
 
 \item{values_displayed}{String description of the values displayed - as defined by `input$values_displayed`}
+
+\item{toggle_heatmap_nee}{Boolean (default = FALSE) should the display include a column for NEE values for mitigators?}
+
+\item{toggle_heatmap_aggregate_summaries}{Boolean (default = FALSE) should the display include columns showing minimum, maximum and mean values for each mitigator?}
 }
 \value{
 Tibble of data ready for use with heatmap plots

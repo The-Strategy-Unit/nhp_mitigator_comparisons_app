@@ -35,7 +35,9 @@ plot_heatmap(
 
 \item{colour_value_high}{Character - value from `input$heatmap_value_colour_high` - hex colour string to use in the gradient fill for high values}
 
-\item{name}{Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot}
+\item{plot_height}{Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot}
+
+\item{font_family}{Character - (default = 'Arial, Helvetica, Droid Sans, sans') a list of font families to use in the plot}
 }
 \value{
 {plotly} object showing heatmap
