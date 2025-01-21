@@ -67,12 +67,12 @@ prepare_heatmap_dat <- function(
       focal_scheme_text = dplyr::if_else(
         condition = scheme_code %in% focal_scheme_code,
         true = "Focal scheme",  false = ""
-      ),
-      scheme_name = dplyr::if_else(
-        condition = scheme_code %in% focal_scheme_code,
-        true = glue::glue("⫷ {scheme_name} ⫸"),
-        false = scheme_name
-      )
+      )#,
+      # scheme_name = dplyr::if_else(
+      #   condition = scheme_code %in% focal_scheme_code,
+      #   true = glue::glue("⫷ {scheme_name} ⫸"),
+      #   false = scheme_name
+      # )
     ) |>
     # put each value type on its own row
     tidyr::pivot_longer(
