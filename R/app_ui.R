@@ -399,8 +399,8 @@ app_ui <- function(request) {
                   selected = "value_mid",
                   multiple = FALSE
                 ),
-                bslib::input_switch(
-                  id = "toggle_horizon_heatmap",
+                shiny::checkboxInput(
+                  inputId = "toggle_horizon_heatmap",
                   label = bslib::tooltip(
                     trigger = list(
                       "Standardise by horizon?",
@@ -410,8 +410,8 @@ app_ui <- function(request) {
                   ),
                   value = FALSE
                 ),
-                bslib::input_switch(
-                  id = "toggle_mitigator_name",
+                shiny::checkboxInput(
+                  inputId = "toggle_mitigator_name",
                   label = bslib::tooltip(
                     trigger = list(
                       "Show mitigator names?",
@@ -421,8 +421,8 @@ app_ui <- function(request) {
                   ),
                   value = TRUE
                 ),
-                bslib::input_switch(
-                  id = "toggle_heatmap_scale_fill_by_mitigator",
+                shiny::checkboxInput(
+                  inputId = "toggle_heatmap_scale_fill_by_mitigator",
                   label = bslib::tooltip(
                     trigger = list(
                       "Fill by mitigator?",
@@ -431,6 +431,28 @@ app_ui <- function(request) {
                     "Controls whether the range of colours is set per mitigator or across the whole heatmap. Toggle on to colour the heatmap by each mitigator (default) or off to colour the heatmap by all values."
                   ),
                   value = TRUE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_heatmap_nee",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Add NEE?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Controls whether the National Elicitation Exercise (NEE) estimates are included. Toggle on to add the NEE value as an additional column."
+                  ),
+                  value = FALSE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_heatmap_aggregate_summaries",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Add aggregate summaries?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Controls whether the minimum, maximum and average mitigator values are displayed. Toggle on to see these values as additional columns and rows."
+                  ),
+                  value = FALSE
                 ),
                 shiny::selectInput(
                   inputId = "heatmap_scheme_order",
