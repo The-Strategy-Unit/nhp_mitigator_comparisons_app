@@ -46,6 +46,18 @@ Enable this option to colour values by mitigator. This means the full range of c
 
 Disable this option to colour values across the whole heatmap. This highlights the lowest and highest value across the range of schemes and mitigators.
 
+##### Add NEE?
+
+This options controls the visibility of the National Elicitation Exercise (NEE) mitigator summary column.
+
+Enable this option to see the relevant NEE value column (midpoint, low, high or range) as context to the mitigator values in the heatmap.
+
+##### Add aggregate summaries?
+
+This option controls the visibility of aggregate summaries (minimum, maximum and mean) for the mitigators (shown as additional columns) and schemes (shown as additional rows).
+
+Enable this option to include the minimum, maximum and average values on the heatmap plot which is useful when exporting to image - where the tooltip context information is lost.
+
 ##### Order schemes by
 
 Select a value from the drop-down list for how schemes are ordered on the x-axis. The default option is 'Number of mitigators (desc)', with options for:
