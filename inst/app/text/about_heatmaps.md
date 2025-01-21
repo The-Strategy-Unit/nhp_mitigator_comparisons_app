@@ -1,6 +1,6 @@
-Heatmaps visualise values in a 2D grid of cells by scheme and mitigators. The colour of cells indicates the value shown, with darker shades being lower values and lighter tints being higher values.
+Heatmaps visualise values in a 2D grid of cells by scheme and mitigators. The colour of cells indicates the value shown.
 
-Use these for an at-a-glance sense of how values vary across scheme and mitigators.
+Use these for an at-a-glance sense of how activity estimates vary by scheme and across mitigators.
 
 #### Structure
 
@@ -24,7 +24,7 @@ Select a value from the drop-down list to be displayed in the heatmap. The defau
 
 -   'Binary' - indicating where a response has or has not been provided by schemes
 
-##### Standardise by horizon length
+##### Standardise by horizon?
 
 The 80% prediction-interval ranges are estimates for reduced activity by a chosen horizon year. The percent of activity mitigated are the inverse - an estimate for how much activity is mitigated against by the chosen horizon year.
 
@@ -37,3 +37,43 @@ To compare the change **per year** you can enable this option to better compare 
 Enable this option to switch between mitigator names and the mitigator codes.
 
 Using mitigator codes is useful if horizontal space is limited.
+
+##### Fill by mitigator
+
+This option controls how the colours in the heatmap are produced.
+
+Enable this option to colour values by mitigator. This means the full range of colours is used for each mitigator, highlighting which schemes have provided the lowest and highest values for each mitigator.
+
+Disable this option to colour values across the whole heatmap. This highlights the lowest and highest value across the range of schemes and mitigators.
+
+##### Order schemes by
+
+Select a value from the drop-down list for how schemes are ordered on the x-axis. The default option is 'Number of mitigators (desc)', with options for:
+
+-   'Scheme name (asc)/(desc)' - order schemes alphabetically by their names
+
+-   'Number of mitigators (asc)/(desc)' - order schemes by the number of mitigators they have used
+
+-   'Average mitigation (asc)/(desc)' - order schemes by their average values set for the mitigators
+
+##### Order mitigators by
+
+Select a value from the drop-down list for how mitigators are ordered on the y-axis. The default option is 'Number of schemes (desc)', with options for:
+
+-   'Mitigator name (asc)/(desc)' - order mitigators alphabetically by their names
+
+-   'Number of schemes (asc)/(desc)' - order mitigators by the number of schemes that have set values for it
+
+-   'Average mitigation (asc)/(desc)' - order mitigators by their average values set for them by schemes
+
+##### Colour for binary plot
+
+The colour to use for the 'Binary' heatmap types. Either click into the cell and choose a colour from the palette or specify a hex colour code.
+
+##### Colour for low values
+
+The colour to use for the extreme low values in the colour gradient heatmaps. Either click into the cell and choose a colour from the palette or specify a hex colour code.
+
+##### Colour for high values
+
+The colour to use for the extreme high values in the colour gradient heatmaps. Either click into the cell and choose a colour from the palette or specify a hex colour code.

@@ -15,6 +15,7 @@ Imports:
     AzureStor,
     bsicons,
     bslib (>= 0.7.0),
+    colourpicker,
     config (>= 0.3.1),
     data.table,
     dplyr,
