@@ -286,10 +286,11 @@ app_server <- function(input, output, session) {
         scheme_codes = input$schemes,
         focal_scheme_code = input$focus_scheme,
         heatmap_type = input$heatmap_type,
-        standardise_heatmap = input$toggle_horizon_heatmap,
         scheme_order = input$heatmap_scheme_order,
         mitigator_order = input$heatmap_mitigator_order,
-        values_displayed = input$values_displayed
+        values_displayed = input$values_displayed,
+        toggle_heatmap_nee = input$toggle_heatmap_nee,
+        toggle_heatmap_aggregate_summaries = input$toggle_heatmap_aggregate_summaries
       )
 
     return(dat)
@@ -383,6 +384,8 @@ app_server <- function(input, output, session) {
       # disable
       shinyjs::disable("toggle_horizon_heatmap")
       shinyjs::disable("toggle_heatmap_scale_fill_by_mitigator")
+      shinyjs::disable("toggle_heatmap_nee")
+      shinyjs::disable("toggle_heatmap_aggregate_summaries")
 
       # show
       shinyjs::show("heatmap_binary_colour")
@@ -396,6 +399,8 @@ app_server <- function(input, output, session) {
       # enable
       shinyjs::enable("toggle_horizon_heatmap")
       shinyjs::enable("toggle_heatmap_scale_fill_by_mitigator")
+      shinyjs::enable("toggle_heatmap_nee")
+      shinyjs::enable("toggle_heatmap_aggregate_summaries")
 
       # disable
 

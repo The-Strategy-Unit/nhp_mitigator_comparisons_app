@@ -10,10 +10,11 @@ prepare_heatmap_dat(
   scheme_codes,
   focal_scheme_code,
   heatmap_type = "value_binary",
-  standardise_heatmap = FALSE,
   scheme_order,
   mitigator_order,
-  values_displayed
+  values_displayed,
+  toggle_heatmap_nee = FALSE,
+  toggle_heatmap_aggregate_summaries = FALSE
 )
 }
 \arguments{
@@ -23,15 +24,17 @@ prepare_heatmap_dat(
 
 \item{scheme_codes}{Character vector of scheme codes to display in the heatmap}
 
-\item{heatmap_type}{String describing the type of heatmap to produce - as defined by `input$heatmap_type``}
-
-\item{standardise_heatmap}{Boolean (default = FALSE) should the values be standardised per year?}
+\item{heatmap_type}{String describing the type of heatmap to produce - as defined by `input$heatmap_type`}
 
 \item{scheme_order}{String describing the display order for schemes}
 
 \item{mitigator_order}{String description of the display order for mitigators}
 
 \item{values_displayed}{String description of the values displayed - as defined by `input$values_displayed`}
+
+\item{toggle_heatmap_nee}{Boolean (default = FALSE) should the display include a column for NEE values for mitigators?}
+
+\item{toggle_heatmap_aggregate_summaries}{Boolean (default = FALSE) should the display include columns showing minimum, maximum and mean values for each mitigator?}
 }
 \value{
 Tibble of data ready for use with heatmap plots

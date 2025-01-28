@@ -400,17 +400,6 @@ app_ui <- function(request) {
                   multiple = FALSE
                 ),
                 shiny::checkboxInput(
-                  inputId = "toggle_horizon_heatmap",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Standardise by horizon?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
-                  ),
-                  value = FALSE
-                ),
-                shiny::checkboxInput(
                   inputId = "toggle_mitigator_name",
                   label = bslib::tooltip(
                     trigger = list(
@@ -431,6 +420,28 @@ app_ui <- function(request) {
                     "Controls whether the range of colours is set per mitigator or across the whole heatmap. Toggle on to colour the heatmap by each mitigator (default) or off to colour the heatmap by all values."
                   ),
                   value = TRUE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_heatmap_nee",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Add NEE?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Controls whether the National Elicitation Exercise (NEE) estimates are included. Toggle on to add the NEE value as an additional column."
+                  ),
+                  value = FALSE
+                ),
+                shiny::checkboxInput(
+                  inputId = "toggle_heatmap_aggregate_summaries",
+                  label = bslib::tooltip(
+                    trigger = list(
+                      "Add aggregate summaries?",
+                      bsicons::bs_icon("info-circle")
+                    ),
+                    "Controls whether the minimum, maximum and average mitigator values are displayed. Toggle on to see these values as additional columns and rows."
+                  ),
+                  value = FALSE
                 ),
                 shiny::selectInput(
                   inputId = "heatmap_scheme_order",
