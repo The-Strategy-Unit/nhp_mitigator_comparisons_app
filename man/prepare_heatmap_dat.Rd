@@ -10,7 +10,6 @@ prepare_heatmap_dat(
   scheme_codes,
   focal_scheme_code,
   heatmap_type = "value_binary",
-  standardise_heatmap = FALSE,
   scheme_order,
   mitigator_order,
   values_displayed,
@@ -25,9 +24,7 @@ prepare_heatmap_dat(
 
 \item{scheme_codes}{Character vector of scheme codes to display in the heatmap}
 
-\item{heatmap_type}{String describing the type of heatmap to produce - as defined by `input$heatmap_type``}
-
-\item{standardise_heatmap}{Boolean (default = FALSE) should the values be standardised per year?}
+\item{heatmap_type}{String describing the type of heatmap to produce - as defined by `input$heatmap_type`}
 
 \item{scheme_order}{String describing the display order for schemes}
 

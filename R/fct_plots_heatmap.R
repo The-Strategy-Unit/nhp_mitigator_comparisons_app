@@ -7,8 +7,7 @@
 #' @param dat Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
 #' @param mitigator_codes Character vector of mitigator codes to display in the heatmap
 #' @param scheme_codes Character vector of scheme codes to display in the heatmap
-#' @param heatmap_type String describing the type of heatmap to produce - as defined by `input$heatmap_type``
-#' @param standardise_heatmap Boolean (default = FALSE) should the values be standardised per year?
+#' @param heatmap_type String describing the type of heatmap to produce - as defined by `input$heatmap_type`
 #' @param scheme_order String describing the display order for schemes
 #' @param mitigator_order String description of the display order for mitigators
 #' @param values_displayed String description of the values displayed - as defined by `input$values_displayed`
@@ -22,7 +21,6 @@ prepare_heatmap_dat <- function(
     scheme_codes,
     focal_scheme_code,
     heatmap_type = "value_binary",
-    standardise_heatmap = FALSE,
     scheme_order,
     mitigator_order,
     values_displayed,
@@ -41,18 +39,6 @@ prepare_heatmap_dat <- function(
       mitigator_code %in% mitigator_codes,
       scheme_code %in% scheme_codes
     )
-
-  # should values be standardised?
-  if (standardise_heatmap) {
-    dat <-
-      dat |>
-      dplyr::mutate(
-        dplyr::across(
-          c(value_lo, value_hi, value_mid),
-          \(.x) .x / year_range
-        )
-      )
-  }
 
   # create a list to hold the working dat objects
   dat_list <- list(dat)

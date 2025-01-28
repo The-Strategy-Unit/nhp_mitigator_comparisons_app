@@ -400,17 +400,6 @@ app_ui <- function(request) {
                   multiple = FALSE
                 ),
                 shiny::checkboxInput(
-                  inputId = "toggle_horizon_heatmap",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Standardise by horizon?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Divides the scheme's chosen mitigator values by the number of years between the chosen start and final year."
-                  ),
-                  value = FALSE
-                ),
-                shiny::checkboxInput(
                   inputId = "toggle_mitigator_name",
                   label = bslib::tooltip(
                     trigger = list(

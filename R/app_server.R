@@ -286,7 +286,6 @@ app_server <- function(input, output, session) {
         scheme_codes = input$schemes,
         focal_scheme_code = input$focus_scheme,
         heatmap_type = input$heatmap_type,
-        standardise_heatmap = input$toggle_horizon_heatmap,
         scheme_order = input$heatmap_scheme_order,
         mitigator_order = input$heatmap_mitigator_order,
         values_displayed = input$values_displayed,
