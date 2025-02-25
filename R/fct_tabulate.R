@@ -290,9 +290,10 @@ populate_table <- function(
 #'
 #' @param dat Tibble of data - as produced from `populate_table` in `fct_tabulate.R`
 #' @param values_displayed Character - the value in `input$values_displayed` indicating the user's preferred view
+#' @param include_point_estimates Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0% mitigation (100% prediction) are to be included
 #'
 #' @return Tibble of data with the 'value_' and 'nee_' fields updated to match the user's preferred values
-update_dat_values <- function(dat, values_displayed) {
+update_dat_values <- function(dat, values_displayed, include_point_estimates = FALSE) {
   if (values_displayed == "Percent of activity mitigated") {
     dat <-
       dat |>
@@ -317,6 +318,30 @@ update_dat_values <- function(dat, values_displayed) {
         nee_p50 = pi_nee_p50,
         nee_mean = pi_nee_mean
       )
+  }
+
+  if (!include_point_estimates) {
+    # we need to exclude point estimates of value = 1
+    # NB, I don't know of a one-step way of filtering data to exclude records
+    # where two or more conditions are met.
+    # So, here we will do this in a two-step process, 1) define the records to
+    # exclude then 2) filter out these records
+
+    # Create a key so we can refer to specific rows
+    dat_temp <-
+      dat |>
+      dplyr::mutate(key = dplyr::row_number())
+
+    # Define which records meet the definition of a point-estimate
+    dat_exclude <-
+      dat_temp |>
+      dplyr::filter(pi_value_lo == 1 & pi_value_hi == 1)
+
+    # Define `Dat` to exclude point-estimates
+    dat <-
+      dat_temp |>
+      dplyr::filter(!key %in% dat_exclude$key) |>
+      dplyr::select(-key)
   }
 
   return(dat)
