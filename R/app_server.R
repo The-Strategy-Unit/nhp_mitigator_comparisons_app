@@ -71,7 +71,8 @@ app_server <- function(input, output, session) {
   dat_reactive <- shiny::reactive({
     dat_return <- update_dat_values(
       dat = dat,
-      values_displayed = input$values_displayed
+      values_displayed = input$values_displayed,
+      include_point_estimates = input$include_point_estimates
     )
 
     return(dat_return)
