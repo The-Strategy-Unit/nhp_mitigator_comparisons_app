@@ -2,6 +2,8 @@ These illustrate the combined distributions of all schemes' responses as either 
 
 Use these to compare the focal scheme's response against an amalgam of all other schemes' responses.
 
+NB, point-estimates (prediction intervals with the same low and high values) are removed from when constructing these distributions.
+
 #### Structure
 
 Mitigators are listed in separate plots (facets), with either the 80% prediction interval or the percent of activity mitigated, on the x-axes and the y-axis showing the density of the mixture distribution.
