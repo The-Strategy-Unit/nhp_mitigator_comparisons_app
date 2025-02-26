@@ -221,6 +221,18 @@ app_ui <- function(request) {
                 #title = "Point-range settings",
                 open = TRUE,
                 width = 350,
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation."
+                    ),
+                    md_file_to_html("app", "text", "about_pointrange.md")
+                  )
+                ),
                 shiny::checkboxInput(
                   inputId = "toggle_mitigator_code_pointrange",
                   label = bslib::tooltip(
@@ -298,14 +310,6 @@ app_ui <- function(request) {
                   label = "Bookmark ",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-
-                bslib::accordion(
-                  open = FALSE,
-                  bslib::accordion_panel(
-                    title = "About",
-                    md_file_to_html("app", "text", "about_pointrange.md")
-                  )
                 )
               ), # end sidebar
               shiny::plotOutput("pointrange")
@@ -327,6 +331,18 @@ app_ui <- function(request) {
                 #title = "Density settings",
                 open = TRUE,
                 width = 350,
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation."
+                    ),
+                    md_file_to_html("app", "text", "about_distributions.md")
+                  )
+                ),
 
                 shiny::checkboxInput(
                   inputId = "toggle_mixture_distribution_ecdf",
@@ -356,15 +372,8 @@ app_ui <- function(request) {
                   label = "Bookmark ",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-
-                bslib::accordion(
-                  open = FALSE,
-                  bslib::accordion_panel(
-                    title = "About",
-                    md_file_to_html("app", "text", "about_distributions.md")
-                  )
                 )
+
               ), # end sidebar
               shiny::plotOutput('mixture_distributions')
             )
@@ -393,6 +402,19 @@ app_ui <- function(request) {
               sidebar = bslib::sidebar(
                 width = 350,
                 open = TRUE,
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation."
+                    ),
+                    md_file_to_html("app", "text", "about_heatmaps.md")
+                  )
+                ),
+
                 shiny::selectInput(
                   inputId = "heatmap_type",
                   label = bslib::tooltip(
@@ -539,14 +561,8 @@ app_ui <- function(request) {
                   label = "Bookmark",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-                bslib::accordion(
-                  open = FALSE,
-                  bslib::accordion_panel(
-                    title = "About",
-                    md_file_to_html("app", "text", "about_heatmaps.md")
-                  )
                 )
+
               ), # end sidebar
               plotly::plotlyOutput("heatmap")
             )
@@ -567,9 +583,13 @@ app_ui <- function(request) {
                 width = 350,
 
                 bslib::accordion(
-                  open = FALSE,
+                  open = TRUE,
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this table."
+                    ),
                     md_file_to_html("app", "text", "about_mitigator_coverage.md")
                   )
                 )
@@ -593,9 +613,13 @@ app_ui <- function(request) {
                 open = TRUE,
 
                 bslib::accordion(
-                  open = FALSE,
+                  open = TRUE,
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this table"
+                    ),
                     md_file_to_html("app", "text", "about_scheme_coverage.md")
                   )
                 )
@@ -627,6 +651,18 @@ app_ui <- function(request) {
               sidebar = bslib::sidebar(
                 width = 350,
                 open = TRUE,
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation."
+                    ),
+                    md_file_to_html("app", "text", "about_baseline.md")
+                  )
+                ),
 
                 shiny::checkboxInput(
                   inputId = "toggle_contextual_baseline_range",
@@ -679,14 +715,8 @@ app_ui <- function(request) {
                   label = "Bookmark",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-                bslib::accordion(
-                  open = FALSE,
-                  bslib::accordion_panel(
-                    title = "About",
-                    md_file_to_html("app", "text", "about_baseline.md")
-                  )
                 )
+
               ), # end sidebar
               plotly::plotlyOutput("contextual_baseline")
             )
@@ -705,6 +735,18 @@ app_ui <- function(request) {
               sidebar = bslib::sidebar(
                 width = 350,
                 open = TRUE,
+
+                bslib::accordion(
+                  open = FALSE,
+                  bslib::accordion_panel(
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation."
+                    ),
+                    md_file_to_html("app", "text", "about_trendline.md")
+                  )
+                ),
 
                 shiny::checkboxInput(
                   inputId = "toggle_contextual_trendline_otherschemes",
@@ -768,14 +810,8 @@ app_ui <- function(request) {
                   label = "Bookmark",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-                bslib::accordion(
-                  open = FALSE,
-                  bslib::accordion_panel(
-                    title = "About",
-                    md_file_to_html("app", "text", "about_trendline.md")
-                  )
                 )
+
               ), # end sidebar
               plotly::plotlyOutput("contextual_trendline")
             )
