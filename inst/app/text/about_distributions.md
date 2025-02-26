@@ -2,7 +2,7 @@ These illustrate the combined distributions of all schemes' responses as either 
 
 Use these to compare the focal scheme's response against an amalgam of all other schemes' responses.
 
-NB, point-estimates (prediction intervals with the same low and high values) are removed from when constructing these distributions.
+NB, point-estimates (prediction intervals with the same low and high values) are removed from the data when constructing these distributions.
 
 #### Structure
 
