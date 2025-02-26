@@ -4,12 +4,14 @@
 \alias{update_dat_values}
 \title{Update dat to reflect the user's preferred values}
 \usage{
-update_dat_values(dat, values_displayed)
+update_dat_values(dat, values_displayed, include_point_estimates = FALSE)
 }
 \arguments{
 \item{dat}{Tibble of data - as produced from `populate_table` in `fct_tabulate.R`}
 
 \item{values_displayed}{Character - the value in `input$values_displayed` indicating the user's preferred view}
+
+\item{include_point_estimates}{Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0% mitigation (100% prediction) are to be included}
 }
 \value{
 Tibble of data with the 'value_' and 'nee_' fields updated to match the user's preferred values
