@@ -281,10 +281,24 @@ app_ui <- function(request) {
                   ),
                   value = FALSE
                 ),
+
                 shiny::bookmarkButton(
                   label = "Bookmark ",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                ),
+
+                shiny::splitLayout(
+                  shiny::downloadButton(
+                      outputId = "point_range_download_data",
+                      label = "Data",
+                      icon = shiny::icon("file-csv", lib = "font-awesome")
+                    ) |> bslib::tooltip("Download the data as CSV"),
+                  shiny::downloadButton(
+                      outputId = "point_range_download_plot",
+                      label = "Plot",
+                      icon = shiny::icon("file-image", lib = "font-awesome")
+                    ) |> bslib::tooltip("Download the plot as SVG"),
                 ),
 
                 bslib::accordion(
@@ -343,6 +357,19 @@ app_ui <- function(request) {
                   label = "Bookmark ",
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                ),
+
+                shiny::splitLayout(
+                  shiny::downloadButton(
+                    outputId = "mixture_distributions_download_data",
+                    label = "Data",
+                    icon = shiny::icon("file-csv", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the data as CSV"),
+                  shiny::downloadButton(
+                    outputId = "mixture_distributions_download_plot",
+                    label = "Plot",
+                    icon = shiny::icon("file-image", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the plot as SVG"),
                 ),
 
                 bslib::accordion(
@@ -527,6 +554,20 @@ app_ui <- function(request) {
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
                 ),
+
+                shiny::splitLayout(
+                  shiny::downloadButton(
+                    outputId = "heatmaps_download_data",
+                    label = "Data",
+                    icon = shiny::icon("file-csv", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the data as CSV"),
+                  shiny::downloadButton(
+                    outputId = "heatmaps_download_plot",
+                    label = "Plot",
+                    icon = shiny::icon("file-code", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the plot as interactive HTML"),
+                ),
+
                 bslib::accordion(
                   open = FALSE,
                   bslib::accordion_panel(
@@ -553,6 +594,14 @@ app_ui <- function(request) {
                 open = TRUE,
                 width = 350,
 
+                shiny::splitLayout(
+                  shiny::downloadButton(
+                    outputId = "mitigator_coverage_download_data",
+                    label = "Data",
+                    icon = shiny::icon("file-csv", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the data as CSV")
+                ),
+
                 bslib::accordion(
                   open = FALSE,
                   bslib::accordion_panel(
@@ -578,6 +627,14 @@ app_ui <- function(request) {
               sidebar = bslib::sidebar(
                 width = 350,
                 open = TRUE,
+
+                shiny::splitLayout(
+                  shiny::downloadButton(
+                    outputId = "scheme_coverage_download_data",
+                    label = "Data",
+                    icon = shiny::icon("file-csv", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the data as CSV")
+                ),
 
                 bslib::accordion(
                   open = FALSE,
@@ -667,6 +724,20 @@ app_ui <- function(request) {
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
                 ),
+
+                shiny::splitLayout(
+                  shiny::downloadButton(
+                    outputId = "context_baseline_download_data",
+                    label = "Data",
+                    icon = shiny::icon("file-csv", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the data as CSV"),
+                  shiny::downloadButton(
+                    outputId = "context_baseline_download_plot",
+                    label = "Plot",
+                    icon = shiny::icon("file-code", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the plot as interactive HTML"),
+                ),
+
                 bslib::accordion(
                   open = FALSE,
                   bslib::accordion_panel(
@@ -756,6 +827,20 @@ app_ui <- function(request) {
                   icon = shiny::icon("bookmark", lib = "glyphicon"),
                   style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
                 ),
+
+                shiny::splitLayout(
+                  shiny::downloadButton(
+                    outputId = "context_trendline_download_data",
+                    label = "Data",
+                    icon = shiny::icon("file-csv", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the data as CSV"),
+                  shiny::downloadButton(
+                    outputId = "context_trendline_download_plot",
+                    label = "Plot",
+                    icon = shiny::icon("file-code", lib = "font-awesome")
+                  ) |> bslib::tooltip("Download the plot as interactive HTML"),
+                ),
+
                 bslib::accordion(
                   open = FALSE,
                   bslib::accordion_panel(
