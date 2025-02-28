@@ -2,8 +2,10 @@
 
 export(get_mixture_distributions_dat)
 export(get_trust_lookup)
+export(make_mitigator_uptake_dat)
 export(make_mitigator_uptake_dt)
 export(make_scheme_dt)
+export(make_scheme_uptake_dat)
 export(make_scheme_uptake_dt)
 export(plot_mixture_distributions)
 export(plot_pointrange)
