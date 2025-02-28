@@ -25,6 +25,7 @@ Imports:
     glue,
     golem (>= 0.4.1),
     htmltools,
+    htmlwidgets,
     janitor,
     jsonlite,
     markdown,
