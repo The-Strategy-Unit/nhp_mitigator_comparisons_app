@@ -707,20 +707,335 @@ app_server <- function(input, output, session) {
     trust_code_lookup |> make_scheme_dt()
   }, server = FALSE) # to download all data via CSV button
 
+  ### mitigator uptake ----
   output$mitigator_uptake_dt <- DT::renderDT({
     make_mitigator_uptake_dt(
-      dat = dat,
+      dat = dat_reactive(),
       selected_schemes = input$schemes
     )
   })
 
+  ### scheme uptake ----
   output$scheme_uptake_dt <- DT::renderDT({
     make_scheme_uptake_dt(
-      dat = dat,
+      dat = dat_reactive(),
       selected_mitigators = input$mitigators,
       selected_schemes = input$schemes,
       focal_scheme = input$focus_scheme
     )
   })
+
+  ## Downloads ----
+
+  ### point-range ----
+  output$point_range_download_data <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_pointrange_data_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.csv") # datetime
+    },
+    content = function(file) {
+      readr::write_csv(
+        x = dat_selected_pointrange(),
+        file = file,
+        na = "",
+        quote = "needed"
+      )
+    },
+    contentType = "text/csv"
+  )
+
+  output$point_range_download_plot <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_pointrange_plot_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.svg") # datetime
+    },
+    content = function(file) {
+      ggplot2::ggsave(
+        filename = file,
+        plot = dat_selected_pointrange() |> plot_pointrange(input),
+        scale = 4,
+        device = 'svg',
+        units = 'px',
+        height = ra$pointrange_min_height,
+        width = 1100,
+        limitsize = FALSE
+      )
+    }
+  )
+
+  ### mixture distributions ----
+  output$mixture_distributions_download_data <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_mixture_distribution_data_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.csv") # datetime
+    },
+    content = function(file) {
+      readr::write_csv(
+        x = dat_selected_mixture_distributions(),
+        file = file,
+        na = "",
+        quote = "needed"
+      )
+    },
+    contentType = "text/csv"
+  )
+
+  output$mixture_distributions_download_plot <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_mixture_distribution_plot_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.svg") # datetime
+    },
+    content = function(file) {
+      ggplot2::ggsave(
+        filename = file,
+        plot = plot_mixture_distributions(
+          dat_selected_mixture_distributions = dat_selected_mixture_distributions(),
+          dat_filtered = dat_filtered(),
+          dat_focal_scheme_code = input$focus_scheme,
+          input = input
+        ),
+        scale = 4,
+        device = 'svg',
+        units = 'px',
+        height = ra$mixturedist_min_height,
+        width = 900,
+        limitsize = FALSE
+      )
+    }
+  )
+
+  ### heatmaps ----
+  output$heatmaps_download_data <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_heatmap_data_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.csv") # datetime
+    },
+    content = function(file) {
+      readr::write_csv(
+        x = dat_selected_heatmap(),
+        file = file,
+        na = "",
+        quote = "needed"
+      )
+    },
+    contentType = "text/csv"
+  )
+
+  output$heatmaps_download_plot <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_heatmap_plot_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.html") # datetime
+    },
+    content = function(file) {
+
+      htmlwidgets::saveWidget(
+        widget = dat_selected_heatmap() |>
+          plot_heatmap(
+            # data
+            focal_scheme_code = input$focus_scheme,
+
+            # options
+            toggle_mitigator_name = input$toggle_mitigator_name,
+            toggle_scale_fill_by_mitigator = input$toggle_heatmap_scale_fill_by_mitigator,
+            values_displayed = input$values_displayed,
+            heatmap_type = input$heatmap_type,
+
+            # formatting
+            colour_binary = input$heatmap_binary_colour,
+            colour_value_low = input$heatmap_value_colour_low,
+            colour_value_high = input$heatmap_value_colour_high,
+            plot_height = ra$heatmap_min_height
+          ) |>
+          plotly::partial_bundle(minified = TRUE),
+        file = file,
+        selfcontained = TRUE,
+        title = "NHP Heatmap Plot"
+      )
+
+    }
+  )
+
+  ### mitigator coverage ----
+  output$mitigator_coverage_download_data <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_mitigator_coverage_data_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.csv") # datetime
+    },
+    content = function(file) {
+      readr::write_csv(
+        x = make_mitigator_uptake_dat(
+          dat = dat_reactive(),
+          selected_schemes = input$schemes
+        ),
+        file = file,
+        na = "",
+        quote = "needed"
+      )
+    },
+    contentType = "text/csv"
+  )
+
+  ### scheme coverage ----
+  output$scheme_coverage_download_data <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_scheme_coverage_data_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.csv") # datetime
+    },
+    content = function(file) {
+      readr::write_csv(
+        x = make_scheme_uptake_dat(
+          dat = dat_reactive(),
+          selected_mitigators = input$mitigators,
+          selected_schemes = input$schemes,
+          focal_scheme = input$focus_scheme
+        ),
+        file = file,
+        na = "",
+        quote = "needed"
+      )
+    },
+    contentType = "text/csv"
+  )
+
+  ### context baseline ----
+  output$context_baseline_download_data <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_context_baseline_data_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.csv") # datetime
+    },
+    content = function(file) {
+      readr::write_csv(
+        x = dat_filtered() |>
+          prep_baseline_comparison(
+            rates_data = rates_data,
+            mitigator_codes = input$mitigators,
+            focal_scheme_code = input$focus_scheme,
+            rate_title = "Baseline rate",
+            value_title = input$values_displayed,
+            trendline = FALSE, # trendlines don't seem to work
+            range = input$toggle_contextual_baseline_range,
+            scheme_label = input$toggle_contextual_baseline_schemecode,
+            quadrants = input$toggle_contextual_baseline_quadrants,
+            facet_columns = 1, # not enabling this feature - feel it is best for one row per mitigator
+            facet_height_px = input$slider_contextual_baseline_height
+          ),
+        file = file,
+        na = "",
+        quote = "needed"
+      )
+    },
+    contentType = "text/csv"
+  )
+
+  output$context_baseline_download_plot <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_context_baseline_plot_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.html") # datetime
+    },
+    content = function(file) {
+
+      htmlwidgets::saveWidget(
+        widget = dat_filtered() |>
+          plot_baseline_comparison(
+            rates_data = rates_data,
+            mitigator_codes = input$mitigators,
+            focal_scheme_code = input$focus_scheme,
+            rate_title = "Baseline rate",
+            value_title = input$values_displayed,
+            trendline = FALSE, # trendlines don't seem to work
+            range = input$toggle_contextual_baseline_range,
+            scheme_label = input$toggle_contextual_baseline_schemecode,
+            quadrants = input$toggle_contextual_baseline_quadrants,
+            facet_columns = 1, # not enabling this feature - feel it is best for one row per mitigator
+            facet_height_px = input$slider_contextual_baseline_height
+          ) |>
+          plotly::partial_bundle(minified = TRUE),
+        file = file,
+        selfcontained = TRUE,
+        title = "NHP Baseline Plot"
+      )
+
+    }
+  )
+
+
+  ### context trendline ----
+  output$context_trendline_download_data <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_context_trendline_data_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.csv") # datetime
+    },
+
+    content = function(file) {
+      df_list <-
+        dat_filtered() |>
+        dplyr::filter(mitigator_code %in% input$mitigators) |>
+        plot_faceted_trendlines(
+          rates_data = rates_data,
+          mitigator_codes = input$mitigators,
+          focal_scheme_code = input$focus_scheme,
+          scheme_codes = input$schemes,
+          show_other_schemes = input$toggle_contextual_trendline_otherschemes,
+          show_horizon_timeline = input$toggle_contextual_trendline_horizon_timeline,
+          show_horizon_overlay = input$toggle_contextual_trendline_horizon_overlay,
+          show_prebaseline_average = input$toggle_contextual_trendline_average,
+          facet_height_px = input$slider_contextual_trendline_height,
+          return_data = TRUE
+        )
+
+      readr::write_csv(
+        x = df_list$plot_data,
+        file = file,
+        na = "",
+        quote = "needed"
+      )
+    },
+    contentType = "text/csv"
+  )
+
+  output$context_trendline_download_plot <- shiny::downloadHandler(
+    filename = function() {
+      glue::glue(
+        "nhp_context_trendline_plot_", # name for this plot
+        "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}.html") # datetime
+    },
+    content = function(file) {
+
+      plot_widget <-
+        dat_filtered() |>
+        dplyr::filter(mitigator_code %in% input$mitigators) |>
+        plot_faceted_trendlines(
+          rates_data = rates_data,
+          mitigator_codes = input$mitigators,
+          focal_scheme_code = input$focus_scheme,
+          scheme_codes = input$schemes,
+          show_other_schemes = input$toggle_contextual_trendline_otherschemes,
+          show_horizon_timeline = input$toggle_contextual_trendline_horizon_timeline,
+          show_horizon_overlay = input$toggle_contextual_trendline_horizon_overlay,
+          show_prebaseline_average = input$toggle_contextual_trendline_average,
+          facet_height_px = input$slider_contextual_trendline_height
+        ) |>
+        plotly::partial_bundle(minified = TRUE)
+
+      htmlwidgets::saveWidget(
+        widget = plot_widget,
+        file = file,
+        selfcontained = TRUE
+      )
+
+    }
+  )
+
 
 }
