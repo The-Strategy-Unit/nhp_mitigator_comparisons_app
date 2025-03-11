@@ -164,6 +164,19 @@ app_ui <- function(request) {
               status = "primary",
               right = TRUE
             ),
+            shinyWidgets::materialSwitch(
+              inputId = "include_point_estimates",
+              label = bslib::tooltip(
+                trigger = list(
+                  "Include point estimates?",
+                  bsicons::bs_icon("info-circle")
+                ),
+                "Should point-estimates indicating zero mitigation be included in the results? Toggle off (default) to exclude all point-estimates indicating 0% mitigation, toggle on to show all mitigator values."
+              ),
+              value = FALSE,
+              status = "primary",
+              right = TRUE
+            )
           )
         )
       ),
