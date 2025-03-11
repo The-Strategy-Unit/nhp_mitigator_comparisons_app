@@ -205,107 +205,131 @@ app_ui <- function(request) {
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
-                #title = "Point-range settings",
                 open = TRUE,
                 width = 350,
-                shiny::checkboxInput(
-                  inputId = "toggle_mitigator_code_pointrange",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show mitigator code?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Replaces the full mitigator name with the mitigator code."
-                  ),
-                  value = FALSE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_invert_facets",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Facet by scheme?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Invert the pointrange plots to show mitigators on the y axis and scheme as the faceting variable."
-                  ),
-                  value = FALSE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_nee_reference_range",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show NEE range?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Include reference results from the National Elicitation Exercise (NEE) for 2039/40. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
-                  ),
-                  value = TRUE
-                ),
-                shiny::sliderInput(
-                  inputId = "facet_columns",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Number of facet columns",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Choose the number of columns over which to break the faceted pointrange charts."
-                  ),
-                  min = 1,
-                  max = 5, # will be reactively updated to match the number of facets
-                  step = 1,
-                  value = 5,
-                  round = TRUE,
-                  ticks = FALSE
-                ),
-                shinyWidgets::materialSwitch(
-                  inputId = "toggle_aggregate_summary",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Summary",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Add an aggregate summary of selected schemes' responses to the plot (includes all but the focal scheme)."
-                  ),
-                  value = FALSE,
-                  status = "primary",
-                  right = TRUE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_aggregate_summary_minmaxrange",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Summary full range",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Show the full range of selected schemes' responses, i.e. the extreme upper and lower values, or switch off to view the average (mean) range."
-                  ),
-                  value = FALSE
-                ),
-
-                shiny::bookmarkButton(
-                  label = "Bookmark ",
-                  icon = shiny::icon("bookmark", lib = "glyphicon"),
-                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-
-                shiny::splitLayout(
-                  shiny::downloadButton(
-                      outputId = "point_range_download_data",
-                      label = "Data",
-                      icon = shiny::icon("file-csv", lib = "font-awesome")
-                    ) |> bslib::tooltip("Download the data as CSV"),
-                  shiny::downloadButton(
-                      outputId = "point_range_download_plot",
-                      label = "Plot",
-                      icon = shiny::icon("file-image", lib = "font-awesome")
-                    ) |> bslib::tooltip("Download the plot as SVG"),
-                ),
 
                 bslib::accordion(
-                  open = FALSE,
+                  open = c("Controls"),
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation"
+                    ),
                     md_file_to_html("app", "text", "about_pointrange.md")
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Controls",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("toggles"),
+                      "Settings for this visualisation"
+                    ),
+
+                    shiny::checkboxInput(
+                      inputId = "toggle_mitigator_code_pointrange",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show mitigator code?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Replaces the full mitigator name with the mitigator code."
+                      ),
+                      value = FALSE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_invert_facets",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Facet by scheme?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Invert the pointrange plots to show mitigators on the y axis and scheme as the faceting variable."
+                      ),
+                      value = FALSE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_nee_reference_range",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show NEE range?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Include reference results from the National Elicitation Exercise (NEE) for 2039/40. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                      ),
+                      value = TRUE
+                    ),
+                    shiny::sliderInput(
+                      inputId = "facet_columns",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Number of facet columns",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Choose the number of columns over which to break the faceted pointrange charts."
+                      ),
+                      min = 1,
+                      max = 5, # will be reactively updated to match the number of facets
+                      step = 1,
+                      value = 5,
+                      round = TRUE,
+                      ticks = FALSE
+                    ),
+                    shinyWidgets::materialSwitch(
+                      inputId = "toggle_aggregate_summary",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Summary",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Add an aggregate summary of selected schemes' responses to the plot (includes all but the focal scheme)."
+                      ),
+                      value = FALSE,
+                      status = "primary",
+                      right = TRUE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_aggregate_summary_minmaxrange",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Summary full range",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Show the full range of selected schemes' responses, i.e. the extreme upper and lower values, or switch off to view the average (mean) range."
+                      ),
+                      value = FALSE
+                    ),
+
+                    shiny::bookmarkButton(
+                      label = "Bookmark ",
+                      icon = shiny::icon("bookmark", lib = "glyphicon"),
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    ),
+
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Download",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("box-arrow-down"),
+                      "Export data and plots"
+                    ),
+
+                    bslib::card_body(
+                      shiny::downloadButton(
+                        outputId = "point_range_download_data",
+                        label = "Data",
+                        icon = shiny::icon("file-csv", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the data as CSV"),
+
+                      shiny::downloadButton(
+                        outputId = "point_range_download_plot",
+                        label = "Plot",
+                        icon = shiny::icon("file-image", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the plot as SVG")
+                    )
                   )
                 )
               ), # end sidebar
@@ -325,58 +349,81 @@ app_ui <- function(request) {
 
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
-                #title = "Density settings",
                 open = TRUE,
                 width = 350,
 
-                shiny::checkboxInput(
-                  inputId = "toggle_mixture_distribution_ecdf",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show ECDF?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Plot the Empirical Cumulative Distribution Function (ECDF), or leave unchecked for the Probability Density Function (PDF)."
-                  ),
-                  value = FALSE
-                ),
-
-                shiny::checkboxInput(
-                  inputId = "toggle_nee_reference_range_density",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show NEE range?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Include reference results from the National Elicitation Exercise (NEE) for 2039/40. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
-                  ),
-                  value = TRUE
-                ),
-
-                shiny::bookmarkButton(
-                  label = "Bookmark ",
-                  icon = shiny::icon("bookmark", lib = "glyphicon"),
-                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-
-                shiny::splitLayout(
-                  shiny::downloadButton(
-                    outputId = "mixture_distributions_download_data",
-                    label = "Data",
-                    icon = shiny::icon("file-csv", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the data as CSV"),
-                  shiny::downloadButton(
-                    outputId = "mixture_distributions_download_plot",
-                    label = "Plot",
-                    icon = shiny::icon("file-image", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the plot as SVG"),
-                ),
-
                 bslib::accordion(
-                  open = FALSE,
+                  open = c("Controls"),
+
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation"
+                    ),
                     md_file_to_html("app", "text", "about_distributions.md")
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Controls",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("toggles"),
+                      "Settings for this visualisation"
+                    ),
+
+                    shiny::checkboxInput(
+                      inputId = "toggle_mixture_distribution_ecdf",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show ECDF?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Plot the Empirical Cumulative Distribution Function (ECDF), or leave unchecked for the Probability Density Function (PDF)."
+                      ),
+                      value = FALSE
+                    ),
+
+                    shiny::checkboxInput(
+                      inputId = "toggle_nee_reference_range_density",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show NEE range?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Include reference results from the National Elicitation Exercise (NEE) for 2039/40. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                      ),
+                      value = TRUE
+                    ),
+
+                    shiny::bookmarkButton(
+                      label = "Bookmark ",
+                      icon = shiny::icon("bookmark", lib = "glyphicon"),
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    )
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Download",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("box-arrow-down"),
+                      "Export data and plots"
+                    ),
+
+                    bslib::card_body(
+                      shiny::downloadButton(
+                        outputId = "mixture_distributions_download_data",
+                        label = "Data",
+                        icon = shiny::icon("file-csv", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the data as CSV"),
+
+                      shiny::downloadButton(
+                        outputId = "mixture_distributions_download_plot",
+                        label = "Plot",
+                        icon = shiny::icon("file-image", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the plot as SVG"),
+                    )
                   )
                 )
               ), # end sidebar
@@ -407,172 +454,197 @@ app_ui <- function(request) {
               sidebar = bslib::sidebar(
                 width = 350,
                 open = TRUE,
-                shiny::selectInput(
-                  inputId = "heatmap_type",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Value type",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Schemes' low or high 80% confidence internal selection in the NHP inputs app, or the range or midpoint of these."
-                  ),
-                  choices = c(
-                    Binary = "value_binary",
-                    Midpoint = "value_mid",
-                    Range = "value_range",
-                    Low = "value_lo",
-                    High = "value_hi"
-                  ),
-                  selected = "value_mid",
-                  multiple = FALSE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_mitigator_name",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show mitigator names?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Plots mitigator names on the y-axis (default) or switch off to display mitigator codes instead."
-                  ),
-                  value = TRUE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_heatmap_scale_fill_by_mitigator",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Fill by mitigator?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Controls whether the range of colours is set per mitigator or across the whole heatmap. Toggle on to colour the heatmap by each mitigator (default) or off to colour the heatmap by all values."
-                  ),
-                  value = TRUE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_heatmap_nee",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Add NEE?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Controls whether the National Elicitation Exercise (NEE) estimates are included. Toggle on to add the NEE value as an additional column."
-                  ),
-                  value = FALSE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_heatmap_aggregate_summaries",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Add aggregate summaries?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Controls whether the minimum, maximum and average mitigator values are displayed. Toggle on to see these values as additional columns and rows."
-                  ),
-                  value = FALSE
-                ),
-                shiny::selectInput(
-                  inputId = "heatmap_scheme_order",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Order schemes by",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Choose how schemes are ordered."
-                  ),
-                  choices = c(
-                    `Scheme name (asc)` = "scheme_name_asc",
-                    `Scheme name (desc)` = "scheme_name_desc",
-                    `Number of mitigators (asc)` = "scheme_mitigator_count_asc",
-                    `Number of mitigators (desc)` = "scheme_mitigator_count_desc",
-                    `Average mitigation (asc)` = "scheme_average_asc",
-                    `Average mitigation (desc)` = "scheme_average_desc"
-                  ),
-                  selected = "scheme_mitigator_count_desc",
-                  multiple = FALSE
-                ),
-                shiny::selectInput(
-                  inputId = "heatmap_mitigator_order",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Order mitigators by",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Choose how mitigators are ordered."
-                  ),
-                  choices = c(
-                    `Mitigator name (asc)` = "mitigator_name_asc",
-                    `Mitigator name (desc)` = "mitigator_name_desc",
-                    `Number of schemes (asc)` = "mitigator_scheme_count_asc",
-                    `Number of schemes (desc)` = "mitigator_scheme_count_desc",
-                    `Average mitigation (asc)` = "mitigator_average_asc",
-                    `Average mitigation (desc)` = "mitigator_average_desc"
-                  ),
-                  selected = "mitigator_scheme_count_desc",
-                  multiple = FALSE
-                ),
-                colourpicker::colourInput(
-                  inputId = "heatmap_binary_colour",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Colour for binary plot",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "The colour to use where a scheme has set a value for a mitigator - 'binary' plot types only."
-                  ),
-                  value = "#273c75",
-                  showColour = "both",
-                  palette = "square"
-                ),
-                colourpicker::colourInput(
-                  inputId = "heatmap_value_colour_low",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Colour for low values",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "The colour to use where a scheme has set a low value for a mitigator - non-'binary' plot types only."
-                  ),
-                  value = "#22A6B3",
-                  showColour = "both",
-                  palette = "square"
-                ),
-                colourpicker::colourInput(
-                  inputId = "heatmap_value_colour_high",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Colour for high values",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "The colour to use where a scheme has set a high value for a mitigator - non-'binary' plot types only."
-                  ),
-                  value = "#130F40",
-                  showColour = "both",
-                  palette = "square"
-                ),
-                shiny::bookmarkButton(
-                  label = "Bookmark",
-                  icon = shiny::icon("bookmark", lib = "glyphicon"),
-                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-
-                shiny::splitLayout(
-                  shiny::downloadButton(
-                    outputId = "heatmaps_download_data",
-                    label = "Data",
-                    icon = shiny::icon("file-csv", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the data as CSV"),
-                  shiny::downloadButton(
-                    outputId = "heatmaps_download_plot",
-                    label = "Plot",
-                    icon = shiny::icon("file-code", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the plot as interactive HTML"),
-                ),
 
                 bslib::accordion(
-                  open = FALSE,
+                  open = c("Controls"),
+
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation"
+                    ),
                     md_file_to_html("app", "text", "about_heatmaps.md")
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Controls",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("toggles"),
+                      "Settings for this visualisation"
+                    ),
+
+                    shiny::selectInput(
+                      inputId = "heatmap_type",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Value type",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Schemes' low or high 80% confidence internal selection in the NHP inputs app, or the range or midpoint of these."
+                      ),
+                      choices = c(
+                        Binary = "value_binary",
+                        Midpoint = "value_mid",
+                        Range = "value_range",
+                        Low = "value_lo",
+                        High = "value_hi"
+                      ),
+                      selected = "value_mid",
+                      multiple = FALSE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_mitigator_name",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show mitigator names?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Plots mitigator names on the y-axis (default) or switch off to display mitigator codes instead."
+                      ),
+                      value = TRUE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_heatmap_scale_fill_by_mitigator",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Fill by mitigator?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Controls whether the range of colours is set per mitigator or across the whole heatmap. Toggle on to colour the heatmap by each mitigator (default) or off to colour the heatmap by all values."
+                      ),
+                      value = TRUE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_heatmap_nee",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Add NEE?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Controls whether the National Elicitation Exercise (NEE) estimates are included. Toggle on to add the NEE value as an additional column."
+                      ),
+                      value = FALSE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_heatmap_aggregate_summaries",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Add aggregate summaries?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Controls whether the minimum, maximum and average mitigator values are displayed. Toggle on to see these values as additional columns and rows."
+                      ),
+                      value = FALSE
+                    ),
+                    shiny::selectInput(
+                      inputId = "heatmap_scheme_order",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Order schemes by",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Choose how schemes are ordered."
+                      ),
+                      choices = c(
+                        `Scheme name (asc)` = "scheme_name_asc",
+                        `Scheme name (desc)` = "scheme_name_desc",
+                        `Number of mitigators (asc)` = "scheme_mitigator_count_asc",
+                        `Number of mitigators (desc)` = "scheme_mitigator_count_desc",
+                        `Average mitigation (asc)` = "scheme_average_asc",
+                        `Average mitigation (desc)` = "scheme_average_desc"
+                      ),
+                      selected = "scheme_mitigator_count_desc",
+                      multiple = FALSE
+                    ),
+                    shiny::selectInput(
+                      inputId = "heatmap_mitigator_order",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Order mitigators by",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Choose how mitigators are ordered."
+                      ),
+                      choices = c(
+                        `Mitigator name (asc)` = "mitigator_name_asc",
+                        `Mitigator name (desc)` = "mitigator_name_desc",
+                        `Number of schemes (asc)` = "mitigator_scheme_count_asc",
+                        `Number of schemes (desc)` = "mitigator_scheme_count_desc",
+                        `Average mitigation (asc)` = "mitigator_average_asc",
+                        `Average mitigation (desc)` = "mitigator_average_desc"
+                      ),
+                      selected = "mitigator_scheme_count_desc",
+                      multiple = FALSE
+                    ),
+                    colourpicker::colourInput(
+                      inputId = "heatmap_binary_colour",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Colour for binary plot",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "The colour to use where a scheme has set a value for a mitigator - 'binary' plot types only."
+                      ),
+                      value = "#273c75",
+                      showColour = "both",
+                      palette = "square"
+                    ),
+                    colourpicker::colourInput(
+                      inputId = "heatmap_value_colour_low",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Colour for low values",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "The colour to use where a scheme has set a low value for a mitigator - non-'binary' plot types only."
+                      ),
+                      value = "#22A6B3",
+                      showColour = "both",
+                      palette = "square"
+                    ),
+                    colourpicker::colourInput(
+                      inputId = "heatmap_value_colour_high",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Colour for high values",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "The colour to use where a scheme has set a high value for a mitigator - non-'binary' plot types only."
+                      ),
+                      value = "#130F40",
+                      showColour = "both",
+                      palette = "square"
+                    ),
+                    shiny::bookmarkButton(
+                      label = "Bookmark",
+                      icon = shiny::icon("bookmark", lib = "glyphicon"),
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    )
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Download",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("box-arrow-down"),
+                      "Export data and plots"
+                    ),
+
+                    bslib::card_body(
+                      shiny::downloadButton(
+                        outputId = "heatmaps_download_data",
+                        label = "Data",
+                        icon = shiny::icon("file-csv", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the data as CSV"),
+
+                      shiny::downloadButton(
+                        outputId = "heatmaps_download_plot",
+                        label = "Plot",
+                        icon = shiny::icon("file-code", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the plot as interactive HTML"),
+                    )
                   )
                 )
               ), # end sidebar
@@ -589,24 +661,36 @@ app_ui <- function(request) {
               ),
               'The proportion of schemes using each mitigator',
             ),
+
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
                 open = TRUE,
                 width = 350,
 
-                shiny::splitLayout(
-                  shiny::downloadButton(
-                    outputId = "mitigator_coverage_download_data",
-                    label = "Data",
-                    icon = shiny::icon("file-csv", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the data as CSV")
-                ),
-
                 bslib::accordion(
-                  open = FALSE,
+                  open = c("Information"),
+
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation"
+                    ),
                     md_file_to_html("app", "text", "about_mitigator_coverage.md")
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Download",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("box-arrow-down"),
+                      "Export data"
+                    ),
+                    shiny::downloadButton(
+                      outputId = "mitigator_coverage_download_data",
+                      label = "Data",
+                      icon = shiny::icon("file-csv", lib = "font-awesome"),
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    ) |> bslib::tooltip("Download the data as CSV")
                   )
                 )
               ), # end sidebar
@@ -628,19 +712,30 @@ app_ui <- function(request) {
                 width = 350,
                 open = TRUE,
 
-                shiny::splitLayout(
-                  shiny::downloadButton(
-                    outputId = "scheme_coverage_download_data",
-                    label = "Data",
-                    icon = shiny::icon("file-csv", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the data as CSV")
-                ),
-
                 bslib::accordion(
-                  open = FALSE,
+                  open = c("Information"),
+
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation"
+                    ),
                     md_file_to_html("app", "text", "about_scheme_coverage.md")
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Download",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("box-arrow-down"),
+                      "Export data"
+                    ),
+                    shiny::downloadButton(
+                      outputId = "scheme_coverage_download_data",
+                      label = "Data",
+                      icon = shiny::icon("file-csv", lib = "font-awesome"),
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    ) |> bslib::tooltip("Download the data as CSV")
                   )
                 )
               ), # end sidebar
@@ -672,77 +767,101 @@ app_ui <- function(request) {
                 width = 350,
                 open = TRUE,
 
-                shiny::checkboxInput(
-                  inputId = "toggle_contextual_baseline_range",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show 80% range?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Shows the 80% range between upper and lower values as points connected by a line, disable to view just the mid-points."
-                  ),
-                  value = TRUE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_contextual_baseline_quadrants",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show quadrant lines?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Shows dotted lines indicating schemes' average (mean) values for each axis, dividing the plot into quadrants."
-                  ),
-                  value = TRUE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_contextual_baseline_schemecode",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show scheme codes?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Shows a label for each scheme code on the plot."
-                  ),
-                  value = FALSE
-                ),
-                shiny::sliderInput(
-                  inputId = "slider_contextual_baseline_height",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Plot height",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Set the height of each plot in pixels."
-                  ),
-                  value = 250,
-                  min = 150,
-                  max = 400,
-                  step = 50
-                ),
-                shiny::bookmarkButton(
-                  label = "Bookmark",
-                  icon = shiny::icon("bookmark", lib = "glyphicon"),
-                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-
-                shiny::splitLayout(
-                  shiny::downloadButton(
-                    outputId = "context_baseline_download_data",
-                    label = "Data",
-                    icon = shiny::icon("file-csv", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the data as CSV"),
-                  shiny::downloadButton(
-                    outputId = "context_baseline_download_plot",
-                    label = "Plot",
-                    icon = shiny::icon("file-code", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the plot as interactive HTML"),
-                ),
-
                 bslib::accordion(
-                  open = FALSE,
+                  open = c("Controls"),
+
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation"
+                    ),
                     md_file_to_html("app", "text", "about_baseline.md")
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Controls",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("toggles"),
+                      "Settings for this visualisation"
+                    ),
+
+                    shiny::checkboxInput(
+                      inputId = "toggle_contextual_baseline_range",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show 80% range?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Shows the 80% range between upper and lower values as points connected by a line, disable to view just the mid-points."
+                      ),
+                      value = TRUE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_contextual_baseline_quadrants",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show quadrant lines?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Shows dotted lines indicating schemes' average (mean) values for each axis, dividing the plot into quadrants."
+                      ),
+                      value = TRUE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_contextual_baseline_schemecode",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show scheme codes?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Shows a label for each scheme code on the plot."
+                      ),
+                      value = FALSE
+                    ),
+                    shiny::sliderInput(
+                      inputId = "slider_contextual_baseline_height",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Plot height",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Set the height of each plot in pixels."
+                      ),
+                      value = 250,
+                      min = 150,
+                      max = 400,
+                      step = 50
+                    ),
+                    shiny::bookmarkButton(
+                      label = "Bookmark",
+                      icon = shiny::icon("bookmark", lib = "glyphicon"),
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    )
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Download",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("box-arrow-down"),
+                      "Export data and plots"
+                    ),
+
+                    bslib::card_body(
+                      shiny::downloadButton(
+                        outputId = "context_baseline_download_data",
+                        label = "Data",
+                        icon = shiny::icon("file-csv", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the data as CSV"),
+
+                      shiny::downloadButton(
+                        outputId = "context_baseline_download_plot",
+                        label = "Plot",
+                        icon = shiny::icon("file-code", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the plot as interactive HTML")
+                    )
                   )
                 )
               ), # end sidebar
@@ -764,88 +883,112 @@ app_ui <- function(request) {
                 width = 350,
                 open = TRUE,
 
-                shiny::checkboxInput(
-                  inputId = "toggle_contextual_trendline_otherschemes",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show other schemes?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Shows trendline plots for schemes other than the focal scheme as grey traces."
-                  ),
-                  value = FALSE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_contextual_trendline_horizon_timeline",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show horizon on timeline?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Shows the predicted activity at the horizon year on the timeline. The predicted interval is shown as a point range on the horizon year with dotted lines connecting it with the baseline rate."
-                  ),
-                  value = TRUE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_contextual_trendline_horizon_overlay",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show horizon as overlay?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Shows the predicted activity as an overlay. The predicted interval is shown as three lines (low, mid and high) with a coloured ribbon across the historical activity timeline."
-                  ),
-                  value = FALSE
-                ),
-                shiny::checkboxInput(
-                  inputId = "toggle_contextual_trendline_average",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Show pre-baseline average?",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Shows the average (mean) rate up to the baseline year along with a window of two standard deviations above and below to indicate the pre-baseline activity and range."
-                  ),
-                  value = FALSE
-                ),
-                shiny::sliderInput(
-                  inputId = "slider_contextual_trendline_height",
-                  label = bslib::tooltip(
-                    trigger = list(
-                      "Plot height",
-                      bsicons::bs_icon("info-circle")
-                    ),
-                    "Set the height of each plot in pixels."
-                  ),
-                  value = 400,
-                  min = 250,
-                  max = 600,
-                  step = 50
-                ),
-                shiny::bookmarkButton(
-                  label = "Bookmark",
-                  icon = shiny::icon("bookmark", lib = "glyphicon"),
-                  style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
-                ),
-
-                shiny::splitLayout(
-                  shiny::downloadButton(
-                    outputId = "context_trendline_download_data",
-                    label = "Data",
-                    icon = shiny::icon("file-csv", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the data as CSV"),
-                  shiny::downloadButton(
-                    outputId = "context_trendline_download_plot",
-                    label = "Plot",
-                    icon = shiny::icon("file-code", lib = "font-awesome")
-                  ) |> bslib::tooltip("Download the plot as interactive HTML"),
-                ),
-
                 bslib::accordion(
-                  open = FALSE,
+                  open = c("Controls"),
+
                   bslib::accordion_panel(
-                    title = "About",
+                    title = "Information",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("card-text"),
+                      "Describe this visualisation"
+                    ),
                     md_file_to_html("app", "text", "about_trendline.md")
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Controls",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("toggles"),
+                      "Settings for this visualisation"
+                    ),
+
+                    shiny::checkboxInput(
+                      inputId = "toggle_contextual_trendline_otherschemes",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show other schemes?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Shows trendline plots for schemes other than the focal scheme as grey traces."
+                      ),
+                      value = FALSE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_contextual_trendline_horizon_timeline",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show horizon on timeline?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Shows the predicted activity at the horizon year on the timeline. The predicted interval is shown as a point range on the horizon year with dotted lines connecting it with the baseline rate."
+                      ),
+                      value = TRUE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_contextual_trendline_horizon_overlay",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show horizon as overlay?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Shows the predicted activity as an overlay. The predicted interval is shown as three lines (low, mid and high) with a coloured ribbon across the historical activity timeline."
+                      ),
+                      value = FALSE
+                    ),
+                    shiny::checkboxInput(
+                      inputId = "toggle_contextual_trendline_average",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Show pre-baseline average?",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Shows the average (mean) rate up to the baseline year along with a window of two standard deviations above and below to indicate the pre-baseline activity and range."
+                      ),
+                      value = FALSE
+                    ),
+                    shiny::sliderInput(
+                      inputId = "slider_contextual_trendline_height",
+                      label = bslib::tooltip(
+                        trigger = list(
+                          "Plot height",
+                          bsicons::bs_icon("info-circle")
+                        ),
+                        "Set the height of each plot in pixels."
+                      ),
+                      value = 400,
+                      min = 250,
+                      max = 600,
+                      step = 50
+                    ),
+                    shiny::bookmarkButton(
+                      label = "Bookmark",
+                      icon = shiny::icon("bookmark", lib = "glyphicon"),
+                      style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                    )
+                  ),
+
+                  bslib::accordion_panel(
+                    title = "Download",
+                    icon = bslib::tooltip(
+                      trigger = bsicons::bs_icon("box-arrow-down"),
+                      "Export data and plots"
+                    ),
+
+                    bslib::card_body(
+                      shiny::downloadButton(
+                        outputId = "context_trendline_download_data",
+                        label = "Data",
+                        icon = shiny::icon("file-csv", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the data as CSV"),
+
+                      shiny::downloadButton(
+                        outputId = "context_trendline_download_plot",
+                        label = "Plot",
+                        icon = shiny::icon("file-code", lib = "font-awesome"),
+                        style = "color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                      ) |> bslib::tooltip("Download the plot as interactive HTML")
+                    )
                   )
                 )
               ), # end sidebar
