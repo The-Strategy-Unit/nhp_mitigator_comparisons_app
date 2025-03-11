@@ -1,0 +1,291 @@
+default:
+  golem_name: inputs
+  golem_version: 0.0.0.9000
+  app_prod: no
+  params_data_path: "."
+  population_projections:
+    principal_proj: "Principal projection"
+    var_proj_10_year_migration: "10 year migration trends"
+    var_proj_alt_internal_migration: "5 year internal migration trend"
+    var_proj_high_intl_migration: "High migration"
+    var_proj_low_intl_migration: "Low migration"
+    const_fertility_no_mortality_improvement: "Constant fertility = no mortality improvement"
+    const_fertility: "Constant fertility"
+    high_population: "High population"
+    young_age_structure: "Young age structure"
+    high_fertility: "High fertility"
+    old_age_structure: "Old age structure"
+    low_population: "Low population"
+    low_fertility: "Low fertility"
+    high_life_expectancy: "High life expectancy"
+    low_life_expectancy: "Low life expectancy"
+    no_mortality_improvement: "No mortality improvement"
+    zero_eu_migration: "0% Future EU migration (Not National Statistics)"
+    half_eu_migration: "50% Future EU migration (Not National Statistics)"
+    zero_net_migration: "Zero net migration (natural change only)"
+    replacement_fertility: "Replacement fertility"
+  non-demographic_adjustment:
+    aae:
+      walk-in: [1.0117592, 1.014443]
+      ambulance: [1.0117592, 1.014443]
+    ip:
+      elective: [1.0050266, 1.007375]
+      non-elective: [1.0187719, 1.024636]
+      maternity: [0.9732562, 0.980959]
+    op:
+      first: [1.0222222, 1.027585]
+      followup: [1.0222222, 1.027585]
+      procedure: [1.0222222, 1.027585]
+  mitigators_config:
+    mitigators_admission_avoidance:
+      activity_type: ip
+      mitigators_type: activity_avoidance
+      y_axis_title: "Admissions per 1,000 population"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format(accuracy = 0.001)
+      funnel_x_title: "Catchment Population of Trust"
+      funnel_number_type: !expr scales::comma_format()
+      slider_scale: 1
+      slider_step: 0.001
+      strategy_subset:
+        alcohol_partially_attributable_acute: "Alcohol Related Admissions (Acute Conditions - Partially Attributable)"
+        alcohol_partially_attributable_chronic: "Alcohol Related Admissions (Chronic Conditions - Partially Attributable)"
+        alcohol_wholly_attributable: "Alcohol Related Admissions (Wholly Attributable)"
+        ambulatory_care_conditions_acute: "Ambulatory Care Sensitive Admissions (Acute Conditions)"
+        ambulatory_care_conditions_chronic: "Ambulatory Care Sensitive Admissions (Chronic Conditions)"
+        ambulatory_care_conditions_vaccine_preventable: "Ambulatory Care Sensitive Admissions (Vaccine Preventable)"
+        cancelled_operations: "Cancelled Operations"
+        eol_care_2_days: "End of Life Care Admissions (died within 2 days)"
+        eol_care_3_to_14_days: "End of Life Care Admissions (died within 3-14 days)"
+        evidence_based_interventions_ent: "Interventions with Limited Evidence (ENT)"
+        evidence_based_interventions_general_surgery: "Interventions with Limited Evidence (General Surgery)"
+        evidence_based_interventions_gi_surgical: "Interventions with Limited Evidence (GI Surgical)"
+        evidence_based_interventions_msk: "Interventions with Limited Evidence (MSK)"
+        evidence_based_interventions_urology: "Interventions with Limited Evidence (Urology)"
+        evidence_based_interventions_vascular_varicose_veins: "Interventions with Limited Evidence (Vascular Varicose Veins)"
+        falls_related_admissions: "Falls Related Admissions"
+        frail_elderly_high: "Frail Elderly Admissions (High Frailty Risk)"
+        frail_elderly_intermediate: "Frail Elderly Admissions (Intermediate Frailty Risk)"
+        intentional_self_harm: "Intentional Self Harm Admissions"
+        medically_unexplained_related_admissions: "Medically Unexplained Symptoms Admissions"
+        medicines_related_admissions_explicit: "Medicines Related Admissions (Explicit)"
+        medicines_related_admissions_implicit_anti-diabetics: "Medicines Related Admissions (Implicit - Anti-Diabetics)"
+        medicines_related_admissions_implicit_benzodiasepines: "Medicines Related Admissions (Implicit - Benzodiazepines)"
+        medicines_related_admissions_implicit_diurectics: "Medicines Related Admissions (Implicit - Diuretics)"
+        medicines_related_admissions_implicit_nsaids: "Medicines Related Admissions (Implicit - NSAIDs)"
+        obesity_related_admissions: "Obesity Related Admissions"
+        raid_ae: "Mental Health Admissions via Emergency Department"
+        readmission_within_28_days: "Emergency Readmissions Within 28 Days"
+        smoking: "Smoking Related Admissions"
+        virtual_wards_activity_avoidance_ari: "Virtual Wards Admission Avoidance (Acute Respiratory Infection)"
+        virtual_wards_activity_avoidance_heart_failure: "Virtual Wards Admission Avoidance (Heart Failure)"
+        zero_los_no_procedure_adult: "Admission With No Overnight Stay and No Procedure (Adults)"
+        zero_los_no_procedure_child: "Admission With No Overnight Stay and No Procedure (Children)"
+    mitigators_mean_los_reduction:
+      activity_type: ip
+      mitigators_type: efficiencies
+      y_axis_title: "Mean Length of Stay (days)"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format(accuracy = 0.1)
+      funnel_x_title: "Number of Admissions"
+      slider_scale: 1
+      slider_step: 0.1
+      strategy_subset:
+        emergency_elderly: "Emergency Admission of Older People"
+        enhanced_recovery_bladder: "Enhanced Recovery (Bladder)"
+        enhanced_recovery_breast: "Enhanced Recovery (Breast)"
+        enhanced_recovery_colectomy: "Enhanced Recovery (Colectomy)"
+        enhanced_recovery_hip: "Enhanced Recovery (Hip)"
+        enhanced_recovery_hysterectomy: "Enhanced Recovery (Hysterectomy)"
+        enhanced_recovery_knee: "Enhanced Recovery (Knee)"
+        enhanced_recovery_prostate: "Enhanced Recovery (Prostate)"
+        enhanced_recovery_rectum: "Enhanced Recovery (Rectum)"
+        excess_beddays_elective: "Excess Beddays (Elective Admissions)"
+        excess_beddays_emergency: "Excess Beddays (Emergency Admissions)"
+        general_los_reduction_elective: "General LoS Reduction: Elective Admissions"
+        general_los_reduction_emergency: "General LoS Reduction: Emergency Admissions"
+        raid_ip: "Admissions with Mental Health Comorbidities"
+        stroke_early_supported_discharge: "Stroke Early Supported Discharge"
+        virtual_wards_efficiencies_ari: "Virtual Wards LoS Reduction (Acute Respiratory Infection)"
+        virtual_wards_efficiencies_heart_failure: "Virtual Wards LoS Reduction (Heart Failure)"
+      params_items:
+        type: "all"
+    mitigators_aec_los_reduction:
+      activity_type: ip
+      mitigators_type: efficiencies
+      y_axis_title: "% admissions with a greater than 0-day length of stay"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Admissions"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        ambulatory_emergency_care_low: "Ambulatory Emergency Care (Low Potential)"
+        ambulatory_emergency_care_moderate: "Ambulatory Emergency Care (Moderate Potential)"
+        ambulatory_emergency_care_high: "Ambulatory Emergency Care (High Potential)"
+        ambulatory_emergency_care_very_high: "Ambulatory Emergency Care (Very High Potential)"
+      params_items:
+        type: "aec"
+    mitigators_preop_los_reduction:
+      activity_type: ip
+      mitigators_type: efficiencies
+      y_axis_title: "Procedures with a Pre-op LoS (per 1000 operations)"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format(accuracy = 0.1, scale = 1000)
+      funnel_x_title: "Number of Procedures Performed"
+      slider_scale: 1000
+      slider_step: 0.1
+      strategy_subset:
+        pre-op_los_1-day: "Pre-op Length of Stay of 1 day"
+        pre-op_los_2-day: "Pre-op Length of Stay of 2 days"
+      params_items:
+        type: "pre-op"
+        pre-op_days:
+          pre-op_los_1-day: 1
+          pre-op_los_2-day: 2
+    mitigators_day_procedures_daycase:
+      activity_type: ip
+      mitigators_type: efficiencies
+      y_axis_title: "% of Procedures Performed in Non-Target Setting"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Procedures Performed"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        day_procedures_occasionally_dc: "Day Procedures: Occasionally performed as a Daycase"
+        day_procedures_usually_dc: "Day Procedures: Usually performed as a Daycase"
+      params_items:
+        type: "day_procedures_daycase"
+    mitigators_day_procedures_outpatients:
+      activity_type: ip
+      mitigators_type: efficiencies
+      y_axis_title: "% of Procedures Performed in Non-Target Setting"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Procedures Performed"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        day_procedures_occasionally_op: "Day Procedures: Occasionally performed in Outpatients"
+        day_procedures_usually_op: "Day Procedures: Usually performed in Outpatients"
+      params_items:
+        type: "day_procedures_outpatients"
+    mitigators_op_c2c_reduction:
+      activity_type: op
+      mitigators_type: activity_avoidance
+      y_axis_title: "% of Appointments that are Consultant to Consultant Referrals"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Appointments"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        consultant_to_consultant_reduction_adult_non-surgical: "Outpatient Consultant to Consultant Referrals (Adult, Non-Surgical)"
+        consultant_to_consultant_reduction_adult_surgical: "Outpatient Consultant to Consultant Referrals (Adult, Surgical)"
+        consultant_to_consultant_reduction_child_non-surgical: "Outpatient Consultant to Consultant Referrals (Children, Non-Surgical)"
+        consultant_to_consultant_reduction_child_surgical: "Outpatient Consultant to Consultant Referrals (Children, Surgical)"
+    mitigators_op_convert_tele:
+      activity_type: op
+      mitigators_type: efficiencies
+      y_axis_title: "% of Appointments that are Face-to-Face"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Appointments"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        convert_to_tele_adult_non-surgical: "Outpatient Convert to Tele-Attendance (Adult, Non-Surgical)"
+        convert_to_tele_adult_surgical: "Outpatient Convert to Tele-Attendance (Adult, Surgical)"
+        convert_to_tele_child_non-surgical: "Outpatient Convert to Tele-Attendance (Children, Non-Surgical)"
+        convert_to_tele_child_surgical: "Outpatient Convert to Tele-Attendance (Children, Surgical)"
+    mitigators_op_fup_reduction:
+      activity_type: op
+      mitigators_type: activity_avoidance
+      y_axis_title: "Followup to First Ratio"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::comma_format()
+      funnel_x_title: "Number of Appointments"
+      slider_scale: 1
+      slider_step: 0.1
+      strategy_subset:
+        followup_reduction_adult_non-surgical: "Outpatient Followup Appointment Reduction (Adult, Non-Surgical)"
+        followup_reduction_adult_surgical: "Outpatient Followup Appointment Reduction (Adult, Surgical)"
+        followup_reduction_child_non-surgical: "Outpatient Followup Appointment Reduction (Children, Non-Surgical)"
+        followup_reduction_child_surgical: "Outpatient Followup Appointment Reduction (Children, Surgical)"
+    mitigators_op_gp_referred_first_attendance_reduction:
+      activity_type: op
+      mitigators_type: activity_avoidance
+      y_axis_title: "% of Attendances that were GP Referred First Attendances"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Appointments"
+      slider_scale: 1
+      slider_step: 0.1
+      strategy_subset:
+        gp_referred_first_attendance_reduction_adult_non-surgical: "Outpatient GP Referred First Attendance Reduction (Adult, Non-Surgical)"
+        gp_referred_first_attendance_reduction_adult_surgical: "Outpatient GP Referred First Attendance Reduction (Adult, Surgical)"
+        gp_referred_first_attendance_reduction_child_non-surgical: "Outpatient GP Referred First Attendance Reduction (Children, Non-Surgical)"
+        gp_referred_first_attendance_reduction_child_surgical: "Outpatient GP Referred First Attendance Reduction (Children, Surgical)"
+    mitigators_aae_frequent_attenders:
+      activity_type: aae
+      mitigators_type: activity_avoidance
+      y_axis_title: "% of Attendances that were Frequent Attenders"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Attendances"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        frequent_attenders_adult_ambulance: "A&E Frequent Attenders (Adult, Ambulance Conveyed)"
+        frequent_attenders_adult_walk-in: "A&E Frequent Attenders (Adult, Walk-in)"
+        frequent_attenders_child_ambulance: "A&E Frequent Attenders (Children, Ambulance Conveyed)"
+        frequent_attenders_child_walk-in: "A&E Frequent Attenders (Children, Walk-in)"
+    mitigators_aae_left_before_seen:
+      activity_type: aae
+      mitigators_type: activity_avoidance
+      y_axis_title: "% of Attendances Where the Patient Left Before Being Seen"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Attendances"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        left_before_seen_adult_ambulance: "A&E Patients Left Before Being Treated (Adult, Ambulance Conveyed)"
+        left_before_seen_adult_walk-in: "A&E Patients Left Before Being Treated (Adult, Walk-in)"
+        left_before_seen_child_ambulance: "A&E Patients Left Before Being Treated (Children, Ambulance Conveyed)"
+        left_before_seen_child_walk-in: "A&E Patients Left Before Being Treated (Children, Walk-in)"
+    mitigators_aae_discharged_no_treatment:
+      activity_type: aae
+      mitigators_type: activity_avoidance
+      y_axis_title: "% of Arrivals where the patient was discharged\nwith no treatment or investigations being performed"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Attendances"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        discharged_no_treatment_adult_ambulance: "A&E Discharged No Investigation or Treatment (Adult, Ambulance Conveyed)"
+        discharged_no_treatment_adult_walk-in: "A&E Discharged No Investigation or Treatment (Adult, Walk-in)"
+        discharged_no_treatment_child_ambulance: "A&E Discharged No Investigation or Treatment (Children, Ambulance Conveyed)"
+        discharged_no_treatment_child_walk-in: "A&E Discharged No Investigation or Treatment (Children, Walk-in)"
+    mitigators_aae_low_cost_discharged:
+      activity_type: aae
+      mitigators_type: activity_avoidance
+      y_axis_title: "% of Attendances Which Were Low Cost and Patient Was Discharged Home"
+      x_axis_title: "Financial Year"
+      number_type: !expr scales::percent_format()
+      funnel_x_title: "Number of Attendances"
+      slider_scale: 100
+      slider_step: 0.1
+      strategy_subset:
+        low_cost_discharged_adult_ambulance: "A&E Low Cost Discharged Attendances (Adult, Ambulance Conveyed)"
+        low_cost_discharged_adult_walk-in: "A&E Low Cost Discharged Attendances (Adult, Walk-in)"
+        low_cost_discharged_child_ambulance: "A&E Low Cost Discharged Attendances (Children, Ambulance Conveyed)"
+        low_cost_discharged_child_walk-in: "A&E Low Cost Discharged Attendances (Children, Walk-in)"
+production:
+  app_prod: yes
+  inputs_selection_app: /nhp/inputs
+  params_data_path: "/data/nhp/prod/inputs"
+dev:
+  golem_wd: !expr here::here()

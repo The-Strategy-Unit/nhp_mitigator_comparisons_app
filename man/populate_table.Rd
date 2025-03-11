@@ -9,7 +9,8 @@ populate_table(
   extracted_params,
   trust_code_lookup,
   mitigator_lookup,
-  nee_results
+  nee_results,
+  yaml_df
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ populate_table(
 \item{mitigator_lookup}{Tibble - from Azure file `mitigator-lookup.csv`}
 
 \item{nee_results}{Tibble - from fct_read.R of `nee_table.rds`}
+
+\item{yaml_df}{Tibble - output of `get_mitigator_baseline_description()`}
 }
 \value{
 Tibble of data

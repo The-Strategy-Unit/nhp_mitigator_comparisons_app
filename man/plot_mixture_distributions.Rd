@@ -24,5 +24,5 @@ plot_mixture_distributions(
 ggplot2 object showing the pointrange for the focal scheme in contrast with the mixture distributions for all schemes combined.
 }
 \description{
-Plot
+Plot the mixutre distribution plots.
 }
