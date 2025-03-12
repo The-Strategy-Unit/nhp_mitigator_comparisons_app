@@ -141,22 +141,22 @@ make_scheme_dt <- function(trust_code_lookup) {
 
 }
 
-
-#' Make the scheme uptake DT object
+#' Prepare data for the mitigator uptake DT object
 #'
-#' Renders a DT object showing the proportion of mitigators in use by each scheme.
+#' Renders a tibble showing the proportion of schemes using each mitigator.
 #' Two rates are shown:
-#' 1. covers all available mitigators,
-#' 2. covers the subset of mitigators selected by the user.
+#' 1. covers all available schemes,
+#' 2. covers the subset of schemes selected by the user.
 #'
 #' @param dat Tibble - the full prepared dataset for this app
 #' @param selected_schemes Character vector - a list of mitigator_codes selected by the user
 #'
-#' @return DT object listing schemes and the proportions of mitigators in use by them
+#' @return Tibble listing the mitigators and summaries of schemes using them
 #' @export
-make_mitigator_uptake_dt <- function(dat, selected_schemes) {
+make_mitigator_uptake_dat <- function(dat, selected_schemes) {
 
-  dat |>
+  dat_return <-
+    dat |>
     # remove ampersand from mitigator names - causes issues with DT filters
     dplyr::mutate(
       mitigator_name = gsub(
@@ -203,7 +203,27 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
       mitigator_activity_type = mitigator_activity_type |> factor(),
       mitigator_group = mitigator_group |> factor(),
       mitigator_name = mitigator_name |> factor()
-    ) |>
+    )
+
+  return(dat_return)
+}
+
+#' Make the scheme uptake DT object
+#'
+#' Renders a DT object showing the proportion of mitigators in use by each scheme.
+#' Two rates are shown:
+#' 1. covers all available mitigators,
+#' 2. covers the subset of mitigators selected by the user.
+#'
+#' @param dat Tibble - the full prepared dataset for this app
+#' @param selected_schemes Character vector - a list of mitigator_codes selected by the user
+#'
+#' @return DT object listing schemes and the proportions of mitigators in use by them
+#' @export
+make_mitigator_uptake_dt <- function(dat, selected_schemes) {
+
+  # prepare the data
+  make_mitigator_uptake_dat(dat = dat, selected_schemes = selected_schemes) |>
     # display as DT
     DT::datatable(
       rownames = FALSE,
@@ -222,9 +242,9 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
 }
 
 
-#' Make the mitigator uptake DT object
+#' Prepare the data for the scheme mitigator uptake DT object
 #'
-#' Renders a DT object showing the proportion of mitigators used by each scheme.
+#' Renders a tibble showing the proportion of mitigators used by each scheme.
 #' Two rates are shown:
 #' 1. covers all available mitigators,
 #' 2. covers the subset of mitigators selected by the user.
@@ -233,11 +253,12 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
 #' @param selected_schemes Character vector - a list of scheme_codes selected by the user
 #' @param focal_scheme Character vector - the focal scheme_code
 #'
-#' @return DT object listing schemes and the proportions of mitigators in use by them
+#' @return Tibble listing schemes and the proportions of mitigators in use by them
 #' @export
-make_scheme_uptake_dt <- function(dat, selected_mitigators, selected_schemes, focal_scheme) {
+make_scheme_uptake_dat <- function(dat, selected_mitigators, selected_schemes, focal_scheme) {
 
-  dat |>
+  dat_return <-
+    dat |>
     # count schemes per mitigator
     dplyr::summarise(
       n_mitigators_using_all = dplyr::n_distinct(
@@ -276,7 +297,34 @@ make_scheme_uptake_dt <- function(dat, selected_mitigators, selected_schemes, fo
       scheme_code = scheme_code |> factor(),
       scheme_name = scheme_name |> factor()
     ) |>
-    dplyr::filter(!is.na(scheme_code)) |>
+    dplyr::filter(!is.na(scheme_code))
+
+  return(dat_return)
+}
+
+
+#' Make the scheme mitigator uptake DT object
+#'
+#' Renders a DT object showing the proportion of mitigators used by each scheme.
+#' Two rates are shown:
+#' 1. covers all available mitigators,
+#' 2. covers the subset of mitigators selected by the user.
+#'
+#' @param dat Tibble - the full prepared dataset for this app
+#' @param selected_schemes Character vector - a list of scheme_codes selected by the user
+#' @param focal_scheme Character vector - the focal scheme_code
+#'
+#' @return DT object listing schemes and the proportions of mitigators in use by them
+#' @export
+make_scheme_uptake_dt <- function(dat, selected_mitigators, selected_schemes, focal_scheme) {
+
+  # prepare the data
+  make_scheme_uptake_dat(
+    dat = dat,
+    selected_mitigators = selected_mitigators,
+    selected_schemes = selected_scheme,
+    focal_scheme = focal_scheme
+  ) |>
     # display as DT
     DT::datatable(
       rownames = FALSE,

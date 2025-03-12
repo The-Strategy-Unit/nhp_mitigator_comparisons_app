@@ -310,12 +310,10 @@ plot_mixture_distributions <- function(
 
 }
 
-
-
-#' Plot the baseline comparison
+#' Prepare data for the baseline comparison
 #'
-#' Show a scatter plot with baseline rate on the x-axis and mitigator value on
-#' the y-axis.
+#' Prepare the data for scatter plot with baseline rate on the x-axis and
+#' mitigator value on the y-axis.
 #'
 #' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
 #' @param rates_data Tibble - historical rates data for schemes / mitigators
@@ -330,8 +328,8 @@ plot_mixture_distributions <- function(
 #' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
 #' @param facet_height_px Integer (default = 250) the pixel height of each facet in the plot
 #'
-#' @returns {plotly} plot
-plot_baseline_comparison <- function(
+#' @returns Tibble
+prep_baseline_comparison <- function(
     dat, rates_data, mitigator_codes, focal_scheme_code,
     rate_title = 'Baseline rate',
     value_title = 'Percent mitigated',
@@ -402,6 +400,60 @@ plot_baseline_comparison <- function(
         as.character()
     )
 
+  return(plot_dat)
+
+}
+
+
+#' Plot the baseline comparison
+#'
+#' Show a scatter plot with baseline rate on the x-axis and mitigator value on
+#' the y-axis.
+#'
+#' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param rates_data Tibble - historical rates data for schemes / mitigators
+#' @param mitigator_codes Character vector - the mitigator codes to visualise
+#' @param focal_scheme_code Character vector - the scheme code for the focal scheme
+#' @param rate_title Character - the label for the x-axis
+#' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
+#' @param trendline Boolean (default = TRUE) show a trendline between mid-points
+#' @param range Boolean (default = TRUE) show the 10% and 90% range as points connected by a line
+#' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
+#' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
+#' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
+#' @param facet_height_px Integer (default = 250) the pixel height of each facet in the plot
+#'
+#' @returns {plotly} plot
+plot_baseline_comparison <- function(
+    dat, rates_data, mitigator_codes, focal_scheme_code,
+    rate_title = 'Baseline rate',
+    value_title = 'Percent mitigated',
+    trendline = TRUE,
+    range = TRUE,
+    scheme_label = TRUE,
+    quadrants = TRUE,
+    facet_columns = 1,
+    facet_height_px = 250
+) {
+
+  # prepare the data
+  plot_dat <-
+    prep_baseline_comparison(
+    dat = dat,
+    rates_data = rates_data,
+    mitigator_codes = mitigator_codes,
+    focal_scheme_code = focal_scheme_code,
+    rate_title = 'Baseline rate',
+    value_title = 'Percent mitigated',
+    trendline = TRUE,
+    range = TRUE,
+    scheme_label = TRUE,
+    quadrants = TRUE,
+    facet_columns = 1,
+    facet_height_px = 250
+    )
+
+  # get the quadrants
   plot_quadrants <-
     plot_dat |>
     # divide into quadrants
