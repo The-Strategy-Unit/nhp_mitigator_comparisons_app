@@ -90,46 +90,81 @@ app_ui <- function(request) {
             id = "accordion_mitigators",
             title = "Select mitigators",
             icon = bsicons::bs_icon("sliders"),
-            shiny::selectInput(
-              inputId = "activity_type",
-              label = bslib::tooltip(
-                trigger = list(
-                  "Activity type",
-                  bsicons::bs_icon("info-circle")
+
+            # new mitigator selection ---
+            shinyWidgets::panel(
+
+              datamods::select_group_ui(
+                id = "mitigator_filters",
+                inline = FALSE,
+                vs_args = list(
+                  search = TRUE,
+                  showValuesAsTags = TRUE
                 ),
-                "Select an activity type to filter the mitigators by."
+                params = list(
+                  mitigator_type = list(
+                    inputId = "mitigator_type",
+                    label = "Mitigator type",
+                    placeholder = "..."
+                  ),
+                  activity_type = list(
+                    inputId = "activity_type",
+                    label = "Activity type",
+                    placeholder = "..."
+                  ),
+                  grouping = list(
+                    inputId = "grouping",
+                    label = "Mitigator group",
+                    placeholder = "..."
+                  ),
+                  strategy_subset = list(
+                    inputId = "strategy_subset",
+                    label = "Strategy subset",
+                    placeholder = "..."
+                  ),
+                  mitigator_name = list(
+                    inputId = "mitigator_name",
+                    label = "Mitigator",
+                    placeholders = "..."
+                  )
+                )
               ),
-              choices = c("All", "Inpatients", "Outpatients", "Accident and Emergency"),
-              selected = "All",
-              multiple = FALSE
-            ),
-            shiny::selectInput(
-              inputId = "mitigator_groups",
-              label = bslib::tooltip(
-                trigger = list(
-                  "Mitigator group",
-                  bsicons::bs_icon("info-circle")
-                ),
-                "Select a group to pre-populate the mitigator selection box."
+
+              # add some separation between 'reset filters' and below button
+              shiny::br(),
+
+              # button to add mitigators to the selection box (🍫)
+              shiny::actionButton(
+                inputId = "mitigators_add_to_selected",
+                label = "Add to selection",
+                icon = shiny::icon("arrow-down", lib = "font-awesome"),
+                class = "btn-light"
               ),
-              choices = NULL,
-              selected = NULL,
-              multiple = FALSE
-            ),
-            shiny::selectInput(
+            ), # end of the panel
+
+            # list mitigators
+            shiny::selectizeInput(
               inputId = "mitigators",
-              label = bslib::tooltip(
-                trigger = list(
-                  "Mitigators to visualise",
-                  bsicons::bs_icon("info-circle")
-                ),
-                "Prepopulated given the activity type and mitigator-group selections, but you can add or remove individual mitigators."
-              ),
+              label = "Selected mitigators",
               choices = NULL,
               selected = NULL,
-              multiple = TRUE
-            )
+              multiple = TRUE,
+              options = list("plugins" = list("remove_button"))
+            ),
+
+            # clear selected mitigators
+            shiny::actionLink(
+              inputId = "clear_selected_mitigators",
+              label = bslib::tooltip(
+                trigger = list(
+                  bsicons::bs_icon("x-lg"),
+                  "Clear selected"
+                ),
+                "Remove all mitigators from the current selection"
+              )
+            ),
           ),
+
           ### other settings ----
           bslib::accordion_panel(
             id = "accordion_other_settings",
@@ -209,6 +244,7 @@ app_ui <- function(request) {
 
           #### pointrange ----
           bslib::nav_panel(
+            value = "nav_panel_pointrange_pointrange",
             title = bslib::tooltip(
               trigger = list(
                 'Point-range',

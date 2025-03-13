@@ -29,6 +29,8 @@ app_server <- function(input, output, session) {
   mitigator_lookup <- container_support |>
     AzureStor::storage_read_csv("mitigator-lookup.csv", show_col_types = FALSE)
 
+  mitigator_reference <- mitigator_lookup |> prepare_mitigators()
+
   nee_results <- container_support |> read_nee("nee_table.rds")
 
   peers <- container_support |>
@@ -65,6 +67,54 @@ app_server <- function(input, output, session) {
   ra$pointrange_min_height <- 100
   ra$mixturedist_min_height <- 100
 
+  # Mitigator selections
+  mitigator_server <- datamods::select_group_server(
+    id = "mitigator_filters",
+    data = mitigator_reference,
+    vars = c(
+      "mitigator_type",
+      "activity_type",
+      "grouping",
+      "strategy_subset",
+      "mitigator_name"
+    )
+  )
+
+  # Bookmarking ----
+  # restore some settings using the manual 'onRestored' function because these
+  # aren't automatically restored.
+  shiny::onRestored(function(state) {
+
+    # schemes ---
+    # select bookmarked focal scheme
+    shiny::updateSelectInput(
+      inputId = "focus_scheme",
+      selected = state$input$focus_scheme
+    )
+
+    # select bookmarked schemes to visualise
+    shiny::updateSelectInput(
+      inputId = "schemes",
+      selected = state$input$schemes
+    )
+
+    # mitigators ---
+    # get a formatted list of mitigators
+    mitigators_selected <- add_to_selected_mitigators(
+      df = mitigator_reference,
+      selected_currently = NA,
+      new_selections = state$input$mitigators
+    )
+
+    # update the selected mitigators list
+    shiny::updateSelectizeInput(
+      inputId = "mitigators",
+      selected = mitigators_selected,
+      choices = mitigators_selected,
+      server = TRUE
+    )
+  })
+
   # Reactives ----
 
   # ensure dat reflects the user's preferred view
@@ -97,12 +147,7 @@ app_server <- function(input, output, session) {
 
   dat_filtered <- reactive({
 
-    if (input$activity_type != "All") {
-      dat_return <- dat_reactive() |>
-        dplyr::filter(mitigator_activity_type == input$activity_type)
-    } else {
-      dat_return <- dat_reactive()
-    }
+    dat_return <- dat_reactive()
 
     # standardise values to 2041 if requested
     if (input$standardise_2041) {
@@ -129,21 +174,6 @@ app_server <- function(input, output, session) {
 
     return(dat_return)
 
-  })
-
-  available_mitigators <- reactive({
-    dat_filtered() |> get_all_mitigators()
-  })
-
-  available_mitigator_groups <- reactive({
-    dat_filtered() |> get_all_mitigator_groups()
-  })
-
-  mitigator_group_set <- reactive({
-    dat_filtered() |>
-      dplyr::filter(mitigator_group == input$mitigator_groups) |>
-      dplyr::distinct(mitigator_code) |>
-      dplyr::pull()
   })
 
   ## dat_selected_pointrange ----
@@ -278,9 +308,9 @@ app_server <- function(input, output, session) {
       shiny::need(input$mitigators, message = "Select at least one mitigator.")
     )
 
-    dat <- dat_filtered()
+    #dat <- dat_filtered()
     dat <-
-      dat |>
+      dat_filtered() |>
       prepare_heatmap_dat(
         dat = _,
         mitigator_codes = input$mitigators,
@@ -309,18 +339,18 @@ app_server <- function(input, output, session) {
       shiny::need(input$mitigators, message = "Select at least one mitigator.")
     )
 
-    # dat <- dat_filtered() |>
-    #   dplyr::filter(
-    #     mitigator_code %in% input$mitigators
-    #   )
-    #
-    # dat <- get_mixture_distributions_dat(dat = dat)
-
-    # using pre-calculated mixture distributions, filtered for selected mitigators
-    dat <- dat_mixture_distributions() |>
+    dat <- dat_filtered() |>
       dplyr::filter(
         mitigator_code %in% input$mitigators
       )
+
+    dat <- get_mixture_distributions_dat(dat = dat)
+
+    # using pre-calculated mixture distributions, filtered for selected mitigators
+    # dat <- dat_mixture_distributions() |>
+    #   dplyr::filter(
+    #     mitigator_code %in% input$mitigators
+    #   )
 
   })
 
@@ -357,22 +387,42 @@ app_server <- function(input, output, session) {
 
   })
 
+  # indicate how many mitigators are available for selection
   shiny::observe({
-    shiny::updateSelectInput(
-      session,
-      "mitigator_groups",
-      choices = available_mitigator_groups(),
-      selected = available_mitigator_groups()[1]
+
+    # how many mitigators are available
+    n_mit <- mitigator_server() |> nrow()
+
+    # update the button indicating how many mitigators are in scope
+    shiny::updateActionButton(
+      inputId = "mitigators_add_to_selected",
+      label = glue::glue("Add to selected [{n_mit}]"),
+      icon = shiny::icon("arrow-down", lib = "font-awesome")
     )
   })
 
-  shiny::observe({
-    shiny::updateSelectInput(
-      session,
-      "mitigators",
-      choices = available_mitigators(),
-      selected = mitigator_group_set()
+  # adding mitigator selections
+  shiny::observeEvent(input$mitigators_add_to_selected, {
+
+    # compile a list of selected mitigators
+    mitigators_selected <- add_to_selected_mitigators(
+      df = mitigator_reference,
+      selected_currently = input$mitigators,
+      new_selections = mitigator_server()$mitigator_code
     )
+
+    # add the selected mitigators to the selected list
+    shiny::updateSelectizeInput(
+      inputId = "mitigators",
+      selected = mitigators_selected,
+      choices = mitigators_selected
+    )
+
+  })
+
+  # removing all mitigator selections
+  shiny::observeEvent(input$clear_selected_mitigators, {
+    shinyjs::reset("mitigators")
   })
 
   ## Enablers ----
