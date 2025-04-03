@@ -1,6 +1,6 @@
 Package: nhp.inputs.report.app
 Title: NHP Mitigator Comparison App
-Version: 0.3.2
+Version: 0.7.1
 Authors@R: c(
     person("Matt", "Dray", , "matt.dray@nhs.net", role = c("cre", "aut")),
     person("Craig", "Parylo", role = "aut"),
@@ -11,6 +11,7 @@ Description: An application to explore the mitigator values selected by
     Trusts in the NHP Inputs App.
 License: MIT + file LICENSE
 Imports: 
+    arrow,
     AzureAuth,
     AzureStor,
     bsicons,
@@ -33,6 +34,7 @@ Imports:
     jsonlite,
     magrittr,
     markdown,
+    nanoparquet,
     pins,
     plotly,
     purrr,
@@ -59,5 +61,5 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-Remotes:  
+Remotes: 
     dreamRs/datamods
