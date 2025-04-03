@@ -125,3 +125,28 @@ fetch_tagged_runs_params <- function(runs_meta, container_results) {
     purrr::map(purrr::pluck("params")) |>
     purrr::set_names(runs_meta$dataset)  # name with scheme code
 }
+
+#' Read Rates (Trend) Data
+#' Fetch and read parquet files that store contextual data used in the NHP
+#' inputs app.
+#' @param file Character. Name of parquet file to be read (without the
+#'     extension).
+#' @param inputs_data_version Character. The app version for which you want to
+#'     return data (there's a separate versioned folder of parquet files for
+#'     each release).
+#' @return A tibble.
+read_provider_data <- function(
+    container_inputs,
+    file = "rates",
+    inputs_data_version = Sys.getenv("NHP_INPUTS_DATA_VERSION", "dev")
+) {
+
+  parquet_in <- AzureStor::storage_download(
+    container_inputs,
+    src = glue::glue("{inputs_data_version}/{file}.parquet"),
+    dest = NULL
+  )
+
+  arrow::read_parquet(parquet_in) |> tibble::as_tibble()
+
+}
