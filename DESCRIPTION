@@ -34,7 +34,6 @@ Imports:
     jsonlite,
     magrittr,
     markdown,
-    nanoparquet,
     pins,
     plotly,
     purrr,
