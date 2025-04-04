@@ -8,7 +8,7 @@ app_server <- function(input, output, session) {
 
   # Prepare data ----
 
-  ## Read data ----
+  ## Make connections ----
 
   container_results <-
     get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"))
@@ -16,10 +16,19 @@ app_server <- function(input, output, session) {
   container_support <-
     get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
 
+  container_inputs <-
+    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_INPUTS"))
+
   board <- pins::board_connect()
+
+  ## Read data ----
+
+  rates_data <- container_inputs |>
+    read_provider_data("rates") |>
+    dplyr::select(procode = provider, strategy, fyear, rate, n = denominator)
+
   params <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_params")
   runs_meta <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_meta")
-  rates_data <- pins::pin_read(board, name = "thomas.jemmett/inputs_app_rates_data_v2-1")
   extracted_params <- extract_params(params, runs_meta)
 
   skeleton_table <- prepare_skeleton_table(extracted_params)
