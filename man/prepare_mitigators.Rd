@@ -2,7 +2,7 @@
 % Please edit documentation in R/fct_tabulate.R
 \name{prepare_mitigators}
 \alias{prepare_mitigators}
-\title{Prepare Mitigator lookup}
+\title{Wrangle Mitigator Lookup}
 \usage{
 prepare_mitigators(mitigator_lookup)
 }
@@ -13,7 +13,7 @@ prepare_mitigators(mitigator_lookup)
 Tibble of mitigator lookups
 }
 \description{
-Prepare the mitigator lookup file for subsequent use by
-a) cleaning variable names
-b) ordering the variables by cardinality
+Prepare mitigator lookup file that's been read in from Azure. Rename/adjust
+content to recreate the original form of the mitigator lookup file, which has
+since been adjusted.
 }
