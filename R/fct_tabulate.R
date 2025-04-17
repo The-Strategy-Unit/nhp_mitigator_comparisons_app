@@ -516,17 +516,60 @@ get_mitigator_baseline_description <- function(yaml) {
   return(df_return)
 }
 
-
-#' Prepare Mitigator lookup
+#' Wrangle Mitigator Lookup
 #'
-#' Prepare the mitigator lookup file for subsequent use by
-#' a) cleaning variable names
-#' b) ordering the variables by cardinality
+#' Prepare mitigator lookup file that's been read in from Azure. Rename/adjust
+#' content to recreate the original form of the mitigator lookup file, which has
+#' since been adjusted.
 #'
 #' @param mitigator_lookup Tibble of mitigator lookup data
 #'
 #' @return Tibble of mitigator lookups
-prepare_mitigators <- function(mitigator_lookup) {
+prepare_mitigators  <- function(mitigator_lookup) {
+
+  mitigator_lookup |>
+    dplyr::select(
+      mitigator_code,
+      activity_type,
+      mitigator_type,
+      mitigator_variable,
+      mitigator_name,
+      mitigator_subset,
+      mitigator_grouping
+    ) |>
+    dplyr::rename_with(\(col_name) {
+      col_name |>
+        stringr::str_to_sentence() |>
+        stringr::str_replace_all("_", " ")
+    }) |>
+    dplyr::rename(
+      "Strategy variable" = "Mitigator variable",
+      "Strategy name" = "Mitigator name",
+      "Strategy subset" = "Mitigator subset",
+      "Grouping" = "Mitigator grouping"
+    ) |>
+    dplyr::mutate(
+      `Activity type` = dplyr::case_match(
+        `Activity type`,
+        "aae" ~ "Accident and Emergency",
+        "ip" ~ "Inpatients",
+        "op" ~ "Outpatients"
+      )
+    )
+
+}
+
+#' Prepare Mitigator Lookup
+#'
+#' Prepare the mitigator lookup file for subsequent use by:
+#' a) cleaning variable names
+#' b) ordering the variables by cardinality
+#' Used when handling user's mitigator selections.
+#'
+#' @param mitigator_lookup Tibble of mitigator lookup data
+#'
+#' @return Tibble of mitigator lookups
+prepare_mitigators_ref <- function(mitigator_lookup) {
 
   # clean up the variable names
   mitigator_lookup <-

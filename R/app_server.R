@@ -36,9 +36,10 @@ app_server <- function(input, output, session) {
   trust_code_lookup <- get_trust_lookup(container_support = container_support)
 
   mitigator_lookup <- container_support |>
-    AzureStor::storage_read_csv("mitigator-lookup.csv", show_col_types = FALSE)
+    AzureStor::storage_read_csv("mitigator-lookup.csv", col_types = "c") |>
+    prepare_mitigators()
 
-  mitigator_reference <- mitigator_lookup |> prepare_mitigators()
+  mitigator_reference <- mitigator_lookup |> prepare_mitigators_ref()
 
   nee_results <- container_support |> read_nee("nee_table.rds")
 
