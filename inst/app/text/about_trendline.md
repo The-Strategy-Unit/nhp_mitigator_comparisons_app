@@ -12,6 +12,11 @@ Hovering the lines reveals contextual information such as scheme name and code, 
 
 Click the plot's camera icon to download a copy of the plot as a high quality image (scalable vector graphic).
 
+#### Data Availability
+
+Note that schemes and mitigators will not be plotted if there is no data to show.
+Schemes may have chosen not to set a mitigator, or a mitigator [may not have been available](https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/mitigators_lookup.html) when developing a scenario.
+
 #### Settings
 
 ##### Show other schemes?
@@ -20,6 +25,8 @@ Toggle this option to show trend lines of historic activity for other schemes as
 Hovering over the lines reveals contextual information such as scheme name and code, the year and rate of activity.
 
 This is useful to compare the observed trend in the focal scheme's activity with other schemes.
+
+Note that other schemes' data won't be plotted if there is no data to show.
 
 ##### Show horizon on timeline?
 

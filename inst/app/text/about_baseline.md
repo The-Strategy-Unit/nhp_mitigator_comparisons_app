@@ -16,6 +16,11 @@ Hovering each point reveals contextual information such as scheme name and code,
 
 Click the plot's camera icon to download a copy of the plot as a high quality image (scalable vector graphic).
 
+#### Data Availability
+
+Note that schemes and mitigators will not be plotted if there is no data to show.
+Schemes may have chosen not to set a mitigator, or a mitigator [may not have been available](https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/mitigators_lookup.html) when developing a scenario.
+
 #### Settings
 
 ##### Show full range?
@@ -26,7 +31,8 @@ These are useful to see how variable the scheme's estimate is.
 
 ##### Show quadrant lines?
 
-Toggle this option to show or hide dotted lines dividing the plot into quadrants. Each line is the average (mean) value of all schemes' results for that mitigator.
+Toggle this option to show or hide dotted lines dividing the plot into quadrants.
+Each line is the average (mean) value of all schemes' results for that mitigator.
 
 This is useful to see which schemes fall into each quadrant, such as high baseline and high reduction.
 

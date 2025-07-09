@@ -16,6 +16,11 @@ Plots with a narrow bell-shaped curve indicate alignment in how schemes have res
 
 Plots with multiple peaks or very wide prediction intervals indicate variation in schemes' responses.
 
+#### Data Availability
+
+Note that schemes and mitigators will not be plotted if there is no data to show.
+Schemes may have chosen not to set a mitigator, or a mitigator [may not have been available](https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/mitigators_lookup.html) when developing a scenario.
+
 #### Settings
 
 ##### Show ECDF?

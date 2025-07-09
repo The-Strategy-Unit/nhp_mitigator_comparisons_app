@@ -10,6 +10,11 @@ Values are shown as cells at intersections between scheme and mitigator and repr
 
 Empty spaces indicate where a scheme has not set a value for a mitigator.
 
+#### Data Availability
+
+Note that schemes and mitigators will not be plotted if there is no data to show.
+Schemes may have chosen not to set a mitigator, or a mitigator [may not have been available](https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/mitigators_lookup.html) when developing a scenario.
+
 #### Settings
 
 ##### Value type

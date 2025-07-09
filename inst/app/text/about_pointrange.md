@@ -13,6 +13,11 @@ You can control the number of plots per row using the 'Number of charts per row'
 
 Responses for the *Focal scheme* are highlighted in red.
 
+#### Data Availability
+
+Note that schemes and mitigators will not be plotted if there is no data to show.
+Schemes may have chosen not to set a mitigator, or a mitigator [may not have been available](https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/mitigators_lookup.html) when developing a scenario.
+
 #### Settings
 
 ##### Standardise by horizon length
