@@ -490,9 +490,9 @@ app_server <- function(input, output, session) {
 
   ### pointrange ----
 
-  # adjust the 'number of facet columns' slider to match the number of facets
-  # i.e. so can select up to a minimum of one facet per row or list all on a
-  # single row
+  # adjust the 'number of charts per row' (number of facet columns) slider to
+  # match the number of facets i.e. so can select up to a minimum of one facet
+  # per row or list all on a single row
   shiny::observe({
 
     dat <- dat_selected_pointrange()

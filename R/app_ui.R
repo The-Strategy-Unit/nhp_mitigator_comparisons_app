@@ -290,10 +290,10 @@ app_ui <- function(request) {
                       inputId = "toggle_invert_facets",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Facet by scheme?",
+                          "One plot per scheme?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Invert the pointrange plots to show mitigators on the y axis and scheme as the faceting variable."
+                        "Invert the pointrange plots to generate a sub-plot for each scheme with mitigators on the y axis."
                       ),
                       value = FALSE
                     ),
@@ -312,10 +312,10 @@ app_ui <- function(request) {
                       inputId = "facet_columns",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Number of facet columns",
+                          "Number of charts per row",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Choose the number of columns over which to break the faceted pointrange charts."
+                        "Choose the number of plots to show side-by-side."
                       ),
                       min = 1,
                       max = 5, # will be reactively updated to match the number of facets

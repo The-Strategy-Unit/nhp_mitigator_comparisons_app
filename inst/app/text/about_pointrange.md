@@ -6,9 +6,10 @@ Use these plots to compare and contrast schemes' estimated predictions for mitig
 
 Schemes are listed alphabetically on the y-axis by default and either the 80% prediction-interval or the percent of activity mitigated is shown on the x-axis.
 
-Separate plots are provided for each of your selected mitigators. These separate plots are called 'facets'.
+Separate plots are provided for each of your selected mitigators.
 
-Facets are shown in columns and repeated on several rows as required. You can control the number of facet columns using the 'Number of facet columns' slider control in the settings sidebar.
+Plots are placed in 'columns' horizontally and repeated on several vertical 'rows' as required.
+You can control the number of plots per row using the 'Number of charts per row' slider control in the settings sidebar.
 
 Responses for the *Focal scheme* are highlighted in red.
 
@@ -28,7 +29,7 @@ Enable this option to switch between mitigator names and the mitigator codes.
 
 Using mitigator codes is useful if horizontal space is limited.
 
-##### Facet by scheme
+##### One chart per scheme
 
 Enable this option to show separate plots for each scheme, with the mitigators listed on the y-axis.
 
@@ -40,9 +41,9 @@ Enable this option to see the range of values suggested from the National Elicit
 
 These are useful aid to check if values are within the ranges suggested by national experts.
 
-##### Number of facet columns
+##### Number of charts per row
 
-Use the slider to control the number of facets shown in each row.
+Use the slider to control the number of plots shown side-by-side across each row.
 
 ##### Summary
 

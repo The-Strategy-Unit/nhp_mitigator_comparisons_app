@@ -4,7 +4,7 @@ Use these to compare each scheme's ambitions relative to their baseline rate.
 
 #### Structure
 
-Mitigators are listed in separate plots (facets), with baseline rates across the x-axes and the y-axis showing the scheme's ambitions for each mitigator, shown as either 80% prediction interval or the percent of activity mitigated depending on your preferred view.
+Mitigators are shown in separate plots, with baseline rates across the x-axes and the y-axis showing the scheme's ambitions for each mitigator, shown as either 80% prediction interval or the percent of activity mitigated depending on your preferred view.
 
 Overlaying the plots are dotted lines indicating the mean scheme values, dividing the plot into four quadrants:
 

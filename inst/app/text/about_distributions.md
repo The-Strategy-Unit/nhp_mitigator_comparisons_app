@@ -6,7 +6,7 @@ NB, point-estimates (prediction intervals with the same low and high values) are
 
 #### Structure
 
-Mitigators are listed in separate plots (facets), with either the 80% prediction interval or the percent of activity mitigated, on the x-axes and the y-axis showing the density of the mixture distribution.
+Mitigators are shown in separate plots, with either the 80% prediction interval or the percent of activity mitigated, on the x-axes and the y-axis showing the density of the mixture distribution.
 
 Overlaying the plots are dotted lines indicating the 80% range between low and high values for the overall distributions, highlighted in turquoise, and a dashed line indicating the mid point.
 
