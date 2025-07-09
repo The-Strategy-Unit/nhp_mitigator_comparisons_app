@@ -969,7 +969,7 @@ app_ui <- function(request) {
                           "Show other schemes?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Shows trendline plots for schemes other than the focal scheme as grey traces."
+                        "Shows trendline plots for schemes other than the focal scheme as grey lines"
                       ),
                       value = FALSE
                     ),
