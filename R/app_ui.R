@@ -203,10 +203,10 @@ app_ui <- function(request) {
               inputId = "include_point_estimates",
               label = bslib::tooltip(
                 trigger = list(
-                  "Include point estimates?",
+                  "Include zero-mitigation predictions?",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Should point-estimates indicating zero mitigation be included in the results? Toggle off (default) to exclude all point-estimates indicating 0% mitigation, toggle on to show all mitigator values."
+                "Include mitigators where a scheme selected a point-value of zero mitigation, rather than a range? Toggle on to enable, toggle off (default) to exclude."
               ),
               value = FALSE,
               status = "primary",
