@@ -41,6 +41,8 @@ Enable this option to see the range of values suggested from the National Elicit
 
 These are useful aid to check if values are within the ranges suggested by national experts.
 
+Bars won't appear if a mitigator wasn't part of the NEE exercise.
+
 ##### Number of charts per row
 
 Use the slider to control the number of plots shown side-by-side across each row.

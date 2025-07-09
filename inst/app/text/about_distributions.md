@@ -29,3 +29,5 @@ These are useful to simplify complex, multi-peak distributions to a smoother lin
 Enable this option to see the range of values suggested from the National Elicitation Exercise (NEE) as bars.
 
 These are useful aid to check if values are within the ranges suggested by national experts.
+
+Bars won't appear if a mitigator wasn't part of the NEE exercise.

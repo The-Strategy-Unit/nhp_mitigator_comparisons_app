@@ -304,9 +304,9 @@ app_ui <- function(request) {
                           "Show NEE range?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Include reference results from the National Elicitation Exercise (NEE) for 2039/40. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                        "Include reference results from the National Elicitation Exercise (NEE) for 2039/40 if the mitigator was part of that exercise. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
                       ),
-                      value = TRUE
+                      value = FALSE
                     ),
                     shiny::sliderInput(
                       inputId = "facet_columns",
@@ -439,9 +439,9 @@ app_ui <- function(request) {
                           "Show NEE range?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Include reference results from the National Elicitation Exercise (NEE) for 2039/40. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                        "Include reference results from the National Elicitation Exercise (NEE) for 2039/40 if the mitigator was part of that exercise. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
                       ),
-                      value = TRUE
+                      value = FALSE
                     ),
 
                     shiny::bookmarkButton(
