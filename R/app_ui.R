@@ -533,7 +533,7 @@ app_ui <- function(request) {
                         "Schemes' low or high 80% confidence internal selection in the NHP inputs app, or the range or midpoint of these."
                       ),
                       choices = c(
-                        Binary = "value_binary",
+                        Submitted = "value_binary",
                         Midpoint = "value_mid",
                         Range = "value_range",
                         Low = "value_lo",
@@ -557,7 +557,7 @@ app_ui <- function(request) {
                       inputId = "toggle_heatmap_scale_fill_by_mitigator",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Fill by mitigator?",
+                          "Set colour within mitigator?",
                           bsicons::bs_icon("info-circle")
                         ),
                         "Controls whether the range of colours is set per mitigator or across the whole heatmap. Toggle on to colour the heatmap by each mitigator (default) or off to colour the heatmap by all values."
@@ -590,7 +590,7 @@ app_ui <- function(request) {
                       inputId = "toggle_heatmap_scheme_adornments",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Adorn scheme names?",
+                          "Add run information to scheme name?",
                           bsicons::bs_icon("info-circle")
                         ),
                         "Controls whether scheme names include additional information. Toggle off (default) to show scheme name. Toggle on to see the scheme names along with scheme codes, run stage and years for baseline and horizon."
@@ -641,10 +641,10 @@ app_ui <- function(request) {
                       inputId = "heatmap_binary_colour",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Colour for binary plot",
+                          "Colour for 'submitted' plot",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "The colour to use where a scheme has set a value for a mitigator - 'binary' plot types only."
+                        "The colour to use where a scheme has set a value for a mitigator - 'submitted' plot types only."
                       ),
                       value = "#273c75",
                       showColour = "both",
@@ -657,7 +657,7 @@ app_ui <- function(request) {
                           "Colour for low values",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "The colour to use where a scheme has set a low value for a mitigator - non-'binary' plot types only."
+                        "The colour to use where a scheme has set a low value for a mitigator - non-'submitted' plot types only."
                       ),
                       value = "#22A6B3",
                       showColour = "both",
@@ -670,7 +670,7 @@ app_ui <- function(request) {
                           "Colour for high values",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "The colour to use where a scheme has set a high value for a mitigator - non-'binary' plot types only."
+                        "The colour to use where a scheme has set a high value for a mitigator - non-'submitted' plot types only."
                       ),
                       value = "#130F40",
                       showColour = "both",
