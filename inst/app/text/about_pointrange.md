@@ -51,4 +51,4 @@ Enable this option to see an aggregate summary of selected schemes' responses (e
 
 This is useful to compare the focal scheme with an aggregate summary of the other schemes' responses.
 
-Enable the *Summary full range* option to see the extreme upper and lower values for the ranges.
+Enable the *Range (selected schemes)* option to see the extreme upper and lower values for the ranges.

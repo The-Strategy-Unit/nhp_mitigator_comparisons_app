@@ -475,7 +475,8 @@ app_server <- function(input, output, session) {
       shinyjs::hide("heatmap_binary_colour")
     }
 
-    # disable 'summary full range' switch if 'summary' is disabled
+    # disable 'range of selected schemes' switch if 'summary of selected
+    # schemes' is disabled
     if (input$toggle_aggregate_summary) {
       shinyjs::enable("toggle_aggregate_summary_minmaxrange")
     } else {

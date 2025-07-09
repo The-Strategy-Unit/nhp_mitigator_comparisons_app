@@ -328,7 +328,7 @@ app_ui <- function(request) {
                       inputId = "toggle_aggregate_summary",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Summary",
+                          "Summary (selected schemes)",
                           bsicons::bs_icon("info-circle")
                         ),
                         "Add an aggregate summary of selected schemes' responses to the plot (includes all but the focal scheme)."
@@ -341,7 +341,7 @@ app_ui <- function(request) {
                       inputId = "toggle_aggregate_summary_minmaxrange",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Summary full range",
+                          "Range (selected schemes)",
                           bsicons::bs_icon("info-circle")
                         ),
                         "Show the full range of selected schemes' responses, i.e. the extreme upper and lower values, or switch off to view the average (mean) range."
