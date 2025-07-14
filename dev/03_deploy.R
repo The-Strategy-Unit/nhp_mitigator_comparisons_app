@@ -1,7 +1,3 @@
-# Deploy to the current and new Posit Connect servers. The current server
-# (strategyunitwm.nhs.uk) will be switched off in May/June 2025 and the new
-# server (currently named su.mlcsu.org) will take its name.
-
 deploy <- function(server_name, app_id) {
   rsconnect::deployApp(
     appName = "nhp_inputs_report_app",
@@ -20,5 +16,4 @@ deploy <- function(server_name, app_id) {
   )
 }
 
-deploy("connect.strategyunitwm.nhs.uk", 298)
-deploy("connect.su.mlcsu.org", 108)
+deploy("connect.strategyunitwm.nhs.uk", 108)
