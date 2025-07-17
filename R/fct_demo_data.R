@@ -46,8 +46,8 @@ generate_test_dataset <- function(
       combos |>
         dplyr::mutate(
           lo = runif(nrows),
-          hi = pmin(lo + runif(nrows, 0.25, 0.5), 1),
-          mid = (lo + hi) / 2,
+          hi = pmin(.data$lo + runif(nrows, 0.25, 0.5), 1),
+          mid = (.data$lo + .data$hi) / 2,
           years = sample(20:30, nrows, replace = TRUE)
         ) |>
         dplyr::slice_sample(prop = prop_selected)
@@ -64,9 +64,9 @@ generate_test_dataset <- function(
 generate_peer_set <- function(test_dataset, n_peers = 5) {
 
   schemes <- test_dataset |>
-    dplyr::distinct(scheme) |>
-    dplyr::arrange(scheme) |>
-    dplyr::pull(scheme)
+    dplyr::distinct(.data$scheme) |>
+    dplyr::arrange(.data$scheme) |>
+    dplyr::pull(.data$scheme)
 
   peer_set <- vector("list", length = length(schemes)) |>
     setNames(schemes)
@@ -83,6 +83,6 @@ generate_peer_set <- function(test_dataset, n_peers = 5) {
       names_to = "scheme",
       values_to = "peer"
     ) |>
-    dplyr::arrange(scheme, peer)
+    dplyr::arrange(.data$scheme, .data$peer)
 
 }
