@@ -25,7 +25,7 @@ plot_heatmap(
 
 \item{toggle_scale_fill_by_mitigator}{Boolean - value from `input$toggle_heatmap_scale_fill_by_mitigator` - used to control whether the colour is scaled across the whole heatmap (FALSE) or applied across each mitigator (TRUE)}
 
-\item{values_displayed}{Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80% prediction interval - used to label the scales}
+\item{values_displayed}{Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales}
 
 \item{heatmap_type}{Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value}
 

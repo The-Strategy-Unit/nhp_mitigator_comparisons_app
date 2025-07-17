@@ -16,7 +16,7 @@ update_dat_values(
 
 \item{values_displayed}{Character - the value in `input$values_displayed` indicating the user's preferred view}
 
-\item{include_point_estimates}{Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0% mitigation (100% prediction) are to be included}
+\item{include_point_estimates}{Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0\% mitigation (100\% prediction) are to be included}
 
 \item{focal_scheme_code}{Character - the scheme code of the focal scheme}
 }
@@ -24,7 +24,7 @@ update_dat_values(
 Tibble of data with the 'value_' and 'nee_' fields updated to match the user's preferred values
 }
 \description{
-Users are able to select from 'Percent of activity mitigated' and '80%
+Users are able to select from 'Percent of activity mitigated' and '80\%
 prediction interval' in the global settings sidebar.
 }
 \details{

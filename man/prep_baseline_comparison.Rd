@@ -34,7 +34,7 @@ prep_baseline_comparison(
 
 \item{trendline}{Boolean (default = TRUE) show a trendline between mid-points}
 
-\item{range}{Boolean (default = TRUE) show the 10% and 90% range as points connected by a line}
+\item{range}{Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line}
 
 \item{scheme_label}{Boolean (default = TRUE) label the mid-points with the scheme code}
 

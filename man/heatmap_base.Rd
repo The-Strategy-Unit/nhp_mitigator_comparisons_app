@@ -35,7 +35,7 @@ heatmap_base(
 
 \item{y_char_wrap}{Integer - the number of characters to string wrap the y-axis text on}
 
-\item{values_displayed}{Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80% prediction interval - used to label the scales}
+\item{values_displayed}{Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales}
 
 \item{heatmap_type}{Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value}
 

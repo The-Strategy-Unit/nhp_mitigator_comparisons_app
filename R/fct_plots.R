@@ -322,7 +322,7 @@ plot_mixture_distributions <- function(
 #' @param rate_title Character - the label for the x-axis
 #' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
 #' @param trendline Boolean (default = TRUE) show a trendline between mid-points
-#' @param range Boolean (default = TRUE) show the 10% and 90% range as points connected by a line
+#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line
 #' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
 #' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
 #' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
@@ -417,7 +417,7 @@ prep_baseline_comparison <- function(
 #' @param rate_title Character - the label for the x-axis
 #' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
 #' @param trendline Boolean (default = TRUE) show a trendline between mid-points
-#' @param range Boolean (default = TRUE) show the 10% and 90% range as points connected by a line
+#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line
 #' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
 #' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
 #' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot

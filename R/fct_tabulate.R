@@ -283,14 +283,14 @@ populate_table <- function(
 
 #' Update dat to reflect the user's preferred values
 #'
-#' Users are able to select from 'Percent of activity mitigated' and '80%
+#' Users are able to select from 'Percent of activity mitigated' and '80\%
 #' prediction interval' in the global settings sidebar.
 #'
 #' This function updates dat to reflect the user's preferred values.
 #'
 #' @param dat Tibble of data - as produced from `populate_table` in `fct_tabulate.R`
 #' @param values_displayed Character - the value in `input$values_displayed` indicating the user's preferred view
-#' @param include_point_estimates Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0% mitigation (100% prediction) are to be included
+#' @param include_point_estimates Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0\% mitigation (100\% prediction) are to be included
 #' @param focal_scheme_code Character - the scheme code of the focal scheme
 #'
 #' @return Tibble of data with the 'value_' and 'nee_' fields updated to match the user's preferred values
@@ -480,10 +480,10 @@ get_trust_lookup <- function(container_support) {
 #'
 #' The baseline activity for each mitigator is not specified in the `dat`, but
 #' is implicit. This function extracts the activity description, e.g.
-#' 'Admissions per 1,000 population' or '% of Appointments that are Face-to-Face'
+#' 'Admissions per 1,000 population' or '\% of Appointments that are Face-to-Face'
 #' from the inputs app yaml file.
 #'
-#' Using Gabriel's code from here:#'
+#' Using Gabriel's code from here:\#'
 #' https://github.com/The-Strategy-Unit/nhp_schemes_report/blob/55de2b1e67394a74eeef1e63ae3b88720c281c3d/R/mitigator%20credibility%20from%20historical%20data.R#L101-L137
 #'
 #' @param yaml List - the yaml file used in the inputs app

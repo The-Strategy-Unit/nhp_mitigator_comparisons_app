@@ -624,7 +624,7 @@ prepare_heatmap_dat <- function(
 #' @param dat Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
 #' @param toggle_mitigator_name Boolean - value from `input$toggle_mitigator_name` - used to decide what to display on y-axis
 #' @param toggle_scale_fill_by_mitigator Boolean - value from `input$toggle_heatmap_scale_fill_by_mitigator` - used to control whether the colour is scaled across the whole heatmap (FALSE) or applied across each mitigator (TRUE)
-#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80% prediction interval - used to label the scales
+#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales
 #' @param heatmap_type Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value
 #' @param colour_binary Character - value from `input$heatmap_binary_colour` - hex colour string to use in the binary plots
 #' @param colour_value_low Character - value from `input$heatmap_value_colour_low` - hex colour string to use in the gradient fill for low values
@@ -923,7 +923,7 @@ plot_heatmap <- function(
 #' @param x_scheme_wrap Integer - the number of characters to string wrap the x-axis text on
 #' @param x_scheme_text ggplot2::element_text - defining how the x-axis labels are to be displayed
 #' @param y_char_wrap Integer - the number of characters to string wrap the y-axis text on
-#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80% prediction interval - used to label the scales
+#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales
 #' @param heatmap_type Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value
 #' @param colour_binary Character - value from `input$heatmap_binary_colour` - hex colour string to use in the binary plots
 #' @param colour_value_low Character - value from `input$heatmap_value_colour_low` - hex colour string to use in the gradient fill for low values

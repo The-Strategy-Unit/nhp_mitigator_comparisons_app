@@ -238,7 +238,7 @@ app_server <- function(input, output, session) {
           ) |>
           dplyr::summarise(
             scheme_code = 'All',
-            scheme_name = 'Summary ●',
+            scheme_name = 'Summary',
             value_mid = mean(.data$value_mid, na.rm = TRUE),
             value_lo = min(.data$value_lo, na.rm = TRUE),
             value_hi = max(.data$value_hi, na.rm = TRUE),
@@ -256,7 +256,7 @@ app_server <- function(input, output, session) {
           ) |>
           dplyr::summarise(
             scheme_code = 'All',
-            scheme_name = 'Summary ●',
+            scheme_name = 'Summary',
             value_mid = mean(.data$value_mid, na.rm = TRUE),
             value_lo = mean(.data$value_lo, na.rm = TRUE),
             value_hi = mean(.data$value_hi, na.rm = TRUE),
@@ -283,7 +283,7 @@ app_server <- function(input, output, session) {
         dplyr::mutate(
           scheme_name = .data$scheme_name |>
             base::factor() |>
-            forcats::fct_relevel('Summary ●', after = Inf) |>
+            forcats::fct_relevel('Summary', after = Inf) |>
             forcats::fct_rev(),
 
           # sort scheme codes to match scheme names
