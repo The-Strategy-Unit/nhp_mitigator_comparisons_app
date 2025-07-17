@@ -483,7 +483,7 @@ get_trust_lookup <- function(container_support) {
 #' 'Admissions per 1,000 population' or '\% of Appointments that are Face-to-Face'
 #' from the inputs app yaml file.
 #'
-#' Using Gabriel's code from here:\#'
+#' Using Gabriel's code from here:#'
 #' https://github.com/The-Strategy-Unit/nhp_schemes_report/blob/55de2b1e67394a74eeef1e63ae3b88720c281c3d/R/mitigator%20credibility%20from%20historical%20data.R#L101-L137
 #'
 #' @param yaml List - the yaml file used in the inputs app

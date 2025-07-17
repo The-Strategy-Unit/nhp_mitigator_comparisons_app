@@ -685,12 +685,12 @@ wrap_strings_to_fit_pixel_limit <- function(
 
 #' Plot an individual trendline comparison plot
 #'
-#' Produces a single {plotly} object showing the trendline for the specified
+#' Produces a single \{plotly\} object showing the trendline for the specified
 #' scheme and mitigator.
 #'
 #' Note - this function is designed for use with `plot_facetted_trendlines()`
 #' which coordinates the production of plots for multiple mitigators.
-#' The use of the `subplot()` features of {plotly} mean that the overall plot
+#' The use of the `subplot()` features of \{plotly\} mean that the overall plot
 #' height is specified in each subplot's definition.
 #'
 #' @param plot_data Tibble - historical rate of activity for the mitigator, as produced within `plot_facetted_trendlines()` in `fct_plots.R`
@@ -993,7 +993,7 @@ plot_trendline_comparison <- function(
 
 #' Plot faceted trendlines
 #'
-#' Co-ordinates the production of a a {plotly} object containing multiple
+#' Co-ordinates the production of a a \{plotly\} object containing multiple
 #' time series plots, one for each mitigator in `mitigator_codes`.
 #'
 #' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`

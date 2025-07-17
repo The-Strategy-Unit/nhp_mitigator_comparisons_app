@@ -9,6 +9,8 @@ get_mixture_distributions(data, mitigators)
 \arguments{
 \item{data}{A dataframe of with the mu and sigma of the normal distribution
 for each peer and mitigator.}
+
+\item{mitigators}{A vector of the unique mitigators.}
 }
 \value{
 A list of mixture distributions for each mitigator.

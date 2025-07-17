@@ -21,6 +21,8 @@ plot_heatmap(
 \arguments{
 \item{dat}{Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`}
 
+\item{focal_scheme_code}{Code for the scheme chosen as the focal scheme by user}
+
 \item{toggle_mitigator_name}{Boolean - value from `input$toggle_mitigator_name` - used to decide what to display on y-axis}
 
 \item{toggle_scale_fill_by_mitigator}{Boolean - value from `input$toggle_heatmap_scale_fill_by_mitigator` - used to control whether the colour is scaled across the whole heatmap (FALSE) or applied across each mitigator (TRUE)}
@@ -43,7 +45,7 @@ plot_heatmap(
 {plotly} object showing heatmap
 }
 \description{
-Produces a {plotly} version of the heatmap showing mitigators on the y-axis
+Produces a \{plotly\} version of the heatmap showing mitigators on the y-axis
 and schemes across the x-axis with the selected mitigator value (mid, low,
 high, binary) controlling the fill colour.
 }

@@ -134,6 +134,7 @@ fetch_tagged_runs_params <- function(runs_meta, container_results) {
 #' @param inputs_data_version Character. The app version for which you want to
 #'     return data (there's a separate versioned folder of parquet files for
 #'     each release).
+#' @param container_inputs A storage container object.
 #' @return A tibble.
 read_provider_data <- function(
     container_inputs,

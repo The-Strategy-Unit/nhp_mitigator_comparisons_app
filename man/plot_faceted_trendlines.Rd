@@ -45,6 +45,6 @@ plot_faceted_trendlines(
 {plotly} plot combining individual trendline plots for each mitigator
 }
 \description{
-Co-ordinates the production of a a {plotly} object containing multiple
+Co-ordinates the production of a a \{plotly\} object containing multiple
 time series plots, one for each mitigator in `mitigator_codes`.
 }

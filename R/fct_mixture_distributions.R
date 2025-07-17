@@ -33,6 +33,7 @@ get_distribution_characteristics <- function(normal_dists,
 #'
 #' @param data A dataframe of with the mu and sigma of the normal distribution
 #' for each peer and mitigator.
+#' @param mitigators A vector of the unique mitigators.
 #'
 #' @return A list of mixture distributions for each mitigator.
 get_mixture_distributions <- function(data, mitigators){

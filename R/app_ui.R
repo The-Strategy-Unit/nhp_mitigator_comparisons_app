@@ -83,7 +83,7 @@ app_ui <- function(request) {
             ),
             # add explanatory note
             shiny::markdown('##### Key'),
-            shiny::markdown('\✏️ = Scenario is not finalised')
+            shiny::markdown('✏️ = Scenario is not finalised')
           ),
           ### mitigator select ----
           bslib::accordion_panel(

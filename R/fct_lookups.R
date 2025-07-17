@@ -252,6 +252,7 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
 #' @param dat Tibble - the full prepared dataset for this app
 #' @param selected_schemes Character vector - a list of scheme_codes selected by the user
 #' @param focal_scheme Character vector - the focal scheme_code
+#' @param selected_mitigators Character vector - a list of mitigators selected by the user
 #'
 #' @return Tibble listing schemes and the proportions of mitigators in use by them
 #' @export
@@ -313,6 +314,7 @@ make_scheme_uptake_dat <- function(dat, selected_mitigators, selected_schemes, f
 #' @param dat Tibble - the full prepared dataset for this app
 #' @param selected_schemes Character vector - a list of scheme_codes selected by the user
 #' @param focal_scheme Character vector - the focal scheme_code
+#' @param selected_mitigators Character vector - a list of mitigators selected by the user
 #'
 #' @return DT object listing schemes and the proportions of mitigators in use by them
 #' @export

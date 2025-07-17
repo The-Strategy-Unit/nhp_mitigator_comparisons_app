@@ -14,6 +14,7 @@
 #' @param toggle_heatmap_nee Boolean (default = FALSE) should the display include a column for NEE values for mitigators?
 #' @param toggle_heatmap_aggregate_summaries Boolean (default = FALSE) should the display include columns showing minimum, maximum and mean values for each mitigator?
 #' @param toggle_heatmap_scheme_adornments  Boolean (default = FALSE) should the scheme details include additional information such as scheme code, run stage and horizon year?
+#' @param focal_scheme_code Code for the scheme chosen as the focal scheme by user
 #'
 #' @returns Tibble of data ready for use with heatmap plots
 prepare_heatmap_dat <- function(
@@ -617,7 +618,7 @@ prepare_heatmap_dat <- function(
 
 #' Plot heatmap
 #'
-#' Produces a {plotly} version of the heatmap showing mitigators on the y-axis
+#' Produces a \{plotly\} version of the heatmap showing mitigators on the y-axis
 #' and schemes across the x-axis with the selected mitigator value (mid, low,
 #' high, binary) controlling the fill colour.
 #'
@@ -631,6 +632,7 @@ prepare_heatmap_dat <- function(
 #' @param colour_value_high Character - value from `input$heatmap_value_colour_high` - hex colour string to use in the gradient fill for high values
 #' @param plot_height Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot
 #' @param font_family Character - (default = 'Arial, Helvetica, Droid Sans, sans') a list of font families to use in the plot
+#' @param focal_scheme_code Code for the scheme chosen as the focal scheme by user
 #'
 #' @returns {plotly} object showing heatmap
 plot_heatmap <- function(

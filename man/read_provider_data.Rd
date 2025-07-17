@@ -13,6 +13,8 @@ read_provider_data(
 )
 }
 \arguments{
+\item{container_inputs}{A storage container object.}
+
 \item{file}{Character. Name of parquet file to be read (without the
 extension).}
 

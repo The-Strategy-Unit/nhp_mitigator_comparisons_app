@@ -51,12 +51,12 @@ plot_trendline_comparison(
 {plotly} plot (or list of tibbles if return_data == TRUE)
 }
 \description{
-Produces a single {plotly} object showing the trendline for the specified
+Produces a single \{plotly\} object showing the trendline for the specified
 scheme and mitigator.
 }
 \details{
 Note - this function is designed for use with `plot_facetted_trendlines()`
 which coordinates the production of plots for multiple mitigators.
-The use of the `subplot()` features of {plotly} mean that the overall plot
+The use of the `subplot()` features of \{plotly\} mean that the overall plot
 height is specified in each subplot's definition.
 }
