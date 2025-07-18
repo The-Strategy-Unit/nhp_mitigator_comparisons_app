@@ -53,9 +53,9 @@ Imports:
     yaml
 Suggests: 
     testthat (>= 3.0.0)
+Remotes: 
+    dreamRs/datamods
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-Remotes: 
-    dreamRs/datamods

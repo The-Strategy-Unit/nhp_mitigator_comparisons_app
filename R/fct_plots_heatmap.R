@@ -620,7 +620,7 @@ prepare_heatmap_dat <- function(
 #'
 #' Produces a \{plotly\} version of the heatmap showing mitigators on the y-axis
 #' and schemes across the x-axis with the selected mitigator value (mid, low,
-#' high, binary) controlling the fill colour.
+#' high, submitted) controlling the fill colour.
 #'
 #' @param dat Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
 #' @param toggle_mitigator_name Boolean - value from `input$toggle_mitigator_name` - used to decide what to display on y-axis
@@ -1010,7 +1010,7 @@ heatmap_base <- function(
     # remove the legend
     ggplot2::theme(legend.position = 'none')
 
-  # handle non-binary plots
+  # handle non-'submitted' (non-binary) plots
   if (heatmap_type != "value_binary") {
     heatmap <-
       heatmap +
@@ -1034,7 +1034,7 @@ heatmap_base <- function(
     # )
   }
 
-  # handle binary plots
+  # handle 'submitted' (binary) plots
   if (heatmap_type == "value_binary") {
     heatmap <-
       heatmap +
