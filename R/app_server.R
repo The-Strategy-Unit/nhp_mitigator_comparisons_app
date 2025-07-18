@@ -25,7 +25,7 @@ app_server <- function(input, output, session) {
 
   rates_data <- container_inputs |>
     read_provider_data("rates") |>
-    dplyr::select(procode = provider, strategy, fyear, rate, n = denominator)
+    dplyr::select(procode = .data$provider, .data$strategy, .data$fyear, .data$rate, n = .data$denominator)
 
   params <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_params")
   runs_meta <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_meta")
@@ -45,7 +45,7 @@ app_server <- function(input, output, session) {
 
   peers <- container_support |>
     AzureStor::storage_load_rds("trust-peers.rds") |>
-    dplyr::rename(scheme = procode)
+    dplyr::rename(scheme = .data$procode)
 
   # inputs app yml (contains meta data)
   yaml <- yaml::read_yaml(
@@ -152,8 +152,8 @@ app_server <- function(input, output, session) {
 
   peer_set <- shiny::reactive({
     peers |>
-      dplyr::filter(scheme == input$focus_scheme) |>
-      dplyr::pull(peer)
+      dplyr::filter(.data$scheme == input$focus_scheme) |>
+      dplyr::pull(.data$peer)
   })
 
   dat_filtered <- reactive({
@@ -165,20 +165,20 @@ app_server <- function(input, output, session) {
       dat_return <- dat_return |>
         dplyr::mutate(
           value_lo = forecast_value(
-            year_baseline = year_baseline,
-            year_horizon = year_horizon,
+            year_baseline = .data$year_baseline,
+            year_horizon = .data$year_horizon,
             year_forecast = 2041,
-            value_horizon = value_lo,
+            value_horizon = .data$value_lo,
             value_displayed = input$values_displayed
           ),
           value_hi = forecast_value(
-            year_baseline = year_baseline,
-            year_horizon = year_horizon,
+            year_baseline = .data$year_baseline,
+            year_horizon = .data$year_horizon,
             year_forecast = 2041,
-            value_horizon = value_hi,
+            value_horizon = .data$value_hi,
             value_displayed = input$values_displayed
           ),
-          value_mid = (value_hi - ((value_hi - value_lo) / 2)) |>
+          value_mid = (.data$value_hi - ((.data$value_hi - .data$value_lo) / 2)) |>
             round(digits = 3)
         )
     }
@@ -204,23 +204,23 @@ app_server <- function(input, output, session) {
 
     # plot scheme names in reverse order so displayed correctly in ggplot
     if (!input$toggle_invert_facets) {
-      dat <- dat |> dplyr::mutate(scheme_name = forcats::fct_rev(scheme_name))
+      dat <- dat |> dplyr::mutate(scheme_name = forcats::fct_rev(.data$scheme_name))
     }
 
     # plot mitigators in order
     if (input$toggle_invert_facets) {
       dat <- dat |>
         dplyr::mutate(
-          mitigator_code = forcats::fct_rev(mitigator_code),
-          mitigator_name = stats::reorder(mitigator_name, as.numeric(mitigator_code)) # order mitigator_name to match mitigator_code
+          mitigator_code = forcats::fct_rev(.data$mitigator_code),
+          mitigator_name = stats::reorder(.data$mitigator_name, as.numeric(.data$mitigator_code)) # order mitigator_name to match mitigator_code
         )
     }
 
     # further filtering
     dat <- dat |>
       dplyr::filter(
-        scheme_code %in% input$schemes,
-        mitigator_code %in% input$mitigators
+        .data$scheme_code %in% input$schemes,
+        .data$mitigator_code %in% input$mitigators
       )
 
     # show an aggregate summary where requested
@@ -233,16 +233,16 @@ app_server <- function(input, output, session) {
         dat_summary <-
           dat |>
           dplyr::filter(
-            !scheme_code %in% input$focus_scheme, # exclude focal scheme
-            !is.na(value_mid) # need at least a mid-point
+            !.data$scheme_code %in% input$focus_scheme, # exclude focal scheme
+            !is.na(.data$value_mid) # need at least a mid-point
           ) |>
           dplyr::summarise(
             scheme_code = 'All',
-            scheme_name = 'Summary ●',
-            value_mid = mean(value_mid, na.rm = TRUE),
-            value_lo = min(value_lo, na.rm = TRUE),
-            value_hi = max(value_hi, na.rm = TRUE),
-            .by = c(mitigator_code, mitigator_name)
+            scheme_name = 'Summary',
+            value_mid = mean(.data$value_mid, na.rm = TRUE),
+            value_lo = min(.data$value_lo, na.rm = TRUE),
+            value_hi = max(.data$value_hi, na.rm = TRUE),
+            .by = c(.data$mitigator_code, .data$mitigator_name)
           )
 
       } else {
@@ -251,16 +251,16 @@ app_server <- function(input, output, session) {
         dat_summary <-
           dat |>
           dplyr::filter(
-            !scheme_code %in% input$focus_scheme, # exclude focal scheme
-            !is.na(value_mid) # need at least a mid-point
+            !.data$scheme_code %in% input$focus_scheme, # exclude focal scheme
+            !is.na(.data$value_mid) # need at least a mid-point
           ) |>
           dplyr::summarise(
             scheme_code = 'All',
-            scheme_name = 'Summary ●',
-            value_mid = mean(value_mid, na.rm = TRUE),
-            value_lo = mean(value_lo, na.rm = TRUE),
-            value_hi = mean(value_hi, na.rm = TRUE),
-            .by = c(mitigator_code, mitigator_name)
+            scheme_name = 'Summary',
+            value_mid = mean(.data$value_mid, na.rm = TRUE),
+            value_lo = mean(.data$value_lo, na.rm = TRUE),
+            value_hi = mean(.data$value_hi, na.rm = TRUE),
+            .by = c(.data$mitigator_code, .data$mitigator_name)
           )
       }
 
@@ -269,7 +269,7 @@ app_server <- function(input, output, session) {
         dat_summary |>
         dplyr::left_join(
           y = dat |>
-            dplyr::select(mitigator_code, nee_mean, nee_p90, nee_p10) |>
+            dplyr::select(.data$mitigator_code, .data$nee_mean, .data$nee_p90, .data$nee_p10) |>
             dplyr::distinct(),
           by = 'mitigator_code'
         )
@@ -281,14 +281,14 @@ app_server <- function(input, output, session) {
       ) |>
         # sort schemes by name alphabetically and the summary placed last
         dplyr::mutate(
-          scheme_name = scheme_name |>
+          scheme_name = .data$scheme_name |>
             base::factor() |>
-            forcats::fct_relevel('Summary ●', after = Inf) |>
+            forcats::fct_relevel('Summary', after = Inf) |>
             forcats::fct_rev(),
 
           # sort scheme codes to match scheme names
-          scheme_code = scheme_code |>
-            base::factor(levels = unique(scheme_code[order(scheme_name)]))
+          scheme_code = .data$scheme_code |>
+            base::factor(levels = unique(.data$scheme_code[order(.data$scheme_name)]))
         )
     }
 
@@ -297,8 +297,8 @@ app_server <- function(input, output, session) {
       dat |>
       dplyr::mutate(
         point_colour = dplyr::case_when(
-          scheme_code == input$focus_scheme ~ 'red',
-          scheme_code == 'All' ~ 'blue',
+          .data$scheme_code == input$focus_scheme ~ 'red',
+          .data$scheme_code == 'All' ~ 'blue',
           .default = 'black'
         )
       )
@@ -353,7 +353,7 @@ app_server <- function(input, output, session) {
 
     dat <- dat_filtered() |>
       dplyr::filter(
-        mitigator_code %in% input$mitigators
+        .data$mitigator_code %in% input$mitigators
       )
 
     dat <- get_mixture_distributions_dat(dat = dat)
@@ -385,7 +385,7 @@ app_server <- function(input, output, session) {
     scheme_and_peers <- c(input$focus_scheme, peer_set())
     selected_schemes <- all_schemes[which(all_schemes %in% scheme_and_peers)] |>
       tibble::enframe() |>
-      dplyr::arrange(name) |>  # sort on name, not code
+      dplyr::arrange(.data$name) |>  # sort on name, not code
       tibble::deframe()
 
     if (input$toggle_all_schemes) selected_schemes <- all_schemes
@@ -502,16 +502,16 @@ app_server <- function(input, output, session) {
     max_facet_cols <- if (input$toggle_invert_facets) {
       # count the number of selected schemes
       dat |>
-        dplyr::filter(scheme_code %in% input$schemes) |>
-        dplyr::pull(scheme_code) |>
+        dplyr::filter(.data$scheme_code %in% input$schemes) |>
+        dplyr::pull(.data$scheme_code) |>
         unique() |>
         length()
 
     } else {
       # count the number of selected mitigators
       dat |>
-        dplyr::filter(mitigator_code %in% input$mitigators) |>
-        dplyr::pull(mitigator_code) |>
+        dplyr::filter(.data$mitigator_code %in% input$mitigators) |>
+        dplyr::pull(.data$mitigator_code) |>
         unique() |>
         length()
     }
@@ -535,15 +535,15 @@ app_server <- function(input, output, session) {
 
     # how many mitigators are shown
     n_mitigators <- dat |>
-      dplyr::filter(mitigator_code %in% input$mitigators) |>
-      dplyr::pull(mitigator_code) |>
+      dplyr::filter(.data$mitigator_code %in% input$mitigators) |>
+      dplyr::pull(.data$mitigator_code) |>
       unique() |>
       length()
 
     # how many schemes are shown
     n_schemes <- dat |>
-      dplyr::filter(scheme_code %in% input$schemes) |>
-      dplyr::pull(scheme_code) |>
+      dplyr::filter(.data$scheme_code %in% input$schemes) |>
+      dplyr::pull(.data$scheme_code) |>
       unique() |>
       length()
 
@@ -602,15 +602,15 @@ app_server <- function(input, output, session) {
 
     # count the number of selected mitigators
     temp_mitigator_count <- dat |>
-      dplyr::filter(mitigator_code %in% input$mitigators) |>
-      dplyr::pull(mitigator_code) |>
+      dplyr::filter(.data$mitigator_code %in% input$mitigators) |>
+      dplyr::pull(.data$mitigator_code) |>
       unique() |>
       length()
 
     # count the number of selected schemes
     temp_scheme_count <- dat |>
-      dplyr::filter(scheme_code %in% input$schemes) |>
-      dplyr::pull(scheme_code) |>
+      dplyr::filter(.data$scheme_code %in% input$schemes) |>
+      dplyr::pull(.data$scheme_code) |>
       unique() |>
       length()
 
@@ -673,8 +673,8 @@ app_server <- function(input, output, session) {
 
     # count the number of selected mitigators
     temp_mitigator_count <- dat |>
-      dplyr::filter(mitigator_code %in% input$mitigators) |>
-      dplyr::pull(mitigator_code) |>
+      dplyr::filter(.data$mitigator_code %in% input$mitigators) |>
+      dplyr::pull(.data$mitigator_code) |>
       unique() |>
       length()
 
@@ -745,7 +745,7 @@ app_server <- function(input, output, session) {
 
     # plot the trendline contextual
     dat_filtered() |>
-      dplyr::filter(mitigator_code %in% input$mitigators) |>
+      dplyr::filter(.data$mitigator_code %in% input$mitigators) |>
       plot_faceted_trendlines(
         rates_data = rates_data,
         mitigator_codes = input$mitigators,
@@ -1048,7 +1048,7 @@ app_server <- function(input, output, session) {
     content = function(file) {
       df_list <-
         dat_filtered() |>
-        dplyr::filter(mitigator_code %in% input$mitigators) |>
+        dplyr::filter(.data$mitigator_code %in% input$mitigators) |>
         plot_faceted_trendlines(
           rates_data = rates_data,
           mitigator_codes = input$mitigators,
@@ -1082,7 +1082,7 @@ app_server <- function(input, output, session) {
 
       plot_widget <-
         dat_filtered() |>
-        dplyr::filter(mitigator_code %in% input$mitigators) |>
+        dplyr::filter(.data$mitigator_code %in% input$mitigators) |>
         plot_faceted_trendlines(
           rates_data = rates_data,
           mitigator_codes = input$mitigators,

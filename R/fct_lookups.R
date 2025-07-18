@@ -1,11 +1,11 @@
 make_raw_dt <- function(dat) {
 
   dat_prepared <- dat |>
-    dplyr::filter(!is.na(value_lo)) |>  # only want mitigators selected by schemes
+    dplyr::filter(!is.na(.data$value_lo)) |>  # only want mitigators selected by schemes
     dplyr::mutate(
       # remove any pencil emojis from scheme names
       scheme_name = stringr::str_remove(
-        string = scheme_name,
+        string = .data$scheme_name,
         pattern = ' ✏️'
       ),
       dplyr::across(
@@ -13,8 +13,8 @@ make_raw_dt <- function(dat) {
           tidyselect::starts_with("scheme"),
           tidyselect::starts_with("run"),
           tidyselect::starts_with("mitigator"),
-          value_point_or_range,
-          value_time_profile
+          .data$value_point_or_range,
+          .data$value_time_profile
         ),
         factor  # enables discrete selection in interactive table
       ),
@@ -57,12 +57,12 @@ make_mitigator_dt <- function(mitigator_lookup) {
 
   mitigator_lookup_prepared <- mitigator_lookup |>
     dplyr::select(
-      `Mitigator code`,
-      `Mitigator name` = `Strategy name`,
-      `Mitigator variable` = `Strategy variable`,
-      `Mitigator type`,
-      `Activity type`,
-      `Mitigator grouping` = Grouping
+      .data$`Mitigator code`,
+      `Mitigator name` = .data$`Strategy name`,
+      `Mitigator variable` = .data$`Strategy variable`,
+      .data$`Mitigator type`,
+      .data$`Activity type`,
+      `Mitigator grouping` = .data$Grouping
     ) |>
     dplyr::mutate(dplyr::across(tidyselect::everything(), factor))
 
@@ -106,13 +106,13 @@ make_scheme_dt <- function(trust_code_lookup) {
 
   schemes_prepared <- trust_code_lookup |>
     dplyr::mutate(
-      `Scheme name` = `Name of Hospital site`,
-      `Trust name` = `Name of Trust`,
-      `Scheme code` = `Trust ODS Code`,
+      `Scheme name` = .data$`Name of Hospital site`,
+      `Trust name` = .data$`Name of Trust`,
+      `Scheme code` = .data$`Trust ODS Code`,
       .keep = "none"
     ) |>
-    dplyr::mutate(across(tidyselect::everything(), factor)) |>
-    dplyr::arrange(`Scheme name`)
+    dplyr::mutate(dplyr::across(tidyselect::everything(), factor)) |>
+    dplyr::arrange(.data$`Scheme name`)
 
   schemes_prepared |>
     DT::datatable(
@@ -161,21 +161,21 @@ make_mitigator_uptake_dat <- function(dat, selected_schemes) {
     dplyr::mutate(
       mitigator_name = gsub(
         pattern = 'A&E',
-        x = mitigator_name,
+        x = .data$mitigator_name,
         replacement = 'ED'
       )
     ) |>
     # count schemes per mitigator
     dplyr::summarise(
       n_schemes_using_all = dplyr::n_distinct(
-        scheme_code,
+        .data$scheme_code,
         na.rm = TRUE
       ),
       n_schemes_using_selected = dplyr::n_distinct(
-        scheme_code[scheme_code %in% selected_schemes],
+        .data$scheme_code[.data$scheme_code %in% selected_schemes],
         na.rm = TRUE
       ),
-      .by = c(mitigator_activity_type, mitigator_group, mitigator_name)
+      .by = c(.data$mitigator_activity_type, .data$mitigator_group, .data$mitigator_name)
     ) |>
     # convert to rate
     dplyr::mutate(
@@ -190,19 +190,19 @@ make_mitigator_uptake_dat <- function(dat, selected_schemes) {
       ),
 
       # convert to rates
-      n_schemes_using_all_rate = n_schemes_using_all / n_schemes_all,
-      n_schemes_using_selected_rate = n_schemes_using_selected / n_schemes_selected
+      n_schemes_using_all_rate = .data$n_schemes_using_all / .data$n_schemes_all,
+      n_schemes_using_selected_rate = .data$n_schemes_using_selected / .data$n_schemes_selected
     ) |>
     # prepare for display
     dplyr::select(
-      -c(n_schemes_using_all, n_schemes_all,
-         n_schemes_using_selected, n_schemes_selected)
+      -c(.data$n_schemes_using_all, .data$n_schemes_all,
+         .data$n_schemes_using_selected, .data$n_schemes_selected)
     ) |>
     dplyr::mutate(
       # convert mitigators to factors for drop-down selectors in DT
-      mitigator_activity_type = mitigator_activity_type |> factor(),
-      mitigator_group = mitigator_group |> factor(),
-      mitigator_name = mitigator_name |> factor()
+      mitigator_activity_type = .data$mitigator_activity_type |> factor(),
+      mitigator_group = .data$mitigator_group |> factor(),
+      mitigator_name = .data$mitigator_name |> factor()
     )
 
   return(dat_return)
@@ -252,6 +252,7 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
 #' @param dat Tibble - the full prepared dataset for this app
 #' @param selected_schemes Character vector - a list of scheme_codes selected by the user
 #' @param focal_scheme Character vector - the focal scheme_code
+#' @param selected_mitigators Character vector - a list of mitigators selected by the user
 #'
 #' @return Tibble listing schemes and the proportions of mitigators in use by them
 #' @export
@@ -262,14 +263,14 @@ make_scheme_uptake_dat <- function(dat, selected_mitigators, selected_schemes, f
     # count schemes per mitigator
     dplyr::summarise(
       n_mitigators_using_all = dplyr::n_distinct(
-        mitigator_code,
+        .data$mitigator_code,
         na.rm = T
       ),
       n_mitigators_using_selected = dplyr::n_distinct(
-        mitigator_code[mitigator_code %in% selected_mitigators],
+        .data$mitigator_code[.data$mitigator_code %in% selected_mitigators],
         na.rm = T
       ),
-      .by = c(scheme_code, scheme_name)
+      .by = c(.data$scheme_code, .data$scheme_name)
     ) |>
     # convert to rate
     dplyr::mutate(
@@ -284,20 +285,20 @@ make_scheme_uptake_dat <- function(dat, selected_mitigators, selected_schemes, f
       ),
 
       # convert to rates
-      n_mitigators_using_all_rate = n_mitigators_using_all / n_mitigators_all,
-      n_mitigators_using_selected_rate = n_mitigators_using_selected / n_mitigators_selected
+      n_mitigators_using_all_rate = .data$n_mitigators_using_all / .data$n_mitigators_all,
+      n_mitigators_using_selected_rate = .data$n_mitigators_using_selected / .data$n_mitigators_selected
     ) |>
     # prepare for display
     dplyr::select(
-      -c(n_mitigators_using_all, n_mitigators_all,
-         n_mitigators_using_selected, n_mitigators_selected)
+      -c(.data$n_mitigators_using_all, .data$n_mitigators_all,
+         .data$n_mitigators_using_selected, .data$n_mitigators_selected)
     ) |>
     dplyr::mutate(
       # convert scheme details to factors for drop-down selectors in DT
-      scheme_code = scheme_code |> factor(),
-      scheme_name = scheme_name |> factor()
+      scheme_code = .data$scheme_code |> factor(),
+      scheme_name = .data$scheme_name |> factor()
     ) |>
-    dplyr::filter(!is.na(scheme_code))
+    dplyr::filter(!is.na(.data$scheme_code))
 
   return(dat_return)
 }
@@ -313,6 +314,7 @@ make_scheme_uptake_dat <- function(dat, selected_mitigators, selected_schemes, f
 #' @param dat Tibble - the full prepared dataset for this app
 #' @param selected_schemes Character vector - a list of scheme_codes selected by the user
 #' @param focal_scheme Character vector - the focal scheme_code
+#' @param selected_mitigators Character vector - a list of mitigators selected by the user
 #'
 #' @return DT object listing schemes and the proportions of mitigators in use by them
 #' @export
@@ -322,7 +324,7 @@ make_scheme_uptake_dt <- function(dat, selected_mitigators, selected_schemes, fo
   make_scheme_uptake_dat(
     dat = dat,
     selected_mitigators = selected_mitigators,
-    selected_schemes = selected_scheme,
+    selected_schemes = .data$selected_scheme,
     focal_scheme = focal_scheme
   ) |>
     # display as DT

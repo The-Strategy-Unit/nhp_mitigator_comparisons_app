@@ -9,7 +9,7 @@ read_nee <- function(
   if (as_decimal) {
     nee <- nee |>
       dplyr::mutate(
-        dplyr::across(c(percentile10, percentile90, mean), \(x) x / 100)
+        dplyr::across(c(.data$percentile10, .data$percentile90, mean), \(x) x / 100)
       )
   }
 

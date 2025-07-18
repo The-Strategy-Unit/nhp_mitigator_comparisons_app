@@ -20,7 +20,7 @@ get_distribution_characteristics <- function(normal_dists,
   peer_agg_p10_p50_p90 <- get_p10_p50_p90(mix_dists, mitigators)
 
   peer_agg_dist_summary <- peer_agg_mu_sigma_n |>
-    dplyr::left_join(peer_agg_p10_p50_p90, dplyr::join_by(mitigator_code))
+    dplyr::left_join(peer_agg_p10_p50_p90, dplyr::join_by("mitigator_code"))
 
   return(peer_agg_dist_summary)
 
@@ -33,6 +33,7 @@ get_distribution_characteristics <- function(normal_dists,
 #'
 #' @param data A dataframe of with the mu and sigma of the normal distribution
 #' for each peer and mitigator.
+#' @param mitigators A vector of the unique mitigators.
 #'
 #' @return A list of mixture distributions for each mitigator.
 get_mixture_distributions <- function(data, mitigators){
@@ -43,14 +44,14 @@ get_mixture_distributions <- function(data, mitigators){
     dist_list <- list()
 
     peers <- data |>
-      dplyr::filter(mitigator_code == i) |>
-      dplyr::distinct(scheme_code) |>
+      dplyr::filter(.data$mitigator_code == i) |>
+      dplyr::distinct(.data$scheme_code) |>
       dplyr::pull()
 
     for (j in (peers)) {
       norm_param <- data |>
-        dplyr::filter(mitigator_code == i, scheme_code == j) |>
-        dplyr::select(mu, sigma)
+        dplyr::filter(.data$mitigator_code == i, .data$scheme_code == j) |>
+        dplyr::select(.data$mu, .data$sigma)
 
       peer_dist <- distr::Norm(mean = norm_param$mu, sd = norm_param$sigma)
 
@@ -90,10 +91,10 @@ get_mu_sigma <- function(data){
 
   summary <- data |>
     dplyr::summarise(
-      mu = mean(mu),
-      sd = (mean(mu ^ 2 + sigma ^ 2)) ^ (1 / 2),
+      mu = mean(.data$mu),
+      sd = (mean(.data$mu ^ 2 + sigma ^ 2)) ^ (1 / 2),
       peers = dplyr::n(),
-      .by = mitigator_code
+      .by = .data$mitigator_code
     )
 
   return(summary)
@@ -113,19 +114,19 @@ get_mu_sigma <- function(data){
 get_normal_distribution_parameters <- function(data) {
   normal_dists <- data |>
     # ensure distinct combinations of mitigator and scheme
-    dplyr::distinct(mitigator_code, scheme_code, .keep_all = TRUE) |>
+    dplyr::distinct(.data$mitigator_code, .data$scheme_code, .keep_all = TRUE) |>
     # convert hi and lo to numerator of percentage - e.g. 90 instead of 0.9
     dplyr::mutate(
-      value_lo = value_lo * 100,
-      value_hi = value_hi * 100
+      value_lo = .data$value_lo * 100,
+      value_hi = .data$value_hi * 100
     ) |>
     dplyr::filter(
-      !(value_lo == 0 & value_hi == 1 | # Exclude default values.
-        value_lo == value_hi)# Exclude point estimates
+      !(.data$value_lo == 0 & .data$value_hi == 1 | # Exclude default values.
+          .data$value_lo == .data$value_hi)# Exclude point estimates
     ) |>
     dplyr::mutate(
-      mu = (value_lo + value_hi) / 2,
-      sigma = (value_hi - mu) / stats::qnorm(p = 0.90, mean = 0, sd = 1)
+      mu = (.data$value_lo + .data$value_hi) / 2,
+      sigma = (.data$value_hi - .data$mu) / stats::qnorm(p = 0.90, mean = 0, sd = 1)
     )
 
   return(normal_dists)
@@ -190,7 +191,7 @@ get_percentiles <- function(data, mitigators){
       q = seq(0, 100, 1),
       ecdf_value = data[[i]]@p(q = seq(0, 100, 1))
     ) |>
-      dplyr::mutate(pdf_value = ecdf_value - dplyr::lag(ecdf_value, 1))
+      dplyr::mutate(pdf_value = .data$ecdf_value - dplyr::lag(.data$ecdf_value, 1))
 
     peer_agg_ecdf_pdf <- peer_agg_ecdf_pdf |>
       dplyr::bind_rows(mitigator_ecdf_pdf)
@@ -230,10 +231,10 @@ get_probability_plot <- function(data, type) {
     ggplot2::ggplot() |>
     modify_theme(type) +
     ggplot2::geom_line(ggplot2::aes(x = q, y = !!rlang::sym(y))) +
-    ggplot2::geom_vline(ggplot2::aes(xintercept = p10), colour = 'blue') +
-    ggplot2::geom_vline(ggplot2::aes(xintercept = p90), colour = 'blue') +
-    ggplot2::geom_vline(ggplot2::aes(xintercept = mu), colour = 'red') +
-    ggplot2::facet_wrap(ggplot2::vars(mitigator_label),
+    ggplot2::geom_vline(ggplot2::aes(xintercept = .data$p10), colour = 'blue') +
+    ggplot2::geom_vline(ggplot2::aes(xintercept = .data$p90), colour = 'blue') +
+    ggplot2::geom_vline(ggplot2::aes(xintercept = .data$mu), colour = 'red') +
+    ggplot2::facet_wrap(ggplot2::vars(.data$mitigator_label),
                         scale = 'free_y') +
     ggplot2::scale_y_continuous(name = y_axis_label,
                                 limits = c(0, y_axis_max)) +
@@ -287,10 +288,10 @@ wrangle_data_for_density_plots <- function(peer_agg_ecdf_pdf,
   strategy_lookup <- strategy_lookup |> janitor::clean_names()
 
   data_wrangled <- peer_agg_ecdf_pdf |>
-    dplyr::left_join(peer_agg_dist_summary, dplyr::join_by(mitigator_code)) |>
-    dplyr::left_join(strategy_lookup, dplyr::join_by(mitigator_code)) |>
-    dplyr::mutate(mitigator_label = paste(mitigator_name,
-                                          ' (n = ', peers, ')',
+    dplyr::left_join(peer_agg_dist_summary, dplyr::join_by("mitigator_code")) |>
+    dplyr::left_join(strategy_lookup, dplyr::join_by("mitigator_code")) |>
+    dplyr::mutate(mitigator_label = paste("mitigator_name",
+                                          ' (n = ', .data$peers, ')',
                                           sep = ''))
 
   return(data_wrangled)
@@ -314,14 +315,14 @@ get_mixture_distributions_dat <- function(dat) {
   # issue with multiple values by the same scheme for the same mitigator
   dat <- dat |>
     dplyr::distinct(
-      mitigator_code,
-      scheme_code,
+      .data$mitigator_code,
+      .data$scheme_code,
       .keep_all = TRUE
     )
 
   # get a vector of mitigator codes
   mitigators <- dat |>
-    dplyr::distinct(mitigator_code) |>
+    dplyr::distinct(.data$mitigator_code) |>
     dplyr::pull()
 
   # estimate mean and sd for each mitigator

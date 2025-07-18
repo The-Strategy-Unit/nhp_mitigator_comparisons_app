@@ -14,6 +14,7 @@
 #' @param toggle_heatmap_nee Boolean (default = FALSE) should the display include a column for NEE values for mitigators?
 #' @param toggle_heatmap_aggregate_summaries Boolean (default = FALSE) should the display include columns showing minimum, maximum and mean values for each mitigator?
 #' @param toggle_heatmap_scheme_adornments  Boolean (default = FALSE) should the scheme details include additional information such as scheme code, run stage and horizon year?
+#' @param focal_scheme_code Code for the scheme chosen as the focal scheme by user
 #'
 #' @returns Tibble of data ready for use with heatmap plots
 prepare_heatmap_dat <- function(
@@ -38,8 +39,8 @@ prepare_heatmap_dat <- function(
   dat <-
     dat |>
     dplyr::filter(
-      mitigator_code %in% mitigator_codes,
-      scheme_code %in% scheme_codes
+      .data$mitigator_code %in% mitigator_codes,
+      .data$scheme_code %in% scheme_codes
     )
 
   # should scheme names include scheme code, run stage and baseline/horizon years?
@@ -48,7 +49,7 @@ prepare_heatmap_dat <- function(
       dat |>
       dplyr::mutate(
         # strip out the pencil and pushpin emojis
-        scheme_name = scheme_name |>
+        scheme_name = .data$scheme_name |>
           stringr::str_remove_all(pattern = " ✏️| 📌"),
         # add in the requested adornments
         scheme_name = glue::glue(
@@ -70,28 +71,28 @@ prepare_heatmap_dat <- function(
       dat |>
       # keep all mitigators, even if contain no NEE data
       # this is useful for aligning plots
-      dplyr::distinct(mitigator_code, .keep_all = TRUE) |>
+      dplyr::distinct(.data$mitigator_code, .keep_all = TRUE) |>
       dplyr::mutate(
         scheme_name = "National Elicitation Exercise",
         scheme_code = "NEE",
         year_baseline = 2019,
         year_horizon = 2041,
-        value_lo = nee_p10,
-        value_mid = nee_p50,
-        value_hi = nee_p90
+        value_lo = .data$nee_p10,
+        value_mid = .data$nee_p50,
+        value_hi = .data$nee_p90
       ) |>
       dplyr::select(
         # scheme
-        scheme_name, scheme_code,
+        .data$scheme_name, .data$scheme_code,
         # mitigator
         dplyr::starts_with('mitigator'),
         # years
-        year_baseline, year_horizon,
+        .data$year_baseline, .data$year_horizon,
         # values
-        value_lo, value_mid, value_hi
+        .data$value_lo, .data$value_mid, .data$value_hi
       ) |>
       dplyr::distinct() |>
-      dplyr::mutate(value_range = abs(value_hi - value_lo))
+      dplyr::mutate(value_range = abs(.data$value_hi - .data$value_lo))
 
     # add to the data list
     dat_list[length(dat_list) + 1] <- list(dat_nee)
@@ -110,7 +111,7 @@ prepare_heatmap_dat <- function(
 
         # low values
         dat |>
-          dplyr::filter(!is.na(mitigator_code)) |>
+          dplyr::filter(!is.na(.data$mitigator_code)) |>
           dplyr::summarise(
             dplyr::across(
               .cols = dplyr::any_of(aggregate_values),
@@ -123,7 +124,7 @@ prepare_heatmap_dat <- function(
 
         # max values
         dat |>
-          dplyr::filter(!is.na(mitigator_code)) |>
+          dplyr::filter(!is.na(.data$mitigator_code)) |>
           dplyr::summarise(
             dplyr::across(
               .cols = dplyr::any_of(aggregate_values),
@@ -136,7 +137,7 @@ prepare_heatmap_dat <- function(
 
         # mean values
         dat |>
-          dplyr::filter(!is.na(mitigator_code)) |>
+          dplyr::filter(!is.na(.data$mitigator_code)) |>
           dplyr::summarise(
             dplyr::across(
               .cols = dplyr::any_of(aggregate_values),
@@ -157,7 +158,7 @@ prepare_heatmap_dat <- function(
 
         # low values
         dat |>
-          dplyr::filter(!is.na(scheme_code)) |>
+          dplyr::filter(!is.na(.data$scheme_code)) |>
           dplyr::summarise(
             dplyr::across(
               .cols = dplyr::any_of(aggregate_values),
@@ -170,7 +171,7 @@ prepare_heatmap_dat <- function(
 
         # max values
         dat |>
-          dplyr::filter(!is.na(scheme_code)) |>
+          dplyr::filter(!is.na(.data$scheme_code)) |>
           dplyr::summarise(
             dplyr::across(
               .cols = dplyr::any_of(aggregate_values),
@@ -183,7 +184,7 @@ prepare_heatmap_dat <- function(
 
         # mean values
         dat |>
-          dplyr::filter(!is.na(scheme_code)) |>
+          dplyr::filter(!is.na(.data$scheme_code)) |>
           dplyr::summarise(
             dplyr::across(
               .cols = dplyr::any_of(aggregate_values),
@@ -207,11 +208,11 @@ prepare_heatmap_dat <- function(
   dat <-
     dat |>
     dplyr::mutate(
-      # produce a binary value to show if a value has been submitted
-      value_binary = !is.na(value_lo),
+      # produce a binary value to show if a value has been set
+      value_binary = !is.na(.data$value_lo),
       # round the values to avoid precision clutter
       dplyr::across(
-        c(value_lo, value_hi, value_mid, value_range),
+        c(.data$value_lo, .data$value_hi, .data$value_mid, .data$value_range),
         \(.x) janitor::round_half_up(.x, 3)
       ),
       # capture values as text (for tooltip)
@@ -222,33 +223,33 @@ prepare_heatmap_dat <- function(
       ),
       # flag the focal scheme
       focal_scheme_text = dplyr::if_else(
-        condition = scheme_code %in% focal_scheme_code,
+        condition = .data$scheme_code %in% focal_scheme_code,
         true = "Focal scheme",  false = ""
       )
     ) |>
     # put each value type on its own row
     tidyr::pivot_longer(
-      c(value_lo, value_hi, value_mid, value_range, value_binary),
+      c(.data$value_lo, .data$value_hi, .data$value_mid, .data$value_range, .data$value_binary),
       names_to = "value_type",
       values_to = "value"
     ) |>
     # limit to specified heatmap type
     dplyr::filter(
-      value_type == heatmap_type
+      .data$value_type == heatmap_type
     ) |>
     dplyr::mutate(
       # standardise values across mitigators (for heatmap colouring across rows)
-      value_scaled = value |>
+      value_scaled = .data$value |>
         scales::rescale() |>
         janitor::round_half_up(digits = 3),
 
       # find min/max/average for each mitigator
       # don't include context schemes in these calculation
-      value_min_mit = value[!scheme_code %in% scheme_additional] |>
+      value_min_mit = .data$value[!.data$scheme_code %in% scheme_additional] |>
         min(na.rm = TRUE),
-      value_max_mit = value[!scheme_code %in% scheme_additional] |>
+      value_max_mit = .data$value[!.data$scheme_code %in% scheme_additional] |>
         max(na.rm = TRUE),
-      value_mean_mit = value[!scheme_code %in% scheme_additional] |>
+      value_mean_mit = .data$value[!.data$scheme_code %in% scheme_additional] |>
         mean(na.rm = TRUE),
 
       # rank schemes within each mitigator
@@ -257,46 +258,46 @@ prepare_heatmap_dat <- function(
       # because of mis-matched row counts. Instead will create a temp_value
       # with scheme_additional set to NA, then rank on these.
       temp_value = dplyr::if_else(
-        condition = scheme_code %in% scheme_additional,
+        condition = .data$scheme_code %in% scheme_additional,
         true = NA,
-        false = value
+        false = .data$value
       ),
-      value_rank = temp_value |> dplyr::desc() |> dplyr::min_rank(),
-      value_rank_total = length(value_rank[!scheme_code %in% scheme_additional]),
+      value_rank = .data$temp_value |> dplyr::desc() |> dplyr::min_rank(),
+      value_rank_total = length(.data$value_rank[!.data$scheme_code %in% scheme_additional]),
 
-      .by = mitigator_code
+      .by = .data$mitigator_code
     ) |>
-    dplyr::select(-temp_value) |>
+    dplyr::select(-.data$temp_value) |>
     dplyr::mutate(
-      value_min_sch = value |> min(na.rm = TRUE),
-      value_max_sch = value |> max(na.rm = TRUE),
-      value_mean_sch = value |> mean(na.rm = TRUE),
+      value_min_sch = .data$value |> min(na.rm = TRUE),
+      value_max_sch = .data$value |> max(na.rm = TRUE),
+      value_mean_sch = .data$value |> mean(na.rm = TRUE),
 
-      .by = scheme_code
+      .by = .data$scheme_code
     ) |>
     # create the tooltip text
     dplyr::mutate(
       # extract just the scheme name where it has been 'adorned' with other details
-      scheme_name_bare = scheme_name |>
+      scheme_name_bare = .data$scheme_name |>
         stringr::str_match(pattern = ".*?(?=\\s\\[)") |>
         as.character(),
-      scheme_name_bare = dplyr::coalesce(scheme_name_bare, scheme_name),
+      scheme_name_bare = dplyr::coalesce(.data$scheme_name_bare, .data$scheme_name),
 
       # construct the tooltip text
       tooltip_text = dplyr::case_when(
-        scheme_code %in% c('NEE') & is.na(value) ~ 'There is no NEE for this mitigator',
-        scheme_code %in% c('NEE') ~ glue::glue(
+        .data$scheme_code %in% c('NEE') & is.na(.data$value) ~ 'There is no NEE for this mitigator',
+        .data$scheme_code %in% c('NEE') ~ glue::glue(
           "<b>{scheme_name_bare}</b> [{scheme_code}]\n",
           "{mitigator_name} [{mitigator_code}]\n",
           "<b>{scales::percent(value, accuracy = 0.1)}</b> {values_displayed}\n",
           "<i>Mitigation:</i> {value_description}\n"
         ),
-        scheme_code %in% c('MIN', 'MAX', 'MEAN') ~ glue::glue(
+        .data$scheme_code %in% c('MIN', 'MAX', 'MEAN') ~ glue::glue(
           "<b>{scheme_name_bare}</b> [{scheme_code}]\n",
           "{mitigator_name} [{mitigator_code}]\n",
           "<b>{scales::percent(value, accuracy = 0.1)}</b> {values_displayed}\n"
         ),
-        mitigator_code %in% c('MIN', 'MAX', 'MEAN') ~ glue::glue(
+        .data$mitigator_code %in% c('MIN', 'MAX', 'MEAN') ~ glue::glue(
           "<b>{scheme_name_bare}</b> [{scheme_code}]\n",
           "{mitigator_name} [{mitigator_code}]\n",
           "<b>{scales::percent(value, accuracy = 0.1)}</b> {values_displayed}\n"
@@ -332,13 +333,13 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           scheme_code = forcats::fct(
-            x = scheme_code,
+            x = .data$scheme_code,
             levels = dat |>
-              dplyr::select(scheme_code, scheme_name) |>
-              dplyr::filter(!is.na(scheme_code)) |>
-              dplyr::distinct(scheme_code, .keep_all = TRUE) |>
-              dplyr::arrange(scheme_name) |>
-              dplyr::pull(scheme_code) |>
+              dplyr::select(.data$scheme_code, .data$scheme_name) |>
+              dplyr::filter(!is.na(.data$scheme_code)) |>
+              dplyr::distinct(.data$scheme_code, .keep_all = TRUE) |>
+              dplyr::arrange(.data$scheme_name) |>
+              dplyr::pull(.data$scheme_code) |>
               c(scheme_additional) |>
               unique()
           )
@@ -350,13 +351,13 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           scheme_code = forcats::fct(
-            x = scheme_code,
+            x = .data$scheme_code,
             levels = dat |>
-              dplyr::select(scheme_code, scheme_name) |>
-              dplyr::filter(!is.na(scheme_code)) |>
-              dplyr::distinct(scheme_code, .keep_all = TRUE) |>
-              dplyr::arrange(desc(scheme_name)) |>
-              dplyr::pull(scheme_code) |>
+              dplyr::select(.data$scheme_code, .data$scheme_name) |>
+              dplyr::filter(!is.na(.data$scheme_code)) |>
+              dplyr::distinct(.data$scheme_code, .keep_all = TRUE) |>
+              dplyr::arrange(dplyr::desc(.data$scheme_name)) |>
+              dplyr::pull(.data$scheme_code) |>
               c(scheme_additional) |>
               unique()
           )
@@ -368,17 +369,17 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           scheme_code = forcats::fct(
-            x = scheme_code,
+            x = .data$scheme_code,
             levels = dat |>
-              dplyr::select(scheme_code, mitigator_code) |>
-              dplyr::filter(!is.na(scheme_code)) |>
-              dplyr::filter(!is.na(mitigator_code)) |>
+              dplyr::select(.data$scheme_code, .data$mitigator_code) |>
+              dplyr::filter(!is.na(.data$scheme_code)) |>
+              dplyr::filter(!is.na(.data$mitigator_code)) |>
               dplyr::summarise(
-                mitigator_count = dplyr::n_distinct(mitigator_code, na.rm = TRUE),
-                .by = scheme_code
+                mitigator_count = dplyr::n_distinct(.data$mitigator_code, na.rm = TRUE),
+                .by = .data$scheme_code
               ) |>
-              dplyr::arrange(mitigator_count, scheme_code) |>
-              dplyr::pull(scheme_code) |>
+              dplyr::arrange(.data$mitigator_count, .data$scheme_code) |>
+              dplyr::pull(.data$scheme_code) |>
               c(scheme_additional) |>
               unique()
           )
@@ -390,17 +391,17 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           scheme_code = forcats::fct(
-            x = scheme_code,
+            x = .data$scheme_code,
             levels = dat |>
-              dplyr::select(scheme_code, mitigator_code) |>
-              dplyr::filter(!is.na(scheme_code)) |>
-              dplyr::filter(!is.na(mitigator_code)) |>
+              dplyr::select(.data$scheme_code, .data$mitigator_code) |>
+              dplyr::filter(!is.na(.data$scheme_code)) |>
+              dplyr::filter(!is.na(.data$mitigator_code)) |>
               dplyr::summarise(
-                mitigator_count = dplyr::n_distinct(mitigator_code, na.rm = TRUE),
-                .by = scheme_code
+                mitigator_count = dplyr::n_distinct(.data$mitigator_code, na.rm = TRUE),
+                .by = .data$scheme_code
               ) |>
-              dplyr::arrange(desc(mitigator_count), scheme_code) |>
-              dplyr::pull(scheme_code) |>
+              dplyr::arrange(dplyr::desc(.data$mitigator_count), .data$scheme_code) |>
+              dplyr::pull(.data$scheme_code) |>
               c(scheme_additional) |>
               unique()
           )
@@ -412,16 +413,16 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           scheme_code = forcats::fct(
-            x = scheme_code,
+            x = .data$scheme_code,
             levels = dat |>
-              dplyr::select(scheme_code, value) |>
-              dplyr::filter(!is.na(scheme_code)) |>
+              dplyr::select(.data$scheme_code, .data$value) |>
+              dplyr::filter(!is.na(.data$scheme_code)) |>
               dplyr::summarise(
-                average = mean(value, na.rm = TRUE),
-                .by = scheme_code
+                average = mean(.data$value, na.rm = TRUE),
+                .by = .data$scheme_code
               ) |>
-              dplyr::arrange(average, scheme_code) |>
-              dplyr::pull(scheme_code) |>
+              dplyr::arrange(.data$average, .data$scheme_code) |>
+              dplyr::pull(.data$scheme_code) |>
               c(scheme_additional) |>
               unique()
           )
@@ -433,16 +434,16 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           scheme_code = forcats::fct(
-            x = scheme_code,
+            x = .data$scheme_code,
             levels = dat |>
-              dplyr::select(scheme_code, value) |>
-              dplyr::filter(!is.na(scheme_code)) |>
+              dplyr::select(.data$scheme_code, .data$value) |>
+              dplyr::filter(!is.na(.data$scheme_code)) |>
               dplyr::summarise(
-                average = mean(value, na.rm = TRUE),
-                .by = scheme_code
+                average = mean(.data$value, na.rm = TRUE),
+                .by = .data$scheme_code
               ) |>
-              dplyr::arrange(desc(average), scheme_code) |>
-              dplyr::pull(scheme_code) |>
+              dplyr::arrange(dplyr::desc(.data$average), .data$scheme_code) |>
+              dplyr::pull(.data$scheme_code) |>
               c(scheme_additional) |>
               unique()
           )
@@ -460,13 +461,13 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           mitigator_code = forcats::fct(
-            x = mitigator_code,
+            x = .data$mitigator_code,
             levels = dat |>
-              dplyr::select(mitigator_code, mitigator_name) |>
-              dplyr::filter(!is.na(mitigator_code)) |>
-              dplyr::distinct(mitigator_code, .keep_all = TRUE) |>
-              dplyr::arrange(mitigator_name) |>
-              dplyr::pull(mitigator_code)
+              dplyr::select(.data$mitigator_code, .data$mitigator_name) |>
+              dplyr::filter(!is.na(.data$mitigator_code)) |>
+              dplyr::distinct(.data$mitigator_code, .keep_all = TRUE) |>
+              dplyr::arrange(.data$mitigator_name) |>
+              dplyr::pull(.data$mitigator_code)
           )
         )
     },
@@ -476,13 +477,13 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           mitigator_code = forcats::fct(
-            x = mitigator_code,
+            x = .data$mitigator_code,
             levels = dat |>
-              dplyr::select(mitigator_code, mitigator_name) |>
-              dplyr::filter(!is.na(mitigator_code)) |>
-              dplyr::distinct(mitigator_code, .keep_all = TRUE) |>
-              dplyr::arrange(desc(mitigator_name)) |>
-              dplyr::pull(mitigator_code)
+              dplyr::select(.data$mitigator_code, .data$mitigator_name) |>
+              dplyr::filter(!is.na(.data$mitigator_code)) |>
+              dplyr::distinct(.data$mitigator_code, .keep_all = TRUE) |>
+              dplyr::arrange(dplyr::desc(.data$mitigator_name)) |>
+              dplyr::pull(.data$mitigator_code)
           )
         )
     },
@@ -492,17 +493,17 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           mitigator_code = forcats::fct(
-            x = mitigator_code,
+            x = .data$mitigator_code,
             levels = dat |>
-              dplyr::select(mitigator_code, scheme_code) |>
-              dplyr::filter(!is.na(mitigator_code)) |>
-              dplyr::filter(!is.na(scheme_code)) |>
+              dplyr::select(.data$mitigator_code, .data$scheme_code) |>
+              dplyr::filter(!is.na(.data$mitigator_code)) |>
+              dplyr::filter(!is.na(.data$scheme_code)) |>
               dplyr::summarise(
-                scheme_count = dplyr::n_distinct(scheme_code, na.rm = TRUE),
-                .by = mitigator_code
+                scheme_count = dplyr::n_distinct(.data$scheme_code, na.rm = TRUE),
+                .by = .data$mitigator_code
               ) |>
-              dplyr::arrange(scheme_count, mitigator_code) |>
-              dplyr::pull(mitigator_code)
+              dplyr::arrange(.data$scheme_count, .data$mitigator_code) |>
+              dplyr::pull(.data$mitigator_code)
           )
         )
     },
@@ -512,17 +513,17 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           mitigator_code = forcats::fct(
-            x = mitigator_code,
+            x = .data$mitigator_code,
             levels = dat |>
-              dplyr::select(mitigator_code, scheme_code) |>
-              dplyr::filter(!is.na(mitigator_code)) |>
-              dplyr::filter(!is.na(scheme_code)) |>
+              dplyr::select(.data$mitigator_code, .data$scheme_code) |>
+              dplyr::filter(!is.na(.data$mitigator_code)) |>
+              dplyr::filter(!is.na(.data$scheme_code)) |>
               dplyr::summarise(
-                scheme_count = dplyr::n_distinct(scheme_code, na.rm = TRUE),
-                .by = mitigator_code
+                scheme_count = dplyr::n_distinct(.data$scheme_code, na.rm = TRUE),
+                .by = .data$mitigator_code
               ) |>
-              dplyr::arrange(desc(scheme_count), mitigator_code) |>
-              dplyr::pull(mitigator_code)
+              dplyr::arrange(dplyr::desc(.data$scheme_count), .data$mitigator_code) |>
+              dplyr::pull(.data$mitigator_code)
           )
         )
     },
@@ -532,16 +533,16 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           mitigator_code = forcats::fct(
-            x = mitigator_code,
+            x = .data$mitigator_code,
             levels = dat |>
-              dplyr::select(mitigator_code, value) |>
-              dplyr::filter(!is.na(mitigator_code)) |>
+              dplyr::select(.data$mitigator_code, .data$value) |>
+              dplyr::filter(!is.na(.data$mitigator_code)) |>
               dplyr::summarise(
-                average = mean(value, na.rm = TRUE),
-                .by = mitigator_code
+                average = mean(.data$value, na.rm = TRUE),
+                .by = .data$mitigator_code
               ) |>
-              dplyr::arrange(average, mitigator_code) |>
-              dplyr::pull(mitigator_code)
+              dplyr::arrange(.data$average, .data$mitigator_code) |>
+              dplyr::pull(.data$mitigator_code)
           )
         )
     },
@@ -551,16 +552,16 @@ prepare_heatmap_dat <- function(
         dat |>
         dplyr::mutate(
           mitigator_code = forcats::fct(
-            x = mitigator_code,
+            x = .data$mitigator_code,
             levels = dat |>
-              dplyr::select(mitigator_code, value) |>
-              dplyr::filter(!is.na(mitigator_code)) |>
+              dplyr::select(.data$mitigator_code, .data$value) |>
+              dplyr::filter(!is.na(.data$mitigator_code)) |>
               dplyr::summarise(
-                average = mean(value, na.rm = TRUE),
-                .by = mitigator_code
+                average = mean(.data$value, na.rm = TRUE),
+                .by = .data$mitigator_code
               ) |>
-              dplyr::arrange(desc(average), mitigator_code) |>
-              dplyr::pull(mitigator_code)
+              dplyr::arrange(dplyr::desc(.data$average), .data$mitigator_code) |>
+              dplyr::pull(.data$mitigator_code)
           )
         )
     }
@@ -572,29 +573,29 @@ prepare_heatmap_dat <- function(
     dplyr::mutate(
       # highlight the focal scheme using ascii
       scheme_name = dplyr::if_else(
-        condition = scheme_code %in% focal_scheme_code &
+        condition = .data$scheme_code %in% focal_scheme_code &
           stringr::str_ends(
-            string = scheme_name,
+            string = .data$scheme_name,
             pattern = "📌",
             negate = TRUE
           ),
         true = glue::glue("{scheme_name} 📌"),
-        false = scheme_name
+        false = .data$scheme_name
       ),
 
       # need to reverse ordering for y-axis to ensure correct display in ggplot2
-      mitigator_code = mitigator_code |>
+      mitigator_code = .data$mitigator_code |>
         forcats::fct_rev(),
 
       # ensure context items are listed last
-      scheme_code = scheme_code |>
+      scheme_code = .data$scheme_code |>
         forcats::fct_expand(scheme_additional) |>
         forcats::fct_relevel(
           'NEE', 'MIN', 'MAX', 'MEAN',
           after = Inf
         ),
 
-      mitigator_code = mitigator_code |>
+      mitigator_code = .data$mitigator_code |>
         forcats::fct_expand(scheme_additional) |>
         forcats::fct_relevel(
           'MEAN', 'MAX', 'MIN', # NB, reverse ordering
@@ -602,13 +603,13 @@ prepare_heatmap_dat <- function(
         ),
 
       # order scheme name to match scheme code
-      scheme_name = scheme_name |>
+      scheme_name = .data$scheme_name |>
         forcats::fct() |>
-        stats::reorder(as.numeric(scheme_code)),
+        stats::reorder(as.numeric(.data$scheme_code)),
       # order mitigator name to match mitigator code
-      mitigator_name = mitigator_name |>
+      mitigator_name = .data$mitigator_name |>
         forcats::fct() |>
-        stats::reorder(as.numeric(mitigator_code)),
+        stats::reorder(as.numeric(.data$mitigator_code)),
     )
 
   # return the result
@@ -617,20 +618,21 @@ prepare_heatmap_dat <- function(
 
 #' Plot heatmap
 #'
-#' Produces a {plotly} version of the heatmap showing mitigators on the y-axis
+#' Produces a \{plotly\} version of the heatmap showing mitigators on the y-axis
 #' and schemes across the x-axis with the selected mitigator value (mid, low,
 #' high, submitted) controlling the fill colour.
 #'
 #' @param dat Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
 #' @param toggle_mitigator_name Boolean - value from `input$toggle_mitigator_name` - used to decide what to display on y-axis
 #' @param toggle_scale_fill_by_mitigator Boolean - value from `input$toggle_heatmap_scale_fill_by_mitigator` - used to control whether the colour is scaled across the whole heatmap (FALSE) or applied across each mitigator (TRUE)
-#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80% prediction interval - used to label the scales
-#' @param heatmap_type Character - value from `input$heatmap_type` - used to control whether a solid colour is applied ('submitted' plots) or colour is dependent on the value
-#' @param colour_binary Character - value from `input$heatmap_binary_colour` - hex colour string to use in the 'submitted' (binary) plots
+#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales
+#' @param heatmap_type Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value
+#' @param colour_binary Character - value from `input$heatmap_binary_colour` - hex colour string to use in the binary plots
 #' @param colour_value_low Character - value from `input$heatmap_value_colour_low` - hex colour string to use in the gradient fill for low values
 #' @param colour_value_high Character - value from `input$heatmap_value_colour_high` - hex colour string to use in the gradient fill for high values
 #' @param plot_height Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot
 #' @param font_family Character - (default = 'Arial, Helvetica, Droid Sans, sans') a list of font families to use in the plot
+#' @param focal_scheme_code Code for the scheme chosen as the focal scheme by user
 #'
 #' @returns {plotly} object showing heatmap
 plot_heatmap <- function(
@@ -674,10 +676,10 @@ plot_heatmap <- function(
     length()
 
   y_mitigator_count_main <- dat |>
-    dplyr::select(mitigator_code) |>
+    dplyr::select(.data$mitigator_code) |>
     dplyr::distinct() |>
-    dplyr::filter(!mitigator_code %in% scheme_additional) |>
-    dplyr::pull(mitigator_code) |>
+    dplyr::filter(!.data$mitigator_code %in% scheme_additional) |>
+    dplyr::pull(.data$mitigator_code) |>
     length()
 
   # logic ----
@@ -711,17 +713,17 @@ plot_heatmap <- function(
   ## separate data from mitigator and scheme summaries
   dat_mitigator <-
     dat |>
-    dplyr::filter(scheme_code %in% scheme_additional)
+    dplyr::filter(.data$scheme_code %in% scheme_additional)
 
   dat_scheme <-
     dat |>
-    dplyr::filter(mitigator_code %in% scheme_additional)
+    dplyr::filter(.data$mitigator_code %in% scheme_additional)
 
   dat <-
     dat |>
     dplyr::filter(
-      !scheme_code %in% scheme_additional,
-      !mitigator_code %in% scheme_additional
+      !.data$scheme_code %in% scheme_additional,
+      !.data$mitigator_code %in% scheme_additional
     )
 
   x_scheme_count_main <-
@@ -923,9 +925,9 @@ plot_heatmap <- function(
 #' @param x_scheme_wrap Integer - the number of characters to string wrap the x-axis text on
 #' @param x_scheme_text ggplot2::element_text - defining how the x-axis labels are to be displayed
 #' @param y_char_wrap Integer - the number of characters to string wrap the y-axis text on
-#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80% prediction interval - used to label the scales
-#' @param heatmap_type Character - value from `input$heatmap_type` - used to control whether a solid colour is applied ('submitted' plots) or colour is dependent on the value
-#' @param colour_binary Character - value from `input$heatmap_binary_colour` - hex colour string to use in the 'submitted' (binary) plots
+#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales
+#' @param heatmap_type Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value
+#' @param colour_binary Character - value from `input$heatmap_binary_colour` - hex colour string to use in the binary plots
 #' @param colour_value_low Character - value from `input$heatmap_value_colour_low` - hex colour string to use in the gradient fill for low values
 #' @param colour_value_high Character - value from `input$heatmap_value_colour_high` - hex colour string to use in the gradient fill for high values
 #' @param plot_height Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot
@@ -961,9 +963,9 @@ heatmap_base <- function(
     dat |>
     ggplot2::ggplot(
       ggplot2::aes(
-        x = scheme_name,
+        x = .data$scheme_name,
         y = {{ var_y_axis }},
-        text = tooltip_text
+        text = .data$tooltip_text
       )
     )
 
@@ -1014,7 +1016,7 @@ heatmap_base <- function(
       heatmap +
       ggplot2::geom_text(
         ggplot2::aes(
-          label = value |> scales::percent(accuracy = 1)
+          label = .data$value |> scales::percent(accuracy = 1)
         ),
         colour = ifelse(context, "black", "white"),
         size = 4
@@ -1037,7 +1039,7 @@ heatmap_base <- function(
     heatmap <-
       heatmap +
       ggplot2::theme(legend.position = "none") +
-      ggplot2::aes(fill = as.character(value), colour = "white") +
+      ggplot2::aes(fill = as.character(.data$value), colour = "white") +
       ggplot2::scale_fill_manual(values = c('1' = colour_binary))
   }
 

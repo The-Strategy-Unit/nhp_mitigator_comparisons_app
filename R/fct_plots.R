@@ -68,10 +68,10 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   pointrange <- dat_selected_pointrange |>
     ggplot2::ggplot(
       ggplot2::aes(
-        x = value_mid,
-        xmin = value_lo,
-        xmax = value_hi,
-        colour = point_colour
+        x = .data$value_mid,
+        xmin = .data$value_lo,
+        xmax = .data$value_hi,
+        colour = .data$point_colour
       )
     )
 
@@ -93,11 +93,11 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
       ggplot2::geom_crossbar(
         # limit to records with nee data
         data = dat_selected_pointrange |>
-          dplyr::filter(!is.na(nee_mean) & !is.na(nee_p90) & !is.na(nee_p10)),
+          dplyr::filter(!is.na(.data$nee_mean) & !is.na(.data$nee_p90) & !is.na(.data$nee_p10)),
         ggplot2::aes(
-          x = nee_mean,
-          xmin = nee_p90,
-          xmax = nee_p10
+          x = .data$nee_mean,
+          xmin = .data$nee_p90,
+          xmax = .data$nee_p10
         ),
         #fill = "lightgrey",
         #colour = "grey85",
@@ -201,21 +201,21 @@ plot_mixture_distributions <- function(
   # pre-processing ----
   # get reference lines from the mixture distributions
   ref_lines <- dat_selected_mixture_distributions |>
-    dplyr::select(mitigator_name, mitigator_code, p10, p90, mu) |>
+    dplyr::select(.data$mitigator_name, .data$mitigator_code, .data$p10, .data$p90, .data$mu) |>
     dplyr::distinct()
 
   # get pointrange details
   focal_pointrange <- dat_filtered |>
     dplyr::filter(
-      scheme_code %in% dat_focal_scheme_code,
-      mitigator_name %in% ref_lines$mitigator_name
+      .data$scheme_code %in% dat_focal_scheme_code,
+      .data$mitigator_name %in% ref_lines$mitigator_name
     ) |>
     # set the y-axis value to be half as high as the maximum pdf_value
     dplyr::left_join(
       y = dat_selected_mixture_distributions |>
         dplyr::summarise(
           y_mid_point = (max({{ var_y_axis }}, na.rm = TRUE) / 2),
-          .by = mitigator_name
+          .by = "mitigator_name"
         ),
       by = 'mitigator_name'
     )
@@ -232,22 +232,22 @@ plot_mixture_distributions <- function(
     # plot reference lines
     ggplot2::geom_rect(
       data = ref_lines,
-      ggplot2::aes(xmin = p10, xmax = p90, ymin = 0, ymax = Inf),
+      ggplot2::aes(xmin = .data$p10, xmax = .data$p90, ymin = 0, ymax = Inf),
       fill = 'turquoise', alpha = 0.08
     ) +
     ggplot2::geom_vline(
       data = ref_lines,
-      ggplot2::aes(xintercept = mu),
+      ggplot2::aes(xintercept = .data$mu),
       linetype = 'dashed'
     ) +
     ggplot2::geom_vline(
       data = ref_lines,
-      ggplot2::aes(xintercept = p10),
+      ggplot2::aes(xintercept = .data$p10),
       linetype = 'dotted'
     ) +
     ggplot2::geom_vline(
       data = ref_lines,
-      ggplot2::aes(xintercept = p90),
+      ggplot2::aes(xintercept = .data$p90),
       linetype = 'dotted'
     ) +
 
@@ -255,17 +255,17 @@ plot_mixture_distributions <- function(
     ggplot2::geom_pointrange(
       data = focal_pointrange,
       ggplot2::aes(
-        y = y_mid_point,
-        x = value_mid * 100,
-        xmin = value_lo * 100,
-        xmax = value_hi * 100
+        y = .data$y_mid_point,
+        x = .data$value_mid * 100,
+        xmin = .data$value_lo * 100,
+        xmax = .data$value_hi * 100
       ),
       colour = 'red', size = 1, linewidth = 1.5, alpha = 0.75
     ) +
 
     # produce the rest of the plot
     ggplot2::facet_wrap(
-      facets = ggplot2::vars(mitigator_name),
+      facets = ggplot2::vars(.data$mitigator_name),
       ncol = 1,
       scales = 'free'
     ) +
@@ -291,11 +291,11 @@ plot_mixture_distributions <- function(
         ggplot2::geom_crossbar(
           data = stats::na.omit(focal_pointrange),
           ggplot2::aes(
-            y = y_mid_point,
-            x = nee_mean * 100,
-            xmin = nee_p90 * 100,
-            xmax = nee_p10 * 100,
-            width = y_mid_point / 5, # set width based on highest point on density
+            y = .data$y_mid_point,
+            x = .data$nee_mean * 100,
+            xmin = .data$nee_p90 * 100,
+            xmax = .data$nee_p10 * 100,
+            width = .data$y_mid_point / 5, # set width based on highest point on density
           ),
           #fill = "lightgrey",
           colour = "grey60",
@@ -322,7 +322,7 @@ plot_mixture_distributions <- function(
 #' @param rate_title Character - the label for the x-axis
 #' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
 #' @param trendline Boolean (default = TRUE) show a trendline between mid-points
-#' @param range Boolean (default = TRUE) show the 10% and 90% range as points connected by a line
+#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line
 #' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
 #' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
 #' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
@@ -346,46 +346,46 @@ prep_baseline_comparison <- function(
     rates_data |>
     dplyr::mutate(
       baseline_year = stringr::str_sub(
-        string = fyear,
+        string = .data$fyear,
         start = 1L,
         end = 4L
       ) |> as.integer()
     ) |>
-    dplyr::select(procode, strategy, baseline_year, rate_baseline = rate)
+    dplyr::select(.data$procode, .data$strategy, .data$baseline_year, rate_baseline = .data$rate)
 
   # prepare the data for plotting
   plot_dat <-
     dat |>
     # limit to the selected mitigators
     dplyr::filter(
-      mitigator_code %in% mitigator_codes
+      .data$mitigator_code %in% mitigator_codes
     ) |>
     # add in the baseline rate
     dplyr::left_join(
       y = rates_data,
       by = dplyr::join_by(
-        scheme_code == procode,
-        mitigator_variable == strategy,
-        year_baseline == baseline_year
+        "scheme_code" == "procode",
+        "mitigator_variable" == "strategy",
+        "year_baseline" == "baseline_year"
       )
     ) |>
     # avoid console errors by limiting to records with mitigator value AND rate values
     dplyr::filter(
-      !is.na(value_mid),
-      !is.na(rate_baseline)
+      !is.na(.data$value_mid),
+      !is.na(.data$rate_baseline)
     ) |>
     # work out quadrant
     dplyr::mutate(
-      y_mid = mean(value_mid, na.rm = TRUE),
-      x_mid = mean(rate_baseline, na.rm = TRUE),
-      quad_baseline = ifelse(rate_baseline <= x_mid, 'Low baseline', 'High baseline'),
-      quad_reduction = ifelse(value_mid <= y_mid, 'Low reduction', 'High reduction'),
-      .by = mitigator_code
+      y_mid = mean(.data$value_mid, na.rm = TRUE),
+      x_mid = mean(.data$rate_baseline, na.rm = TRUE),
+      quad_baseline = ifelse(.data$rate_baseline <= .data$x_mid, 'Low baseline', 'High baseline'),
+      quad_reduction = ifelse(.data$value_mid <= .data$y_mid, 'Low reduction', 'High reduction'),
+      .by = .data$mitigator_code
     ) |>
     # prepare for use
     dplyr::mutate(
       # highlight the focal scheme
-      scheme_highlight = scheme_code == focal_scheme_code,
+      scheme_highlight = .data$scheme_code == focal_scheme_code,
 
       # set the tooltip text
       tooltip_text = glue::glue(
@@ -417,7 +417,7 @@ prep_baseline_comparison <- function(
 #' @param rate_title Character - the label for the x-axis
 #' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
 #' @param trendline Boolean (default = TRUE) show a trendline between mid-points
-#' @param range Boolean (default = TRUE) show the 10% and 90% range as points connected by a line
+#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line
 #' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
 #' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
 #' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
@@ -459,34 +459,34 @@ plot_baseline_comparison <- function(
     # divide into quadrants
     dplyr::summarise(
       # where are the mid-values?
-      y_mid = mean(value_mid, na.rm = TRUE),
-      x_mid = mean(rate_baseline, na.rm = TRUE),
+      y_mid = mean(.data$value_mid, na.rm = TRUE),
+      x_mid = mean(.data$rate_baseline, na.rm = TRUE),
       # where are the bounds?
-      y_min = min(value_mid, na.rm = TRUE) |>
+      y_min = min(.data$value_mid, na.rm = TRUE) |>
         magrittr::multiply_by(10) |>
         floor() |>
         magrittr::divide_by(10),
-      x_min = min(rate_baseline, na.rm = TRUE) |>
+      x_min = min(.data$rate_baseline, na.rm = TRUE) |>
         magrittr::multiply_by(10) |>
         floor() |>
         magrittr::divide_by(10),
-      y_max = max(value_mid, na.rm = TRUE) |>
+      y_max = max(.data$value_mid, na.rm = TRUE) |>
         magrittr::multiply_by(10) |>
         ceiling() |>
         magrittr::divide_by(10),
-      x_max = max(rate_baseline, na.rm = TRUE) |>
+      x_max = max(.data$rate_baseline, na.rm = TRUE) |>
         magrittr::multiply_by(10) |>
         ceiling() |>
         magrittr::divide_by(10),
-      .by = mitigator_name
+      .by = .data$mitigator_name
     )
 
   # create the plot ---
   plot <-
     plot_dat |>
-    ggplot2::ggplot(ggplot2::aes(x = rate_baseline, text = tooltip_text)) +
+    ggplot2::ggplot(ggplot2::aes(x = .data$rate_baseline, text = .data$tooltip_text)) +
     ggplot2::facet_wrap(
-      facets = ggplot2::vars(mitigator_name),
+      facets = ggplot2::vars(.data$mitigator_name),
       scales = 'free_x',
       ncol = facet_columns
     ) +
@@ -501,14 +501,14 @@ plot_baseline_comparison <- function(
       plot +
       ggplot2::geom_hline(
         data = plot_quadrants,
-        ggplot2::aes(yintercept = y_mid),
+        ggplot2::aes(yintercept = .data$y_mid),
         linetype = 'dotted',
         colour = 'grey80',
         alpha = 0.8
       ) +
       ggplot2::geom_vline(
         data = plot_quadrants,
-        ggplot2::aes(xintercept = x_mid),
+        ggplot2::aes(xintercept = .data$x_mid),
         linetype = 'dotted',
         colour = 'grey80',
         alpha = 0.8
@@ -520,7 +520,7 @@ plot_baseline_comparison <- function(
     plot <-
       plot +
       ggplot2::geom_smooth(
-        ggplot2::aes(y = value_mid),
+        ggplot2::aes(y = .data$value_mid),
         formula = y ~ x,
         method = 'lm', se = FALSE, linetype = 'dotted', linewidth = 1
       )
@@ -532,19 +532,19 @@ plot_baseline_comparison <- function(
       plot +
       ggplot2::geom_segment(
         ggplot2::aes(
-          xend = rate_baseline, # keep same x-position
-          y = value_lo,
-          yend = value_hi,
-          colour = scheme_highlight
+          xend = .data$rate_baseline, # keep same x-position
+          y = .data$value_lo,
+          yend = .data$value_hi,
+          colour = .data$scheme_highlight
         ),
         linewidth = 2, alpha = 0.1
       ) +
       ggplot2::geom_point(
-        ggplot2::aes(y = value_lo, colour = scheme_highlight),
+        ggplot2::aes(y = .data$value_lo, colour = .data$scheme_highlight),
         alpha = 0.5
       ) +
       ggplot2::geom_point(
-        ggplot2::aes(y = value_hi, colour = scheme_highlight),
+        ggplot2::aes(y = .data$value_hi, colour = .data$scheme_highlight),
         alpha = 0.5
       )
   }
@@ -554,7 +554,7 @@ plot_baseline_comparison <- function(
     plot <-
       plot +
       ggplot2::geom_text(
-        ggplot2::aes(y = value_mid, label = scheme_code),
+        ggplot2::aes(y = .data$value_mid, label = .data$scheme_code),
         check_overlap = TRUE, nudge_y = 0.04
       )
   }
@@ -562,7 +562,7 @@ plot_baseline_comparison <- function(
   # add in midpoints
   plot <-
     plot +
-    ggplot2::geom_point(ggplot2::aes(y = value_mid, colour = scheme_highlight)) +
+    ggplot2::geom_point(ggplot2::aes(y = .data$value_mid, colour = .data$scheme_highlight)) +
     ggplot2::scale_color_manual(
       values = c(
         'FALSE' = 'grey50',
@@ -592,7 +592,7 @@ plot_baseline_comparison <- function(
   # work out how tall to make this plot
   n_mitigators <-
     plot_dat |>
-    dplyr::pull(mitigator_code) |>
+    dplyr::pull(.data$mitigator_code) |>
     unique() |>
     length()
 
@@ -649,26 +649,26 @@ wrap_strings_to_fit_pixel_limit <- function(
   df <-
     strings |>
     tibble::as_tibble() |>
-    dplyr::rename(input = value) |>
+    dplyr::rename(input = .data$value) |>
     dplyr::mutate(
       input_width_px = systemfonts::string_width(
-        strings = input,
+        strings = .data$input,
         family = font_family,
         size = font_size
       ),
-      input_chars = nchar(input),
-      input_char_px = input_width_px / nchar(input),
-      chars_optimal = floor(px_limit / input_char_px),
+      input_chars = nchar(.data$input),
+      input_char_px = .data$input_width_px / nchar(.data$input),
+      chars_optimal = floor(px_limit / .data$input_char_px),
     ) |>
     dplyr::rowwise() |> # to apply each chars_optimal to each input string
     dplyr::mutate(
       output = stringr::str_wrap(
-        string = input,
-        width = chars_optimal
+        string = .data$input,
+        width = .data$chars_optimal
       ),
       output_width_px = systemfonts::string_width(
         strings = stringr::str_split_i(
-          string = output,
+          string = .data$output,
           pattern = '\n',
           i = 1
         ), # take the first line of the wrapped string
@@ -685,12 +685,12 @@ wrap_strings_to_fit_pixel_limit <- function(
 
 #' Plot an individual trendline comparison plot
 #'
-#' Produces a single {plotly} object showing the trendline for the specified
+#' Produces a single \{plotly\} object showing the trendline for the specified
 #' scheme and mitigator.
 #'
 #' Note - this function is designed for use with `plot_facetted_trendlines()`
 #' which coordinates the production of plots for multiple mitigators.
-#' The use of the `subplot()` features of {plotly} mean that the overall plot
+#' The use of the `subplot()` features of \{plotly\} mean that the overall plot
 #' height is specified in each subplot's definition.
 #'
 #' @param plot_data Tibble - historical rate of activity for the mitigator, as produced within `plot_facetted_trendlines()` in `fct_plots.R`
@@ -729,7 +729,7 @@ plot_trendline_comparison <- function(
     plot_data |>
     dplyr::mutate(
       mitigator_activity_title = wrap_strings_to_fit_pixel_limit(
-        strings = mitigator_activity_title,
+        strings = .data$mitigator_activity_title,
         px_limit = facet_height_px
       )
     )
@@ -740,19 +740,19 @@ plot_trendline_comparison <- function(
     plot_data |>
     # filter to baseline year for the focal scheme
     dplyr::filter(
-      scheme_code %in% focal_scheme_code,
-      year == year_baseline
+      .data$scheme_code %in% focal_scheme_code,
+      .data$year == .data$year_baseline
     ) |>
     dplyr::mutate(
       # work out the forecasted horizon rate
-      horizon_value_lo = rate * pi_value_lo,
-      horizon_value_mid = rate * pi_value_mid,
-      horizon_value_hi = rate * pi_value_hi,
+      horizon_value_lo = .data$rate * .data$pi_value_lo,
+      horizon_value_mid = .data$rate * .data$pi_value_mid,
+      horizon_value_hi = .data$rate * .data$pi_value_hi,
 
       # how do the horizon values compare with average data (i.e. z-scores)
-      zscore_value_lo = (horizon_value_lo - rate_mean) / rate_sd,
-      zscore_value_mid = (horizon_value_mid - rate_mean) / rate_sd,
-      zscore_value_hi = (horizon_value_hi - rate_mean) / rate_sd,
+      zscore_value_lo = (.data$horizon_value_lo - .data$rate_mean) / .data$rate_sd,
+      zscore_value_mid = (.data$horizon_value_mid - .data$rate_mean) / .data$rate_sd,
+      zscore_value_hi = (.data$horizon_value_hi - .data$rate_mean) / .data$rate_sd,
 
       # prepare the tooltip text
       tooltip_text = glue::glue(
@@ -769,9 +769,9 @@ plot_trendline_comparison <- function(
   # create the plot ----
   plot <-
     plot_data |>
-    ggplot2::ggplot(ggplot2::aes(x = year, y = rate, text = tooltip_text)) +
+    ggplot2::ggplot(ggplot2::aes(x = .data$year, y = .data$rate, text = .data$tooltip_text)) +
     ggplot2::facet_wrap(
-      facets = ggplot2::vars(mitigator_name),
+      facets = ggplot2::vars(.data$mitigator_name),
       scales = 'free',
       ncol = facet_columns
     )
@@ -783,8 +783,8 @@ plot_trendline_comparison <- function(
     df_horizon_overlay <-
       plot_data |>
       dplyr::filter(
-        scheme_code %in% focal_scheme_code,
-        year <= year_baseline
+        .data$scheme_code %in% focal_scheme_code,
+        .data$year <= .data$year_baseline
       ) |>
       dplyr::mutate(tooltip_text = '')
 
@@ -795,9 +795,9 @@ plot_trendline_comparison <- function(
       ggplot2::geom_ribbon(
         data = df_horizon_overlay,
         ggplot2::aes(
-          x = year, y = rate_mean,
-          ymin = rate_mean - (rate_sd * 2),
-          ymax = rate_mean + (rate_sd * 2),
+          x = .data$year, y = .data$rate_mean,
+          ymin = .data$rate_mean - (.data$rate_sd * 2),
+          ymax = .data$rate_mean + (.data$rate_sd * 2),
           group = 1
         ),
         alpha = 0.05
@@ -805,19 +805,19 @@ plot_trendline_comparison <- function(
       # mean
       ggplot2::geom_line(
         data = df_horizon_overlay,
-        ggplot2::aes(x = year, y = rate_mean, group = 1),
+        ggplot2::aes(x = .data$year, y = .data$rate_mean, group = 1),
         alpha = 0.5, linetype = 'dotted'
       ) +
       # mean + 2sd
       ggplot2::geom_line(
         data = df_horizon_overlay,
-        ggplot2::aes(x = year, y = rate_mean + (rate_sd * 2), group = 1),
+        ggplot2::aes(x = .data$year, y = .data$rate_mean + (.data$rate_sd * 2), group = 1),
         alpha = 0.2, linetype = 'dotted'
       ) +
       # mean - 2sd
       ggplot2::geom_line(
         data = df_horizon_overlay,
-        ggplot2::aes(x = year, y = rate_mean - (rate_sd * 2), group = 1),
+        ggplot2::aes(x = .data$year, y = .data$rate_mean - (.data$rate_sd * 2), group = 1),
         alpha = 0.2, linetype = 'dotted'
       )
   }
@@ -827,15 +827,15 @@ plot_trendline_comparison <- function(
 
     # get the data
     df_other_schemes <-
-      plot_data |> dplyr::filter(scheme_code != focal_scheme_code)
+      plot_data |> dplyr::filter(.data$scheme_code != focal_scheme_code)
 
     # add to the plot only if there is data present
     if (nrow(df_other_schemes) > 0) {
       plot <-
         plot +
         ggplot2::geom_line(
-          data = plot_data |> dplyr::filter(scheme_code != focal_scheme_code),
-          ggplot2::aes(group = scheme_code),
+          data = plot_data |> dplyr::filter(.data$scheme_code != focal_scheme_code),
+          ggplot2::aes(group = .data$scheme_code),
           alpha = 0.2
         )
     }
@@ -853,7 +853,7 @@ plot_trendline_comparison <- function(
         yes = max(plot_data_horizon_focal$year_horizon),
         no = max(plot_data$year)
       ),
-      year = dplyr::coalesce(year_min, 2010):dplyr::coalesce(year_max, 2041),
+      year = dplyr::coalesce(.data$year_min, 2010):dplyr::coalesce(.data$year_max, 2041),
       ymin = plot_data_horizon_focal$horizon_value_lo,
       ymax = plot_data_horizon_focal$horizon_value_hi,
       rate = plot_data_horizon_focal$horizon_value_mid,
@@ -867,26 +867,26 @@ plot_trendline_comparison <- function(
       ggplot2::geom_ribbon(
         data = df_horizon_overlay,
         ggplot2::aes(
-          x = year,
-          y = rate,
-          ymin = ymin,
-          ymax = ymax,
+          x = .data$year,
+          y = .data$rate,
+          ymin = .data$ymin,
+          ymax = .data$ymax,
         ),
         fill = 'red', alpha = 0.1
       ) +
       ggplot2::geom_line(
         data = df_horizon_overlay,
-        ggplot2::aes(x = year, y = ymin),
+        ggplot2::aes(x = .data$year, y = .data$ymin),
         colour = 'red', alpha = 0.15
       ) +
       ggplot2::geom_line(
         data = df_horizon_overlay,
-        ggplot2::aes(x = year, y = ymax),
+        ggplot2::aes(x = .data$year, y = .data$ymax),
         colour = 'red', alpha = 0.15
       ) +
       ggplot2::geom_line(
         data = df_horizon_overlay,
-        ggplot2::aes(x = year, y = rate),
+        ggplot2::aes(x = .data$year, y = .data$rate),
         colour = 'red', alpha = 0.15
       )
   }
@@ -899,26 +899,26 @@ plot_trendline_comparison <- function(
       ggplot2::geom_pointrange(
         data = plot_data_horizon_focal,
         ggplot2::aes(
-          x = year_horizon,
-          y = horizon_value_mid,
-          ymin = horizon_value_lo,
-          ymax = horizon_value_hi
+          x = .data$year_horizon,
+          y = .data$horizon_value_mid,
+          ymin = .data$horizon_value_lo,
+          ymax = .data$horizon_value_hi
         ),
         colour = 'red'
       ) +
       ggplot2::geom_segment(
         data = plot_data_horizon_focal,
         ggplot2::aes(
-          x = year, xend = year_horizon,
-          y = rate, yend = horizon_value_lo
+          x = .data$year, xend = .data$year_horizon,
+          y = .data$rate, yend = .data$horizon_value_lo
         ),
         alpha = 0.2, colour = 'red', linetype = 'dotted'
       ) +
       ggplot2::geom_segment(
         data = plot_data_horizon_focal,
         ggplot2::aes(
-          x = year, xend = year_horizon,
-          y = rate, yend = horizon_value_hi
+          x = .data$year, xend = .data$year_horizon,
+          y = .data$rate, yend = .data$horizon_value_hi
         ),
         alpha = 0.2, colour = 'red', linetype = 'dotted'
       )
@@ -928,8 +928,8 @@ plot_trendline_comparison <- function(
   plot <-
     plot +
     ggplot2::geom_line(
-      data = plot_data |> dplyr::filter(scheme_code == focal_scheme_code),
-      ggplot2::aes(group = scheme_code),
+      data = plot_data |> dplyr::filter(.data$scheme_code == focal_scheme_code),
+      ggplot2::aes(group = .data$scheme_code),
       colour = 'red', linewidth = 2
     )
 
@@ -971,7 +971,7 @@ plot_trendline_comparison <- function(
       yaxis = list(
         title = plot_data |>
           dplyr::slice_head(n = 1) |>
-          dplyr::pull(mitigator_activity_title),
+          dplyr::pull(.data$mitigator_activity_title),
         titlefont = list(size = 14)
       )
     )
@@ -993,7 +993,7 @@ plot_trendline_comparison <- function(
 
 #' Plot faceted trendlines
 #'
-#' Co-ordinates the production of a a {plotly} object containing multiple
+#' Co-ordinates the production of a a \{plotly\} object containing multiple
 #' time series plots, one for each mitigator in `mitigator_codes`.
 #'
 #' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
@@ -1028,19 +1028,19 @@ plot_faceted_trendlines <- function(
   dat_lu <-
     dat |>
     dplyr::filter(
-      !is.na(scheme_code),
-      mitigator_code %in% mitigator_codes,
-      scheme_code %in% c(focal_scheme_code, scheme_codes)
+      !is.na(.data$scheme_code),
+      .data$mitigator_code %in% mitigator_codes,
+      .data$scheme_code %in% c(focal_scheme_code, scheme_codes)
     ) |>
     dplyr::select(
       # keys
-      mitigator_variable, scheme_code,
+      .data$mitigator_variable, .data$scheme_code,
 
       # lookup data
-      scheme_name,
-      mitigator_code, mitigator_name, mitigator_activity_title,
-      year_baseline, year_horizon,
-      pi_value_lo, pi_value_mid, pi_value_hi
+      .data$scheme_name,
+      .data$mitigator_code, .data$mitigator_name, .data$mitigator_activity_title,
+      .data$year_baseline, .data$year_horizon,
+      .data$pi_value_lo, .data$pi_value_mid, .data$pi_value_hi
     ) |>
     dplyr::distinct(.keep_all = TRUE)
 
@@ -1052,27 +1052,27 @@ plot_faceted_trendlines <- function(
     dplyr::inner_join(
       y = rates_data,
       by = dplyr::join_by(
-        scheme_code == procode,
-        mitigator_variable == strategy
+        "scheme_code" == "procode",
+        "mitigator_variable" == "strategy"
       )
     ) |>
     # limit to mitigators where the focal scheme has data
     dplyr::filter(
-      mitigator_code %in% mitigator_code[scheme_code == focal_scheme_code]
+      .data$mitigator_code %in% .data$mitigator_code[.data$scheme_code == focal_scheme_code]
     ) |>
     # format the rates data ready for use
     dplyr::mutate(
       year = stringr::str_sub(
-        string = fyear,
+        string = .data$fyear,
         start = 1L,
         end = 4L
       ) |> as.integer()
     ) |>
     # work out some useful metrics
     dplyr::mutate(
-      rate_mean = mean(rate[year <= year_baseline], na.rm = T),
-      rate_sd = sd(rate[year <= year_baseline], na.rm = T),
-      .by = c(scheme_code, mitigator_code)
+      rate_mean = mean(.data$rate[.data$year <= .data$year_baseline], na.rm = T),
+      rate_sd = sd(.data$rate[.data$year <= .data$year_baseline], na.rm = T),
+      .by = c(.data$scheme_code, .data$mitigator_code)
     ) |>
     dplyr::mutate(
       # prepare the tooltip information
@@ -1087,7 +1087,7 @@ plot_faceted_trendlines <- function(
   # reset the list of mitigators to where the focal scheme has data
   mitigator_codes_new <-
     plot_data |>
-    dplyr::pull(mitigator_code) |>
+    dplyr::pull(.data$mitigator_code) |>
     unique() |>
     sort()
 
@@ -1097,8 +1097,8 @@ plot_faceted_trendlines <- function(
     purrr::map(
       .x = mitigator_codes_new,
       .f = \(.x) plot_trendline_comparison(
-        plot_data = plot_data |> dplyr::filter(mitigator_code == .x),
-        dat_lu = dat_lu |> dplyr::filter(mitigator_code == .x),
+        plot_data = plot_data |> dplyr::filter(.data$mitigator_code == .x),
+        dat_lu = dat_lu |> dplyr::filter(.data$mitigator_code == .x),
         mitigator_codes = .x,
         focal_scheme_code = focal_scheme_code,
 
@@ -1157,10 +1157,10 @@ plot_faceted_trendlines <- function(
       title = list(
         # name the focal scheme so available when exported as image
         text = plot_data |>
-          dplyr::filter(scheme_code == focal_scheme_code) |>
+          dplyr::filter(.data$scheme_code == focal_scheme_code) |>
           dplyr::slice_head(n = 1) |>
           dplyr::mutate(focal_scheme_name = glue::glue('{scheme_name} [{scheme_code}]')) |>
-          dplyr::pull(focal_scheme_name),
+          dplyr::pull(.data$focal_scheme_name),
         x = 0.5,
         font = list(
           family = 'Arial, Helvetica, Droid Sans, sans',

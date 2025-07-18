@@ -10,15 +10,15 @@ extract_params <- function(params, runs_meta) {
     purrr::map(possibly_report_params_table, "efficiencies") |>
     purrr::list_rbind()
 
-  runs_meta <- runs_meta |> dplyr::select(dataset, scenario, run_stage)
+  runs_meta <- runs_meta |> dplyr::select(.data$dataset, .data$scenario, .data$run_stage)
 
   activity_avoidance |>
     dplyr::bind_rows(efficiencies) |>
     dplyr::mutate(
       peer_year = paste0(
-        peer,
-        "_", stringr::str_sub(baseline_year, 3, 4),
-        "_", stringr::str_sub(horizon_year, 3, 4)
+        .data$peer,
+        "_", stringr::str_sub(.data$baseline_year, 3, 4),
+        "_", stringr::str_sub(.data$horizon_year, 3, 4)
       )
     ) |>
     dplyr::left_join(runs_meta, by = dplyr::join_by("peer" == "dataset")) |>
@@ -33,19 +33,19 @@ correct_day_procedures <- function(x) {
     dplyr::mutate(
       mitigator_code_flag = dplyr::case_when(
         stringr::str_detect(
-          strategy,
+          .data$strategy,
           "^bads_daycase$|^day_procedures_usually_dc$"  # old name/new name
         ) ~ "IP-EF-005",  # might as well flag with the mitigator code
         stringr::str_detect(
-          strategy,
+          .data$strategy,
           "^bads_daycase_occasional$|^day_procedures_occasionally_dc$"
         ) ~ "IP-EF-006",
         stringr::str_detect(
-          strategy,
+          .data$strategy,
           "^bads_outpatients$|^day_procedures_usually_op$"
         ) ~ "IP-EF-007",
         stringr::str_detect(
-          strategy,
+          .data$strategy,
           "^bads_outpatients_or_daycase$|^day_procedures_occasionally_op$"
         ) ~ "IP-EF-008",
         .default = NA_character_
@@ -56,17 +56,17 @@ correct_day_procedures <- function(x) {
   # mitigator is represented by both a bads and a day_procedures version. We'll
   # use this info to filter out the bads version.
   dupes <- flagged |>
-    dplyr::count(peer, mitigator_code_flag) |>
-    tidyr::drop_na(mitigator_code_flag) |>
-    dplyr::filter(n > 1)
+    dplyr::count(.data$peer, .data$mitigator_code_flag) |>
+    tidyr::drop_na(.data$mitigator_code_flag) |>
+    dplyr::filter(.data$n > 1)
 
   # Remove bads mitigators if there's a day_procedures replacement for it
   for (i in seq(nrow(dupes))) {
     flagged <- flagged |>
       dplyr::filter(
-        !(peer == dupes[[i, "peer"]] &
-            mitigator_code_flag == dupes[[i, "mitigator_code_flag"]] &
-            stringr::str_detect(strategy, "^bads_"))
+        !(.data$peer == dupes[[i, "peer"]] &
+            .data$mitigator_code_flag == dupes[[i, "mitigator_code_flag"]] &
+            stringr::str_detect(.data$strategy, "^bads_"))
       )
   }
 
@@ -75,15 +75,15 @@ correct_day_procedures <- function(x) {
   flagged |>
     dplyr::mutate(
       strategy = dplyr::case_match(
-        strategy,
+        .data$strategy,
         "bads_daycase" ~ "day_procedures_usually_dc",
         "bads_daycase_occasional" ~ "day_procedures_occasionally_dc",
         "bads_outpatients" ~ "day_procedures_usually_op",
         "bads_outpatients_or_daycase" ~ "day_procedures_occasionally_op",
-        .default = strategy
+        .default = .data$strategy
       )
     ) |>
-    dplyr::select(-mitigator_code_flag)  # remove helper column
+    dplyr::select(-.data$mitigator_code_flag)  # remove helper column
 
 }
 
@@ -122,15 +122,15 @@ report_params_table <- function(
 prepare_skeleton_table <- function(extracted_params) {
 
   strategies <- extracted_params |>
-    dplyr::distinct(activity_type, strategy, parameter)
+    dplyr::distinct(.data$activity_type, .data$strategy, .data$parameter)
 
   tidyr::expand_grid(
     "strategy" = unique(extracted_params[["strategy"]]),
     "peer_year" = unique(extracted_params[["peer_year"]])
   ) |>
-    dplyr::left_join(strategies, by = dplyr::join_by(strategy)) |>
-    dplyr::select(peer_year, activity_type, parameter, strategy) |>
-    dplyr::arrange(peer_year, activity_type, parameter, strategy)
+    dplyr::left_join(strategies, by = dplyr::join_by("strategy")) |>
+    dplyr::select(.data$peer_year, .data$activity_type, .data$parameter, .data$strategy) |>
+    dplyr::arrange(.data$peer_year, .data$activity_type, .data$parameter, .data$strategy)
 
 }
 
@@ -161,84 +161,84 @@ populate_table <- function(
   data_joined <- skeleton_table |>
     dplyr::left_join(
       extracted_params,
-      by = dplyr::join_by(peer_year, activity_type, parameter, strategy)
+      by = dplyr::join_by("peer_year", "activity_type", "parameter", "strategy")
     ) |>
     dplyr::left_join(
       trust_code_lookup |>
         dplyr::mutate(
-          scheme_code = `Trust ODS Code`,
-          scheme_name = `Name of Hospital site`,
+          scheme_code = .data$`Trust ODS Code`,
+          scheme_name = .data$`Name of Hospital site`,
           .keep = "none"
         ),
-      by = dplyr::join_by(peer == scheme_code)
+      by = dplyr::join_by("peer" == "scheme_code")
     ) |>
     dplyr::left_join(
       mitigator_lookup,
-      by = dplyr::join_by(strategy == "Strategy variable")
+      by = dplyr::join_by("strategy" == "Strategy variable")
     ) |>
     dplyr::left_join(
       nee_results,
-      by = dplyr::join_by(strategy == param_name)
+      by = dplyr::join_by("strategy" == "param_name")
     ) |>
     dplyr::left_join(
       y = yaml_df |>
-        dplyr::select(strategy_variable, mitigator_activity_title = y_axis_title) |>
+        dplyr::select(.data$strategy_variable, mitigator_activity_title = .data$y_axis_title) |>
         dplyr::distinct(),
-      by = dplyr::join_by(strategy == strategy_variable)
+      by = dplyr::join_by("strategy" == "strategy_variable")
     )
 
   data_prepared <- data_joined |>
     dplyr::filter(
-      (value_1 <= 1 & value_2 <= 1) |
-        is.na(value_1) & is.na(value_2)
+      (.data$value_1 <= 1 & .data$value_2 <= 1) |
+        is.na(.data$value_1) & is.na(.data$value_2)
     ) |>
     dplyr::mutate(
       .keep = "none",
       # schemes
       scheme_name = dplyr::case_when(
         # identify schemes whose mitigators are not yet finalised
-        !is.na(scheme_name) & stringr::str_starts(
-          string = run_stage |> stringr::str_to_lower(),
+        !is.na(.data$scheme_name) & stringr::str_starts(
+          string = .data$run_stage |> stringr::str_to_lower(),
           pattern = 'final',
           negate = TRUE
         ) ~ glue::glue('{scheme_name} ✏️'),
-        .default = scheme_name
+        .default = .data$scheme_name
       ),
-      scheme_code = peer,
+      scheme_code = .data$peer,
       scheme_year = dplyr::if_else(
-        stringr::str_detect(run_stage, "Final"),
-        paste0(peer_year, "*"), peer_year
+        stringr::str_detect(.data$run_stage, "Final"),
+        paste0(.data$peer_year, "*"), .data$peer_year
       ),
       # model run
-      run_scenario = scenario,
-      run_stage,
+      run_scenario = .data$scenario,
+      .data$run_stage,
       # mitigators
-      mitigator_code = `Mitigator code`,
-      mitigator_name = `Strategy name`,
-      mitigator_variable = strategy,
-      mitigator_activity_type = `Activity type`,
-      mitigator_type = `Mitigator type`,
-      mitigator_group = Grouping,
-      mitigator_activity_title = mitigator_activity_title,
+      mitigator_code = .data$`Mitigator code`,
+      mitigator_name = .data$`Strategy name`,
+      mitigator_variable = .data$strategy,
+      mitigator_activity_type = .data$`Activity type`,
+      mitigator_type = .data$`Mitigator type`,
+      mitigator_group = .data$Grouping,
+      mitigator_activity_title = .data$mitigator_activity_title,
       # mitigator value selections
-      value_lo = value_1,
-      value_hi = value_2,
-      value_mid = value_lo + (value_hi - value_lo) / 2,
-      value_range = value_hi - value_lo,
+      value_lo = .data$value_1,
+      value_hi = .data$value_2,
+      value_mid = .data$value_lo + (.data$value_hi - .data$value_lo) / 2,
+      value_range = .data$value_hi - .data$value_lo,
       value_point_or_range = dplyr::if_else(
-        value_hi - value_lo == 0,
+        .data$value_hi - .data$value_lo == 0,
         "point",
         "range"
       ),
-      value_time_profile = time_profile,
+      value_time_profile = .data$time_profile,
       # years
-      year_baseline = baseline_year,
-      year_horizon = horizon_year,
-      year_range = year_horizon - year_baseline,
+      year_baseline = .data$baseline_year,
+      year_horizon = .data$horizon_year,
+      year_range = .data$year_horizon - .data$year_baseline,
       # national elicitation exercise
-      nee_p10 = percentile10,
-      nee_p90 = percentile90,
-      nee_p50 = nee_p10 - (nee_p10 - nee_p90) / 2,
+      nee_p10 = .data$percentile10,
+      nee_p90 = .data$percentile90,
+      nee_p50 = .data$nee_p10 - (.data$nee_p10 - .data$nee_p90) / 2,
       nee_mean = mean
     )
 
@@ -247,22 +247,22 @@ populate_table <- function(
     data_prepared |>
     dplyr::mutate(
       # prediction_interval
-      pi_value_lo = value_lo,
-      pi_value_hi = value_hi,
-      pi_value_mid = value_mid,
-      pi_nee_p10 = round(nee_p10, 3),
-      pi_nee_p90 = round(nee_p90, 3),
-      pi_nee_p50 = round(nee_p50, 3),
-      pi_nee_mean = round(nee_mean, 3),
+      pi_value_lo = .data$value_lo,
+      pi_value_hi = .data$value_hi,
+      pi_value_mid = .data$value_mid,
+      pi_nee_p10 = round(.data$nee_p10, 3),
+      pi_nee_p90 = round(.data$nee_p90, 3),
+      pi_nee_p50 = round(.data$nee_p50, 3),
+      pi_nee_mean = round(.data$nee_mean, 3),
 
       # percent mitigated
-      pm_value_lo = round(1 - value_lo, 3),
-      pm_value_hi = round(1 - value_hi, 3),
-      pm_value_mid = round(1 - value_mid, 3),
-      pm_nee_p10 = round(1 - nee_p10, 3),
-      pm_nee_p90 = round(1 - nee_p90, 3),
-      pm_nee_p50 = round(1 - nee_p50, 3),
-      pm_nee_mean = round(1 - nee_mean, 3)
+      pm_value_lo = round(1 - .data$value_lo, 3),
+      pm_value_hi = round(1 - .data$value_hi, 3),
+      pm_value_mid = round(1 - .data$value_mid, 3),
+      pm_nee_p10 = round(1 - .data$nee_p10, 3),
+      pm_nee_p90 = round(1 - .data$nee_p90, 3),
+      pm_nee_p50 = round(1 - .data$nee_p50, 3),
+      pm_nee_mean = round(1 - .data$nee_mean, 3)
     )
 
   # organise ready for output
@@ -277,20 +277,20 @@ populate_table <- function(
       tidyselect::starts_with("pi_"),
       tidyselect::starts_with("pm_")
     ) |>
-    dplyr::arrange(scheme_name, mitigator_code)
+    dplyr::arrange(.data$scheme_name, .data$mitigator_code)
 
 }
 
 #' Update dat to reflect the user's preferred values
 #'
-#' Users are able to select from 'Percent of activity mitigated' and '80%
+#' Users are able to select from 'Percent of activity mitigated' and '80\%
 #' prediction interval' in the global settings sidebar.
 #'
 #' This function updates dat to reflect the user's preferred values.
 #'
 #' @param dat Tibble of data - as produced from `populate_table` in `fct_tabulate.R`
 #' @param values_displayed Character - the value in `input$values_displayed` indicating the user's preferred view
-#' @param include_point_estimates Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0% mitigation (100% prediction) are to be included
+#' @param include_point_estimates Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0\% mitigation (100\% prediction) are to be included
 #' @param focal_scheme_code Character - the scheme code of the focal scheme
 #'
 #' @return Tibble of data with the 'value_' and 'nee_' fields updated to match the user's preferred values
@@ -302,25 +302,25 @@ update_dat_values <- function(dat,
     dat <-
       dat |>
       dplyr::mutate(
-        value_lo = pm_value_hi, # low becomes high if viewing percent mitigated
-        value_hi = pm_value_lo, # high becomes low if viewing percent mitigated
-        value_mid = pm_value_mid,
-        nee_p10 = pm_nee_p90, # low becomes high if viewing percent mitigated
-        nee_p90 = pm_nee_p10, # high becomes low if viewing percent mitigated
-        nee_p50 = pm_nee_p50,
-        nee_mean = pm_nee_mean
+        value_lo = .data$pm_value_hi, # low becomes high if viewing percent mitigated
+        value_hi = .data$pm_value_lo, # high becomes low if viewing percent mitigated
+        value_mid = .data$pm_value_mid,
+        nee_p10 = .data$pm_nee_p90, # low becomes high if viewing percent mitigated
+        nee_p90 = .data$pm_nee_p10, # high becomes low if viewing percent mitigated
+        nee_p50 = .data$pm_nee_p50,
+        nee_mean = .data$pm_nee_mean
       )
   } else {
     dat <-
       dat |>
       dplyr::mutate(
-        value_lo = pi_value_lo,
-        value_hi = pi_value_hi,
-        value_mid = pi_value_mid,
-        nee_p10 = pi_nee_p10,
-        nee_p90 = pi_nee_p90,
-        nee_p50 = pi_nee_p50,
-        nee_mean = pi_nee_mean
+        value_lo = .data$pi_value_lo,
+        value_hi = .data$pi_value_hi,
+        value_mid = .data$pi_value_mid,
+        nee_p10 = .data$pi_nee_p10,
+        nee_p90 = .data$pi_nee_p90,
+        nee_p50 = .data$pi_nee_p50,
+        nee_mean = .data$pi_nee_mean
       )
   }
 
@@ -339,13 +339,13 @@ update_dat_values <- function(dat,
     # Define which records meet the definition of a point-estimate
     dat_exclude <-
       dat_temp |>
-      dplyr::filter(pi_value_lo == 1 & pi_value_hi == 1)
+      dplyr::filter(.data$pi_value_lo == 1 & .data$pi_value_hi == 1)
 
     # Define `Dat` to exclude point-estimates
     dat <-
       dat_temp |>
-      dplyr::filter(!key %in% dat_exclude$key) |>
-      dplyr::select(-key)
+      dplyr::filter(!.data$key %in% dat_exclude$key) |>
+      dplyr::select(-.data$key)
   }
 
   # identify the focal scheme
@@ -353,9 +353,9 @@ update_dat_values <- function(dat,
     dat |>
     dplyr::mutate(
       scheme_name = dplyr::if_else(
-        condition = scheme_code %in% dplyr::coalesce(focal_scheme_code, ""),
+        condition = .data$scheme_code %in% dplyr::coalesce(focal_scheme_code, ""),
         true = glue::glue("{scheme_name} 📌"),
-        false = scheme_name
+        false = .data$scheme_name
       )
     )
 
@@ -414,29 +414,29 @@ forecast_value <- function(
 get_all_schemes <- function(dat) {
   dat |>
     shiny::req() |>
-    dplyr::distinct(scheme_name, scheme_code) |>
-    dplyr::filter(!is.na(scheme_code)) |>
+    dplyr::distinct(.data$scheme_name, .data$scheme_code) |>
+    dplyr::filter(!is.na(.data$scheme_code)) |>
     dplyr::mutate(scheme_name = glue::glue("{scheme_name} ({scheme_code})")) |>
-    dplyr::arrange(scheme_name) |>
+    dplyr::arrange(.data$scheme_name) |>
     tibble::deframe()
 }
 
 get_all_mitigators <- function(dat) {
   dat |>
     shiny::req() |>
-    dplyr::distinct(mitigator_name, mitigator_code) |>
-    dplyr::filter(!is.na(mitigator_code)) |>
+    dplyr::distinct(.data$mitigator_name, .data$mitigator_code) |>
+    dplyr::filter(!is.na(.data$mitigator_code)) |>
     dplyr::mutate(
       mitigator_name = glue::glue("{mitigator_code}: {mitigator_name}")
     ) |>
-    dplyr::arrange(mitigator_code) |>
+    dplyr::arrange(.data$mitigator_code) |>
     tibble::deframe()
 }
 
 get_all_mitigator_groups <- function(dat) {
   dat |>
     shiny::req() |>
-    dplyr::distinct(mitigator_group) |>
+    dplyr::distinct(.data$mitigator_group) |>
     dplyr::pull() |>
     sort()
 }
@@ -463,15 +463,15 @@ get_trust_lookup <- function(container_support) {
     # sites, so simplify to one row
     dplyr::mutate(
       `Name of Hospital site` = dplyr::case_match(
-        `Trust ODS Code`,
+        .data$`Trust ODS Code`,
         'RYJ' ~ 'Imperial',
-        .default = `Name of Hospital site`
+        .default = .data$`Name of Hospital site`
       )
     ) |>
     # Ensure one row per trust - deals with Hampshire which appears twice
-    dplyr::distinct(`Trust ODS Code`, .keep_all = TRUE) |>
+    dplyr::distinct(.data$`Trust ODS Code`, .keep_all = TRUE) |>
     # Sort
-    dplyr::arrange(`Trust ODS Code`)
+    dplyr::arrange(.data$`Trust ODS Code`)
 
   return(trust_lookup)
 }
@@ -480,7 +480,7 @@ get_trust_lookup <- function(container_support) {
 #'
 #' The baseline activity for each mitigator is not specified in the `dat`, but
 #' is implicit. This function extracts the activity description, e.g.
-#' 'Admissions per 1,000 population' or '% of Appointments that are Face-to-Face'
+#' 'Admissions per 1,000 population' or '\% of Appointments that are Face-to-Face'
 #' from the inputs app yaml file.
 #'
 #' Using Gabriel's code from here:#'
@@ -529,13 +529,13 @@ prepare_mitigators  <- function(mitigator_lookup) {
 
   mitigator_lookup |>
     dplyr::select(
-      mitigator_code,
-      activity_type,
-      mitigator_type,
-      mitigator_variable,
-      mitigator_name,
-      mitigator_subset,
-      mitigator_grouping
+      .data$mitigator_code,
+      .data$activity_type,
+      .data$mitigator_type,
+      .data$mitigator_variable,
+      .data$mitigator_name,
+      .data$mitigator_subset,
+      .data$mitigator_grouping
     ) |>
     dplyr::rename_with(\(col_name) {
       col_name |>
@@ -550,7 +550,7 @@ prepare_mitigators  <- function(mitigator_lookup) {
     ) |>
     dplyr::mutate(
       `Activity type` = dplyr::case_match(
-        `Activity type`,
+        .data$`Activity type`,
         "aae" ~ "Accident and Emergency",
         "ip" ~ "Inpatients",
         "op" ~ "Outpatients"
@@ -586,15 +586,15 @@ prepare_mitigators_ref <- function(mitigator_lookup) {
       )
     ) |>
     tidyr::pivot_longer(cols = dplyr::everything()) |>
-    dplyr::arrange(value)
+    dplyr::arrange(.data$value)
 
   # order the variables by cardinality (less to more)
   mitigator_lookup <-
     mitigator_lookup |>
     dplyr::select(dplyr::any_of(mit_order$name)) |>
-    dplyr::rename(mitigator_name = strategy_name) |>
+    dplyr::rename(mitigator_name = .data$strategy_name) |>
     dplyr::mutate(mitigator_name = glue::glue('{mitigator_name} [{mitigator_code}]')) |>
-    dplyr::select(-strategy_variable)
+    dplyr::select(-.data$strategy_variable)
 
   return(mitigator_lookup)
 }
@@ -611,8 +611,8 @@ prepare_mitigators_ref <- function(mitigator_lookup) {
 add_to_selected_mitigators <- function(df, selected_currently, new_selections) {
 
   df |>
-    dplyr::filter(mitigator_code %in% c(selected_currently, new_selections)) |>
-    dplyr::select(mitigator_name, mitigator_code) |>
+    dplyr::filter(.data$mitigator_code %in% c(selected_currently, new_selections)) |>
+    dplyr::select(.data$mitigator_name, .data$mitigator_code) |>
     tibble::deframe()
 
 }

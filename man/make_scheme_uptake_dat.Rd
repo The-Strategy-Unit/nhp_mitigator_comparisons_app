@@ -14,6 +14,8 @@ make_scheme_uptake_dat(
 \arguments{
 \item{dat}{Tibble - the full prepared dataset for this app}
 
+\item{selected_mitigators}{Character vector - a list of mitigators selected by the user}
+
 \item{selected_schemes}{Character vector - a list of scheme_codes selected by the user}
 
 \item{focal_scheme}{Character vector - the focal scheme_code}

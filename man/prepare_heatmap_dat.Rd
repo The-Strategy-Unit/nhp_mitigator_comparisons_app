@@ -25,6 +25,8 @@ prepare_heatmap_dat(
 
 \item{scheme_codes}{Character vector of scheme codes to display in the heatmap}
 
+\item{focal_scheme_code}{Code for the scheme chosen as the focal scheme by user}
+
 \item{heatmap_type}{String describing the type of heatmap to produce - as defined by `input$heatmap_type`}
 
 \item{scheme_order}{String describing the display order for schemes}

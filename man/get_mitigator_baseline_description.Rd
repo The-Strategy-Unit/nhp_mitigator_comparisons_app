@@ -15,7 +15,7 @@ Tibble of mitigator details including the `y_axis_title` activity
 \description{
 The baseline activity for each mitigator is not specified in the `dat`, but
 is implicit. This function extracts the activity description, e.g.
-'Admissions per 1,000 population' or '% of Appointments that are Face-to-Face'
+'Admissions per 1,000 population' or '\% of Appointments that are Face-to-Face'
 from the inputs app yaml file.
 }
 \details{
