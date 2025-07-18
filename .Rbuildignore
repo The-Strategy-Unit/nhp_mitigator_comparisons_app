@@ -10,3 +10,7 @@ $run_dev.*
 ^CODE_OF_CONDUCT\.md$
 ^app\.R$
 ^rsconnect$
+^CODEOWNERS$
+^.github$
+^.Renviron.example$
+^shiny_bookmarks$
