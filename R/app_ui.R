@@ -16,22 +16,7 @@ app_ui <- function(request) {
     # Application UI logic
     bslib::page_navbar(
       id = "page_navbar",
-      title = bslib::tooltip(
-        trigger = list(
-          "NHP mitigator comparisons",
-          bsicons::bs_icon("exclamation-triangle")
-        ),
-        md_file_to_html("app", "text", "warning.md")
-      ),
-      header = bslib::card(
-        fill = FALSE,
-        bslib::card_header(
-          class = "bg-warning",
-          bsicons::bs_icon("exclamation-triangle"),
-          "Warning"
-        ),
-        md_file_to_html("app", "text", "warning.md")
-      ),
+      title = "NHP mitigator comparisons",
       ## sidebar ----
       sidebar = bslib::sidebar(
         id = "sidebar",

@@ -19,7 +19,7 @@ app_server <- function(input, output, session) {
   container_inputs <-
     get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_INPUTS"))
 
-  board <- pins::board_connect(server = "connect.strategyunitwm.nhs.uk")
+  board <- pins::board_connect(server = Sys.getenv("CONNECT_SERVER"))
 
   ## Read data ----
 
