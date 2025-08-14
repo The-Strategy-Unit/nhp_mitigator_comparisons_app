@@ -23,15 +23,15 @@ app_server <- function(input, output, session) {
 
   ## Read data ----
 
+  # Datasets
+
   rates_data <- container_inputs |>
     read_provider_data("rates") |>
     dplyr::select(procode = .data$provider, .data$strategy, .data$fyear, .data$rate, n = .data$denominator)
 
-  params <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_params")
-  runs_meta <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_meta")
-  extracted_params <- extract_params(params, runs_meta)
+  nee_results <- container_support |> read_nee("nee_table.rds")
 
-  skeleton_table <- prepare_skeleton_table(extracted_params)
+  # Lookups
 
   trust_code_lookup <- get_trust_lookup(container_support = container_support)
 
@@ -41,18 +41,25 @@ app_server <- function(input, output, session) {
 
   mitigator_reference <- mitigator_lookup |> prepare_mitigators_ref()
 
-  nee_results <- container_support |> read_nee("nee_table.rds")
-
   peers <- container_support |>
     AzureStor::storage_load_rds("trust-peers.rds") |>
     dplyr::rename(scheme = .data$procode)
 
-  # inputs app yml (contains meta data)
+  # Metadata
   yaml <- yaml::read_yaml(
     file = here::here('inst', 'ref_inputs-golem-config.yml'),
     eval.expr = FALSE
   )
   yaml_df <- get_mitigator_baseline_description(yaml)
+
+  # Parameters
+  params <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_params")
+  runs_meta <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_meta")
+  extracted_params <- extract_params(params, runs_meta) |>
+    dplyr::filter(  # include active mitigators only
+      .data$strategy %in% mitigator_lookup[["Strategy variable"]]
+    )
+  skeleton_table <- prepare_skeleton_table(extracted_params)
 
   ## Prep data ----
   dat <- populate_table(
