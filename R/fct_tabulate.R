@@ -188,7 +188,7 @@ populate_table <- function(
     )
 
   data_prepared <- data_joined |>
-    dplyr::filter(
+    dplyr::filter(  # values must exist and be equal-to/less-than 1
       (.data$value_1 <= 1 & .data$value_2 <= 1) |
         is.na(.data$value_1) & is.na(.data$value_2)
     ) |>
@@ -528,6 +528,7 @@ get_mitigator_baseline_description <- function(yaml) {
 prepare_mitigators  <- function(mitigator_lookup) {
 
   mitigator_lookup |>
+    dplyr::filter(is.na(.data$active_to)) |>  # active mitigators only
     dplyr::select(
       .data$mitigator_code,
       .data$activity_type,
