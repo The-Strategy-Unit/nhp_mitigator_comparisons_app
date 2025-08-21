@@ -14,7 +14,8 @@ jobs:
           r-version: latest
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-renv@v2
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
 
       - name: Create manifest.json
         shell: Rscript {0}
