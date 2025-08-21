@@ -1,9 +1,10 @@
 Package: nhp.inputs.report.app
 Title: NHP Mitigator Comparison App
-Version: 0.7.2
+Version: 0.8.1
 Authors@R: c(
     person("Matt", "Dray", , "matt.dray@nhs.net", role = c("cre", "aut")),
     person("Craig", "Parylo", role = "aut"),
+    person("Claire", "Welsh", role = "ctb"),
     person("Ozayr", "Mohammed", role = "ctb"),
     person("Anya", "Ferguson", role = "ctb")
   )
@@ -52,6 +53,7 @@ Imports:
     withr,
     yaml
 Suggests: 
+    rsconnect,
     testthat (>= 3.0.0)
 Remotes: 
     dreamRs/datamods
