@@ -2,7 +2,7 @@ name: connect-publish
 on:
   release:
     types: [published]
-  pull_request
+  pull_request:
 
 jobs:
   connect-publish:
