@@ -19,8 +19,12 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            any::rsconnect
             local::.
+            any::rsconnect
+            any::attachment
+            any::covrpage
+            any::devtools
+            any::usethis
 
       - name: Create manifest.json
         shell: Rscript {0}
