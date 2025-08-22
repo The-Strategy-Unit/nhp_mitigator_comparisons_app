@@ -60,8 +60,8 @@ Suggests:
     testthat (>= 3.0.0),
     usethis
 Remotes: 
-    dreamRs/datamods
-    yonicd/covrpage
+    github::dreamRs/datamods
+    github::yonicd/covrpage
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
