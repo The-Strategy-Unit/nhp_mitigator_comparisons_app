@@ -1,4 +1,4 @@
-# nhp_inputs_report_app
+# nhp_mitigator_comparisons_app
 
 <!-- badges: start -->
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
