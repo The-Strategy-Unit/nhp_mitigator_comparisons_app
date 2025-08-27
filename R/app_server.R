@@ -11,13 +11,13 @@ app_server <- function(input, output, session) {
   ## Make connections ----
 
   container_results <-
-    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"))
+    azkit::get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"))
 
   container_support <-
-    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
+    azkit::get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
 
   container_inputs <-
-    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_INPUTS"))
+    azkit:: get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_INPUTS"))
 
   board <- pins::board_connect(server = Sys.getenv("CONNECT_SERVER"))
 

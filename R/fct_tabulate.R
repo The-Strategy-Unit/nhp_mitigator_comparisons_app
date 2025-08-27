@@ -446,7 +446,8 @@ get_all_mitigator_groups <- function(dat) {
 #' Read a csv lookup file from Azure storage and do some clean-up to ensure
 #' one row per Trust.
 #'
-#' @param container_support The Azure container for supporting information, as obtained by `get_container()` from `fct_tabulate.R`
+#' @param container_support The Azure container for supporting information,
+#'     as obtained by `get_container()` from {azkit}.
 #'
 #' @return Tibble of data listing participating Trusts
 #' @export
