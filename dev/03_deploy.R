@@ -1,7 +1,7 @@
 deploy <- function(server_name, app_id) {
   rsconnect::deployApp(
-    appName = "nhp_inputs_report_app",
-    appTitle = "NHP Mitigator Comparison App",
+    appName = "nhp_mitigator_comparisons_app",
+    appTitle = "NHP Mitigator Comparisons App",
     appFiles = c(
       "R/",
       "inst/",
