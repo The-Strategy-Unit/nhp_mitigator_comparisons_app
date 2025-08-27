@@ -139,7 +139,7 @@ populate_table <- function(
           string = .data$run_stage |> stringr::str_to_lower(),
           pattern = 'final',
           negate = TRUE
-        ) ~ glue::glue('{scheme_name} ✏️'),
+        ) ~ glue::glue('{scheme_name} [preliminary]'),
         .default = .data$scheme_name
       ),
       scheme_code = .data$peer,
@@ -292,7 +292,7 @@ update_dat_values <- function(dat,
     dplyr::mutate(
       scheme_name = dplyr::if_else(
         condition = .data$scheme_code %in% dplyr::coalesce(focal_scheme_code, ""),
-        true = glue::glue("{scheme_name} 📌"),
+        true = glue::glue("{scheme_name} [focal]"),
         false = .data$scheme_name
       )
     )

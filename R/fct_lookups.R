@@ -6,7 +6,7 @@ make_raw_dt <- function(dat) {
       # remove any pencil emojis from scheme names
       scheme_name = stringr::str_remove(
         string = .data$scheme_name,
-        pattern = ' ✏️'
+        pattern = " \\[preliminary\\]"
       ),
       dplyr::across(
         c(

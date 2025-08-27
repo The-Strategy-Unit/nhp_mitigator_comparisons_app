@@ -50,7 +50,7 @@ prepare_heatmap_dat <- function(
       dplyr::mutate(
         # strip out the pencil and pushpin emojis
         scheme_name = .data$scheme_name |>
-          stringr::str_remove_all(pattern = " ✏️| 📌"),
+          stringr::str_remove_all(pattern = " \\[(preliminary|focal)\\]"),
         # add in the requested adornments
         scheme_name = glue::glue(
           "{scheme_name} ",
@@ -571,17 +571,6 @@ prepare_heatmap_dat <- function(
   dat <-
     dat |>
     dplyr::mutate(
-      # highlight the focal scheme using ascii
-      scheme_name = dplyr::if_else(
-        condition = .data$scheme_code %in% focal_scheme_code &
-          stringr::str_ends(
-            string = .data$scheme_name,
-            pattern = "📌",
-            negate = TRUE
-          ),
-        true = glue::glue("{scheme_name} 📌"),
-        false = .data$scheme_name
-      ),
 
       # need to reverse ordering for y-axis to ensure correct display in ggplot2
       mitigator_code = .data$mitigator_code |>
