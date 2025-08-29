@@ -65,10 +65,7 @@ app_ui <- function(request) {
                 "Automatically select all schemes at once."
               ),
               value = TRUE
-            ),
-            # add explanatory note
-            shiny::markdown('##### Key'),
-            shiny::markdown('✏️ = Scenario is not finalised')
+            )
           ),
           ### mitigator select ----
           bslib::accordion_panel(

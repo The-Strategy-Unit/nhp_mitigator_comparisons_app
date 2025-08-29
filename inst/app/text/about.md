@@ -13,6 +13,12 @@ From the navigation bar above you can visit the:
 
 ## Mitigator values
 
+### Labels
+
+-   The scenarios presented in this app are the ones each scheme has identified as the 'final' one used in their outputs report.
+-   Schemes labelled as '[preliminary]' have not yet identified a 'final' scenario but have identified one as an 'initial' or 'intermediate' scenarios.
+-   The scheme labelled '[focal]' is the one you have selected as the focal scheme in the left-hand panel.
+
 ### 80% prediction interval
 
 -   Schemes were asked to select mitigators in the NHP Inputs app and to provide an 80% prediction interval (a lower and upper value) for the expected reduction in activity by their chosen horizon (final) year.
