@@ -4,15 +4,17 @@ Version: 0.8.1
 Authors@R: c(
     person("Matt", "Dray", , "matt.dray@nhs.net", role = c("cre", "aut")),
     person("Craig", "Parylo", role = "aut"),
-    person("Claire", "Welsh", role = "ctb"),
+    person("Anya", "Ferguson", role = "ctb"),
+    person("Tom", "Jemmett", role = "ctb"),
     person("Ozayr", "Mohammed", role = "ctb"),
-    person("Anya", "Ferguson", role = "ctb")
+    person("Claire", "Welsh", role = "ctb")
   )
 Description: An application to explore the mitigator values selected by
     Trusts in the NHP Inputs App.
 License: MIT + file LICENSE
 Imports: 
     arrow,
+    azkit,
     AzureAuth,
     AzureStor,
     bsicons,
@@ -56,7 +58,8 @@ Suggests:
     rsconnect,
     testthat (>= 3.0.0)
 Remotes: 
-    dreamRs/datamods
+    dreamRs/datamods,
+    The-Strategy-Unit/azkit
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
