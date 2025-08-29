@@ -1,4 +1,4 @@
-# nhp_inputs_report_app
+# nhp_mitigator_comparisons_app
 
 <!-- badges: start -->
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
@@ -42,7 +42,7 @@ Source the `dev/run_dev.R` script to run the app, assuming you've installed the 
 
 ### Deploy
 
-You can redeploy the app to Posit Connect using the `dev/03_deploy.R` script.
+You can redeploy the app to Posit Connect using the `dev/deploy.R` script.
 This usually happens after a new GitHub release/Git tag.
 
 ### Data

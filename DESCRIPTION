@@ -1,5 +1,5 @@
-Package: nhp.inputs.report.app
-Title: NHP Mitigator Comparison App
+Package: nhp.mitigator.comparisons.app
+Title: NHP Mitigator Comparisons App
 Version: 0.8.1
 Authors@R: c(
     person("Matt", "Dray", , "matt.dray@nhs.net", role = c("cre", "aut")),
@@ -9,8 +9,8 @@ Authors@R: c(
     person("Ozayr", "Mohammed", role = "ctb"),
     person("Claire", "Welsh", role = "ctb")
   )
-Description: An application to explore the mitigator values selected by
-    Trusts in the NHP Inputs App.
+Description: Compare mitigator selections by schemes that are part of the New
+    Hospital Programme demand-modelling process.
 License: MIT + file LICENSE
 Imports: 
     arrow,
