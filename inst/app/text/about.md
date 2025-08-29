@@ -6,12 +6,18 @@ Compare activity mitigator values selected by schemes within the New Hospital Pr
 
 From the navigation bar above you can visit the:
 
--   'Information' tab (current tab), which provides background information and instructions
--   'Point-ranges' tab, which shows a plot of the selected schemes' the percentage range and midpoint for the selected mitigators
--   'Heatmap' tab, which colours the upper, lower, midpoint and range values of the percentage range selections made by the selected schemes, as well as a binary version to indicate simply whether a mitigator was submitted or not
--   'Data' tab, which presents the full underlying data and lookups for schemes and mitigators
+-   'Information' tab (current tab), which provides background information and instructions.
+-   'Point-ranges' tab, which shows a plot of the selected schemes' the percentage range and midpoint for the selected mitigators.
+-   'Heatmap' tab, which colours the upper, lower, midpoint and range values of the percentage range selections made by the selected schemes, as well as a binary version to indicate simply whether a mitigator was submitted or not.
+-   'Data' tab, which presents the full underlying data and lookups for schemes and mitigators.
 
 ## Mitigator values
+
+### Labels
+
+-   The scenarios presented in this app are the ones each scheme has identified as the 'final' one used in their outputs report.
+-   Schemes labelled as '[preliminary]' have not yet identified a 'final' scenario but have identified one as an 'initial' or 'intermediate' scenarios.
+-   The scheme labelled 'focal' is the one you have selected as the focal scheme in the left-hand panel.
 
 ### 80% prediction interval
 
