@@ -7,8 +7,8 @@
 get_trust_lookup(container_support)
 }
 \arguments{
-\item{container_support}{The Azure container for supporting information,
-as obtained by `get_container()` from {azkit}.}
+\item{container_support}{The Azure container for supporting information, as
+obtained by `get_container()` from `fct_azure.R`.}
 }
 \value{
 Tibble of data listing participating Trusts

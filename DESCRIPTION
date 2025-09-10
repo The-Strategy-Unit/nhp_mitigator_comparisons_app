@@ -14,7 +14,6 @@ Description: Compare mitigator selections by schemes that are part of the New
 License: MIT + file LICENSE
 Imports: 
     arrow,
-    azkit,
     AzureAuth,
     AzureStor,
     bsicons,
@@ -59,7 +58,6 @@ Suggests:
     testthat (>= 3.0.0)
 Remotes: 
     dreamRs/datamods,
-    The-Strategy-Unit/azkit
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
