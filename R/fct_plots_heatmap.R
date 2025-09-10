@@ -2,17 +2,28 @@
 #'
 #' Prepares the data ready for use in the heatmap plots.
 #'
-#' @param dat Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
-#' @param mitigator_codes Character vector of mitigator codes to display in the heatmap
-#' @param scheme_codes Character vector of scheme codes to display in the heatmap
-#' @param heatmap_type String describing the type of heatmap to produce - as defined by `input$heatmap_type`
+#' @param dat Tibble of mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
+#' @param mitigator_codes Character vector of mitigator codes to display in the
+#'   heatmap
+#' @param scheme_codes Character vector of scheme codes to display in the
+#'   heatmap
+#' @param heatmap_type String describing the type of heatmap to produce - as
+#'   defined by `input$heatmap_type`
 #' @param scheme_order String describing the display order for schemes
 #' @param mitigator_order String description of the display order for mitigators
-#' @param values_displayed String description of the values displayed - as defined by `input$values_displayed`
-#' @param toggle_heatmap_nee Boolean (default = FALSE) should the display include a column for NEE values for mitigators?
-#' @param toggle_heatmap_aggregate_summaries Boolean (default = FALSE) should the display include columns showing minimum, maximum and mean values for each mitigator?
-#' @param toggle_heatmap_scheme_adornments  Boolean (default = FALSE) should the scheme details include additional information such as scheme code, run stage and horizon year?
-#' @param focal_scheme_code Code for the scheme chosen as the focal scheme by user
+#' @param values_displayed String description of the values displayed - as
+#'   defined by `input$values_displayed`
+#' @param toggle_heatmap_nee Boolean (default = FALSE) should the display
+#'   include a column for NEE values for mitigators?
+#' @param toggle_heatmap_aggregate_summaries Boolean (default = FALSE) should
+#'   the display include columns showing minimum, maximum and mean values for
+#'   each mitigator?
+#' @param toggle_heatmap_scheme_adornments  Boolean (default = FALSE) should the
+#'   scheme details include additional information such as scheme code, run
+#'   stage and horizon year?
+#' @param focal_scheme_code Code for the scheme chosen as the focal scheme by
+#'   user
 #'
 #' @returns Tibble of data ready for use with heatmap plots
 prepare_heatmap_dat <- function(
@@ -649,17 +660,34 @@ prepare_heatmap_dat <- function(
 #' and schemes across the x-axis with the selected mitigator value (mid, low,
 #' high, submitted) controlling the fill colour.
 #'
-#' @param dat Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
-#' @param toggle_mitigator_name Boolean - value from `input$toggle_mitigator_name` - used to decide what to display on y-axis
-#' @param toggle_scale_fill_by_mitigator Boolean - value from `input$toggle_heatmap_scale_fill_by_mitigator` - used to control whether the colour is scaled across the whole heatmap (FALSE) or applied across each mitigator (TRUE)
-#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales
-#' @param heatmap_type Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value
-#' @param colour_binary Character - value from `input$heatmap_binary_colour` - hex colour string to use in the binary plots
-#' @param colour_value_low Character - value from `input$heatmap_value_colour_low` - hex colour string to use in the gradient fill for low values
-#' @param colour_value_high Character - value from `input$heatmap_value_colour_high` - hex colour string to use in the gradient fill for high values
-#' @param plot_height Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot
-#' @param font_family Character - (default = 'Arial, Helvetica, Droid Sans, sans') a list of font families to use in the plot
-#' @param focal_scheme_code Code for the scheme chosen as the focal scheme by user
+#' @param dat Tibble of mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
+#' @param toggle_mitigator_name Boolean - value from
+#'   `input$toggle_mitigator_name` - used to decide what to display on y-axis
+#' @param toggle_scale_fill_by_mitigator Boolean - value from
+#'   `input$toggle_heatmap_scale_fill_by_mitigator` - used to control whether
+#'   the colour is scaled across the whole heatmap (FALSE) or applied across
+#'   each mitigator (TRUE)
+#' @param values_displayed Character - value from `input$values_displayed` -
+#'   describing if values represent either percent of activity mitigated or the
+#'   80\% prediction interval - used to label the scales
+#' @param heatmap_type Character - value from `input$heatmap_type` - used to
+#'   control whether a solid colour is applied (binary) or colour is dependent
+#'   on the value
+#' @param colour_binary Character - value from `input$heatmap_binary_colour` -
+#'   hex colour string to use in the binary plots
+#' @param colour_value_low Character - value from
+#'   `input$heatmap_value_colour_low` - hex colour string to use in the gradient
+#'   fill for low values
+#' @param colour_value_high Character - value from
+#'   `input$heatmap_value_colour_high` - hex colour string to use in the
+#'   gradient fill for high values
+#' @param plot_height Integer - value from `ra$heatmap_min_height` - the number
+#'   of pixels to set as the height of the plot
+#' @param font_family Character - (default = 'Arial, Helvetica, Droid Sans,
+#'   sans') a list of font families to use in the plot
+#' @param focal_scheme_code Code for the scheme chosen as the focal scheme by
+#'   user
 #'
 #' @returns {plotly} object showing heatmap
 plot_heatmap <- function(
@@ -955,23 +983,43 @@ plot_heatmap <- function(
 #' National Elicitation Exercise (NEE) values and aggregate summaries such as
 #' min, max and mean values across schemes and mitigators.
 #'
-#' @param dat Tibble - mitigator data, filtered to either the 'main' heatmap data or the 'context' data
-#' @param var_y_axis Character - the name of the variable in `dat` to use when plotting the y-axis
-#' @param var_fill Character - the name of the variable in `dat` to use when deciding the fill colour of the heatmap ('main' heatmaps only)
-#' @param x_scheme_wrap Integer - the number of characters to string wrap the x-axis text on
-#' @param x_scheme_text ggplot2::element_text - defining how the x-axis labels are to be displayed
-#' @param y_char_wrap Integer - the number of characters to string wrap the y-axis text on
-#' @param values_displayed Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales
-#' @param heatmap_type Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value
-#' @param colour_binary Character - value from `input$heatmap_binary_colour` - hex colour string to use in the binary plots
-#' @param colour_value_low Character - value from `input$heatmap_value_colour_low` - hex colour string to use in the gradient fill for low values
-#' @param colour_value_high Character - value from `input$heatmap_value_colour_high` - hex colour string to use in the gradient fill for high values
-#' @param plot_height Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot
-#' @param font_family Character - (default = 'Arial, Helvetica, Droid Sans, sans') a list of font families to use in the plot
-#' @param include_x_axis Boolean (default = TRUE) should the x-axis be included in the plot
-#' @param context Boolean (default = FALSE) is this a context (e.g. NEE, min / max / mean) plot
+#' @param dat Tibble - mitigator data, filtered to either the 'main' heatmap
+#'   data or the 'context' data
+#' @param var_y_axis Character - the name of the variable in `dat` to use when
+#'   plotting the y-axis
+#' @param var_fill Character - the name of the variable in `dat` to use when
+#'   deciding the fill colour of the heatmap ('main' heatmaps only)
+#' @param x_scheme_wrap Integer - the number of characters to string wrap the
+#'   x-axis text on
+#' @param x_scheme_text ggplot2::element_text - defining how the x-axis labels
+#'   are to be displayed
+#' @param y_char_wrap Integer - the number of characters to string wrap the
+#'   y-axis text on
+#' @param values_displayed Character - value from `input$values_displayed` -
+#'   describing if values represent either percent of activity mitigated or the
+#'   80\% prediction interval - used to label the scales
+#' @param heatmap_type Character - value from `input$heatmap_type` - used to
+#'   control whether a solid colour is applied (binary) or colour is dependent
+#'   on the value
+#' @param colour_binary Character - value from `input$heatmap_binary_colour` -
+#'   hex colour string to use in the binary plots
+#' @param colour_value_low Character - value from
+#'   `input$heatmap_value_colour_low` - hex colour string to use in the gradient
+#'   fill for low values
+#' @param colour_value_high Character - value from
+#'   `input$heatmap_value_colour_high` - hex colour string to use in the
+#'   gradient fill for high values
+#' @param plot_height Integer - value from `ra$heatmap_min_height` - the number
+#'   of pixels to set as the height of the plot
+#' @param font_family Character - (default = 'Arial, Helvetica, Droid Sans,
+#'   sans') a list of font families to use in the plot
+#' @param include_x_axis Boolean (default = TRUE) should the x-axis be included
+#'   in the plot
+#' @param context Boolean (default = FALSE) is this a context (e.g. NEE, min /
+#'   max / mean) plot
 #'
-#' @returns {plotly} object showing heatmap component - e.g. the main plot, or a context plot for the x or y-axis.
+#' @returns {plotly} object showing heatmap component - e.g. the main plot, or a
+#'   context plot for the x or y-axis.
 heatmap_base <- function(
   dat,
   var_y_axis,

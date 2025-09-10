@@ -238,12 +238,17 @@ populate_table <- function(
 #'
 #' This function updates dat to reflect the user's preferred values.
 #'
-#' @param dat Tibble of data - as produced from `populate_table` in `fct_tabulate.R`
-#' @param values_displayed Character - the value in `input$values_displayed` indicating the user's preferred view
-#' @param include_point_estimates Boolean - the value in `input$include_point_estimates` indicating whether point-estimates of 0\% mitigation (100\% prediction) are to be included
+#' @param dat Tibble of data - as produced from `populate_table` in
+#'   `fct_tabulate.R`
+#' @param values_displayed Character - the value in `input$values_displayed`
+#'   indicating the user's preferred view
+#' @param include_point_estimates Boolean - the value in
+#'   `input$include_point_estimates` indicating whether point-estimates of 0\%
+#'   mitigation (100\% prediction) are to be included
 #' @param focal_scheme_code Character - the scheme code of the focal scheme
 #'
-#' @return Tibble of data with the 'value_' and 'nee_' fields updated to match the user's preferred values
+#' @return Tibble of data with the 'value_' and 'nee_' fields updated to match
+#'   the user's preferred values
 update_dat_values <- function(
   dat,
   values_displayed,
@@ -327,12 +332,16 @@ update_dat_values <- function(
 #' standardised value that makes comparing schemes a little easier.
 #'
 #' @param year_baseline The year the activity starts from, defaults to 2019
-#' @param year_horizon The year the value is predicted for, often 2041 but can be different
+#' @param year_horizon The year the value is predicted for, often 2041 but can
+#'   be different
 #' @param year_forecast The year to forecast for, defaults to 2041
 #' @param value_horizon The value at the horizon year
-#' @param value_displayed The content of `input$values_displayed` - whether values are displayed as prediction intervals or percent mitigated, as these require differnet calculation approaches
+#' @param value_displayed The content of `input$values_displayed` - whether
+#'   values are displayed as prediction intervals or percent mitigated, as these
+#'   require differnet calculation approaches
 #'
-#' @return numeric predicted value between 0 and 1 rounded to 3 decimal places at `year_forecast`
+#' @return numeric predicted value between 0 and 1 rounded to 3 decimal places
+#'   at `year_forecast`
 forecast_value <- function(
   year_baseline = 2019,
   year_horizon,
@@ -432,10 +441,10 @@ get_trust_lookup <- function(container_support) {
 #'
 #' The baseline activity for each mitigator is not specified in the `dat`, but
 #' is implicit. This function extracts the activity description, e.g.
-#' 'Admissions per 1,000 population' or '\% of Appointments that are Face-to-Face'
-#' from the inputs app yaml file.
+#' 'Admissions per 1,000 population' or '\% of Appointments that are
+#' Face-to-Face' from the inputs app yaml file.
 #'
-#' Using Gabriel's code from here:#'
+#' Using Gabriel's code from here:
 #' https://github.com/The-Strategy-Unit/nhp_schemes_report/blob/55de2b1e67394a74eeef1e63ae3b88720c281c3d/R/mitigator%20credibility%20from%20historical%20data.R#L101-L137
 #'
 #' @param yaml List - the yaml file used in the inputs app
@@ -556,7 +565,8 @@ prepare_mitigators_ref <- function(mitigator_lookup) {
 #' Adds newly selected mitigators to the list of currently selected mitigators
 #'
 #' @param df Tibble of mitigator reference data - e.g. `mitigator_reference`
-#' @param selected_currently A list of mitigator_codes which are currently selected - as provided by `input$mitigators`
+#' @param selected_currently A list of mitigator_codes which are currently
+#'   selected - as provided by `input$mitigators`
 #' @param new_selections A list of newly selected mitigatoe
 #'
 #' @return Vector - mitigator labels with mitigator codes as the value

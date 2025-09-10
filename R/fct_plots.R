@@ -22,10 +22,12 @@
 #'    Allows the user to display the range of values from the National Elicitation
 #'    Exercise (NEE) as context. Defaults to on.
 #'
-#' @param dat_selected_pointrange Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat_selected_pointrange Tibble of mitigator data as produced by
+#'   `populate_table()` in `fct_tabulate.R`
 #' @param input Reference to the Shiny input widget that triggered this chart
 #'
-#' @return ggplot2 object showing point-range view facetted by scheme or mitigator
+#' @return ggplot2 object showing point-range view facetted by scheme or
+#'   mitigator
 #' @export
 plot_pointrange <- function(dat_selected_pointrange, input) {
   ## logic ----
@@ -153,8 +155,8 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
 #' Set breaks for a percent value
 #'
-#' An internal function to produce ggplot breaks on 0.01 (1%) intervals.
-#' Based on code found here:
+#' An internal function to produce ggplot breaks on 0.01 (1%) intervals. Based
+#' on code found here:
 #' https://jhrcook.github.io/jhrcook-website/posts/2019-11-09_integer-values-ggplot-axis/
 #'
 #' @param n integer - the approximate number of breaks to set (defaults to 5)
@@ -173,14 +175,18 @@ percent_breaks <- function(n = 5, ...) {
 
 #' Mixture distribution / density plot
 #'
-#' Plot the mixutre distribution plots.
+#' Plot the mixture distribution plots.
 #'
-#' @param dat_selected_mixture_distributions Tibble - mixture distributions for all schemes for the selected mitigators - as produced by `dat_selected_mixture_distributions()` in  `app_server.R`
-#' @param dat_filtered Tibble - of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat_selected_mixture_distributions Tibble - mixture distributions for
+#'   all schemes for the selected mitigators - as produced by
+#'   `dat_selected_mixture_distributions()` in  `app_server.R`
+#' @param dat_filtered Tibble - of mitigator data as produced by
+#'   `populate_table()` in `fct_tabulate.R`
 #' @param dat_focal_scheme_code String - the `scheme_code` of the focal scheme
 #' @param input Reference to the Shiny input widget that triggered this chart
 #'
-#' @return ggplot2 object showing the pointrange for the focal scheme in contrast with the mixture distributions for all schemes combined.
+#' @return ggplot2 object showing the pointrange for the focal scheme in
+#'   contrast with the mixture distributions for all schemes combined.
 #' @export
 plot_mixture_distributions <- function(
   dat_selected_mixture_distributions, # the pre-calculated mixture distributions for each mitigator (based on all schemes)
@@ -326,18 +332,26 @@ plot_mixture_distributions <- function(
 #' Prepare the data for scatter plot with baseline rate on the x-axis and
 #' mitigator value on the y-axis.
 #'
-#' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat Tibble - mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
 #' @param rates_data Tibble - historical rates data for schemes / mitigators
 #' @param mitigator_codes Character vector - the mitigator codes to visualise
-#' @param focal_scheme_code Character vector - the scheme code for the focal scheme
+#' @param focal_scheme_code Character vector - the scheme code for the focal
+#'   scheme
 #' @param rate_title Character - the label for the x-axis
-#' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
+#' @param value_title Character - the label for the y-axis, should reflect the
+#'   user's preference in input$values_displayed
 #' @param trendline Boolean (default = TRUE) show a trendline between mid-points
-#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line
-#' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
-#' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
-#' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
-#' @param facet_height_px Integer (default = 250) the pixel height of each facet in the plot
+#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points
+#'   connected by a line
+#' @param scheme_label Boolean (default = TRUE) label the mid-points with the
+#'   scheme code
+#' @param quadrants Boolean (default = TRUE) show the lines splitting the data
+#'   into quadrants
+#' @param facet_columns Integer (default = 1) the number of columns to facet the
+#'   baseline plot
+#' @param facet_height_px Integer (default = 250) the pixel height of each facet
+#'   in the plot
 #'
 #' @returns Tibble
 prep_baseline_comparison <- function(
@@ -436,18 +450,26 @@ prep_baseline_comparison <- function(
 #' Show a scatter plot with baseline rate on the x-axis and mitigator value on
 #' the y-axis.
 #'
-#' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat Tibble - mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
 #' @param rates_data Tibble - historical rates data for schemes / mitigators
 #' @param mitigator_codes Character vector - the mitigator codes to visualise
-#' @param focal_scheme_code Character vector - the scheme code for the focal scheme
+#' @param focal_scheme_code Character vector - the scheme code for the focal
+#'   scheme
 #' @param rate_title Character - the label for the x-axis
-#' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
+#' @param value_title Character - the label for the y-axis, should reflect the
+#'   user's preference in input$values_displayed
 #' @param trendline Boolean (default = TRUE) show a trendline between mid-points
-#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line
-#' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
-#' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
-#' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
-#' @param facet_height_px Integer (default = 250) the pixel height of each facet in the plot
+#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points
+#'   connected by a line
+#' @param scheme_label Boolean (default = TRUE) label the mid-points with the
+#'   scheme code
+#' @param quadrants Boolean (default = TRUE) show the lines splitting the data
+#'   into quadrants
+#' @param facet_columns Integer (default = 1) the number of columns to facet the
+#'   baseline plot
+#' @param facet_height_px Integer (default = 250) the pixel height of each facet
+#'   in the plot
 #'
 #' @returns {plotly} plot
 plot_baseline_comparison <- function(
@@ -669,9 +691,12 @@ plot_baseline_comparison <- function(
 #' width limit.
 #'
 #' @param strings Character vector - the input vector of strings to wrap
-#' @param px_limit Integer (default 300) - the number of pixels to wrap `strings` to fit
-#' @param font_family Character (default 'Arial, Helvetica, Droid Sans, sans') - the font family to use when estimating the width of strings
-#' @param font_size Integer (default 14) - the font size to use when estimating the width of strings
+#' @param px_limit Integer (default 300) - the number of pixels to wrap
+#'   `strings` to fit
+#' @param font_family Character (default 'Arial, Helvetica, Droid Sans, sans') -
+#'   the font family to use when estimating the width of strings
+#' @param font_size Integer (default 14) - the font size to use when estimating
+#'   the width of strings
 #'
 #' @returns Character vector
 wrap_strings_to_fit_pixel_limit <- function(
@@ -727,23 +752,37 @@ wrap_strings_to_fit_pixel_limit <- function(
 #' scheme and mitigator.
 #'
 #' Note - this function is designed for use with `plot_facetted_trendlines()`
-#' which coordinates the production of plots for multiple mitigators.
-#' The use of the `subplot()` features of \{plotly\} mean that the overall plot
-#' height is specified in each subplot's definition.
+#' which coordinates the production of plots for multiple mitigators. The use of
+#' the `subplot()` features of \{plotly\} mean that the overall plot height is
+#' specified in each subplot's definition.
 #'
-#' @param plot_data Tibble - historical rate of activity for the mitigator, as produced within `plot_facetted_trendlines()` in `fct_plots.R`
-#' @param dat_lu Tibble - lookup information for schemes and mitigators, as produced within `plot_facetted_trendlines()` in `fct_plots.R`
-#' @param mitigator_codes Character vector - the `mitigator_code` to produce the plot for
-#' @param focal_scheme_code Character vector - the focal `scheme_code` to produce the plot for
-#' @param show_other_schemes Boolean (default = TRUE) plot time series for other schemes
-#' @param show_horizon_timeline Boolean (default = TRUE) plot the predicted activity on the timeline at the horizon year
-#' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted activity as an overlay over the historical time series plots
-#' @param show_prebaseline_average Boolean (default = TRUE) show the pre-baseline average (mean) with a range of two standard deviations above and below
-#' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
+#' @param plot_data Tibble - historical rate of activity for the mitigator, as
+#'   produced within `plot_facetted_trendlines()` in `fct_plots.R`
+#' @param dat_lu Tibble - lookup information for schemes and mitigators, as
+#'   produced within `plot_facetted_trendlines()` in `fct_plots.R`
+#' @param mitigator_codes Character vector - the `mitigator_code` to produce the
+#'   plot for
+#' @param focal_scheme_code Character vector - the focal `scheme_code` to
+#'   produce the plot for
+#' @param show_other_schemes Boolean (default = TRUE) plot time series for other
+#'   schemes
+#' @param show_horizon_timeline Boolean (default = TRUE) plot the predicted
+#'   activity on the timeline at the horizon year
+#' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted
+#'   activity as an overlay over the historical time series plots
+#' @param show_prebaseline_average Boolean (default = TRUE) show the
+#'   pre-baseline average (mean) with a range of two standard deviations above
+#'   and below
+#' @param facet_columns Integer (default = 1) the number of columns to facet the
+#'   baseline plot
 #' @param facet_height_px Integer (default = 400) the height of the plot
-#' @param facet_count Integer (default = 1) the number of individual plots to be combined
-#' @param x_axis_min Integer (default = 2010) the minimum year to show on the x-axis to help coordinate the x-axes for each plot
-#' @param return_data Boolean (default = FALSE) TRUE = return a list object of tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES ONLY
+#' @param facet_count Integer (default = 1) the number of individual plots to be
+#'   combined
+#' @param x_axis_min Integer (default = 2010) the minimum year to show on the
+#'   x-axis to help coordinate the x-axes for each plot
+#' @param return_data Boolean (default = FALSE) TRUE = return a list object of
+#'   tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES
+#'   ONLY
 #'
 #' @returns {plotly} plot (or list of tibbles if return_data == TRUE)
 plot_trendline_comparison <- function(
@@ -1068,22 +1107,33 @@ plot_trendline_comparison <- function(
 
 #' Plot faceted trendlines
 #'
-#' Co-ordinates the production of a a \{plotly\} object containing multiple
-#' time series plots, one for each mitigator in `mitigator_codes`.
+#' Co-ordinates the production of a a \{plotly\} object containing multiple time
+#' series plots, one for each mitigator in `mitigator_codes`.
 #'
-#' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat Tibble - mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
 #' @param rates_data Tibble - historical rates data for schemes / mitigators
 #' @param mitigator_codes Character vector - the mitigator codes to visualise
-#' @param focal_scheme_code Character vector - the scheme code for the focal scheme
-#' @param scheme_codes Character vector - a list of codes for other schemes to visualise
-#' @param show_other_schemes Boolean (default = TRUE) plot time series for other schemes
-#' @param show_horizon_timeline Boolean (default = TRUE) plot the predicted activity on the timeline at the horizon year
-#' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted activity as an overlay over the historical time series plots
-#' @param show_prebaseline_average Boolean (default = TRUE) show the pre-baseline average (mean) with a range of two standard deviations above and below
+#' @param focal_scheme_code Character vector - the scheme code for the focal
+#'   scheme
+#' @param scheme_codes Character vector - a list of codes for other schemes to
+#'   visualise
+#' @param show_other_schemes Boolean (default = TRUE) plot time series for other
+#'   schemes
+#' @param show_horizon_timeline Boolean (default = TRUE) plot the predicted
+#'   activity on the timeline at the horizon year
+#' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted
+#'   activity as an overlay over the historical time series plots
+#' @param show_prebaseline_average Boolean (default = TRUE) show the
+#'   pre-baseline average (mean) with a range of two standard deviations above
+#'   and below
 #' @param facet_height_px Integer (default = 400) the height of the plot
-#' @param return_data Boolean (default = FALSE) TRUE = return a list object of tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES ONLY
+#' @param return_data Boolean (default = FALSE) TRUE = return a list object of
+#'   tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES
+#'   ONLY
 #'
-#' @returns {plotly} plot combining individual trendline plots for each mitigator
+#' @returns {plotly} plot combining individual trendline plots for each
+#'   mitigator
 plot_faceted_trendlines <- function(
   # data objects
   dat,

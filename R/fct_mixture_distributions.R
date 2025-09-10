@@ -7,7 +7,7 @@
 #' distribution.
 #'
 #' @param normal_dists A dataframe with the mu and sigma of the normal
-#' distribution for each peer and mitigator.
+#'   distribution for each peer and mitigator.
 #' @param mix_dists A list of mixture distributions for each mitigator.
 #' @param mitigators A vector of the unique mitigators.
 #'
@@ -33,7 +33,7 @@ get_distribution_characteristics <- function(
 #' subset.
 #'
 #' @param data A dataframe of with the mu and sigma of the normal distribution
-#' for each peer and mitigator.
+#'   for each peer and mitigator.
 #' @param mitigators A vector of the unique mitigators.
 #'
 #' @return A list of mixture distributions for each mitigator.
@@ -74,10 +74,10 @@ get_mixture_distributions <- function(data, mitigators) {
 #' Get mu and sigma from aggregating over normal distributions.
 #'
 #' @param data  A dataframe with the mu and sigma of the normal distribution
-#' for each peer and mitigator.
+#'   for each peer and mitigator.
 #'
 #' @return A dataframe with mu, sigma and number of peers for each mixture
-#' distribution.
+#'   distribution.
 #'
 #' Note mean and sd of unweighted mixture distribution of Normal distributions
 #' is:
@@ -104,10 +104,10 @@ get_mu_sigma <- function(data) {
 #' where default values (lo = 0 and hi = 1) are given are excluded.
 #'
 #' @param data A dataframe with lo and hi values where each row is a different
-#' normal distribution.
+#'   normal distribution.
 #'
 #' @return A dataframe with the mu and sigma of the normal distribution for each
-#'  row.
+#'   row.
 get_normal_distribution_parameters <- function(data) {
   normal_dists <- data |>
     # ensure distinct combinations of mitigator and scheme
@@ -207,10 +207,10 @@ get_percentiles <- function(data, mitigators) {
 #' Probability plot.
 #'
 #' @param data A dataframe where each row is a percentile of the ECDF and PDF of
-#' a mixture distribution. Distribution characteristics and labels, groups are
-#' also included.
+#'   a mixture distribution. Distribution characteristics and labels, groups are
+#'   also included.
 #' @param type Either `"ecdf"` or `"pdf"` to get the empirical cumulative
-#' distribution functions or probability density functions, respectively.
+#'   distribution functions or probability density functions, respectively.
 #'
 #' @return A plot of the ECDF or PDF.
 get_probability_plot <- function(data, type) {
@@ -251,11 +251,11 @@ get_probability_plot <- function(data, type) {
 #'
 #' @param plot A plot of an ECDF or PDF.
 #' @param type Either `"ecdf"` or `"pdf"` to get the modifications for the
-#' empirical cumulative distribution functions or probability density functions,
-#' respectively.
+#'   empirical cumulative distribution functions or probability density
+#'   functions, respectively.
 #'
 #' @return A plot with theme modifiers based on whether the plot was is an ECDF
-#' or PDF.
+#'   or PDF.
 modify_theme <- function(plot, type) {
   if (type == "ecdf") {
     plot <- plot
@@ -311,7 +311,8 @@ wrangle_data_for_density_plots <- function(
 #' Co-ordinates the production of mixture distribution data from the various
 #' functions above.
 #'
-#' @param dat Tibble - of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat Tibble - of mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
 #'
 #' @return Tibble of mixture distribution data for each mitigator
 #' @export
