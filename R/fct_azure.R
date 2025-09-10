@@ -1,3 +1,28 @@
+# Get container details
+get_container <- function(
+    tenant = Sys.getenv("AZ_TENANT_ID"),
+    app_id = Sys.getenv("AZ_APP_ID"),
+    ep_uri = Sys.getenv("AZ_STORAGE_EP"),
+    container_name  # env var "AZ_STORAGE_CONTAINER_RESULTS" or "*_SUPPORT"
+) {
+  # if the app_id variable is empty, we assume that this is running on an Azure
+  # VM, and then we will use Managed Identities for authentication.
+  token <- if (app_id != "") {
+    AzureAuth::get_azure_token(
+      resource = "https://storage.azure.com",
+      tenant = tenant,
+      app = app_id,
+      auth_type = "device_code",
+      use_cache = TRUE  # avoid browser-authorisation prompt
+    )
+  } else {
+    AzureAuth::get_managed_token("https://storage.azure.com/")
+  }
+  ep_uri |>
+    AzureStor::blob_endpoint(token = token) |>
+    AzureStor::storage_container(container_name)
+}
+
 # Fetch result-file information
 get_nhp_result_sets <- function(container_results, container_support) {
 
