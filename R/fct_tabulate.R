@@ -1,5 +1,4 @@
 extract_params <- function(params, runs_meta) {
-
   possibly_report_params_table <- purrr::possibly(report_params_table)
 
   activity_avoidance <- params |>
@@ -10,26 +9,27 @@ extract_params <- function(params, runs_meta) {
     purrr::map(possibly_report_params_table, "efficiencies") |>
     purrr::list_rbind()
 
-  runs_meta <- runs_meta |> dplyr::select(.data$dataset, .data$scenario, .data$run_stage)
+  runs_meta <- runs_meta |>
+    dplyr::select(.data$dataset, .data$scenario, .data$run_stage)
 
   activity_avoidance |>
     dplyr::bind_rows(efficiencies) |>
     dplyr::mutate(
       peer_year = paste0(
         .data$peer,
-        "_", stringr::str_sub(.data$baseline_year, 3, 4),
-        "_", stringr::str_sub(.data$horizon_year, 3, 4)
+        "_",
+        stringr::str_sub(.data$baseline_year, 3, 4),
+        "_",
+        stringr::str_sub(.data$horizon_year, 3, 4)
       )
     ) |>
     dplyr::left_join(runs_meta, by = dplyr::join_by("peer" == "dataset"))
-
 }
 
 report_params_table <- function(
-    p,  # a single scheme's params
-    parameter = c("activity_avoidance", "efficiencies")
+  p, # a single scheme's params
+  parameter = c("activity_avoidance", "efficiencies")
 ) {
-
   parameter_data <- p[[parameter]]
 
   time_profiles <- p[["time_profile_mappings"]][[parameter]] |>
@@ -54,11 +54,9 @@ report_params_table <- function(
       baseline_year = p[["start_year"]],
       horizon_year = p[["end_year"]]
     )
-
 }
 
 prepare_skeleton_table <- function(extracted_params) {
-
   strategies <- extracted_params |>
     dplyr::distinct(.data$activity_type, .data$strategy, .data$parameter)
 
@@ -67,9 +65,18 @@ prepare_skeleton_table <- function(extracted_params) {
     "peer_year" = unique(extracted_params[["peer_year"]])
   ) |>
     dplyr::left_join(strategies, by = dplyr::join_by("strategy")) |>
-    dplyr::select(.data$peer_year, .data$activity_type, .data$parameter, .data$strategy) |>
-    dplyr::arrange(.data$peer_year, .data$activity_type, .data$parameter, .data$strategy)
-
+    dplyr::select(
+      .data$peer_year,
+      .data$activity_type,
+      .data$parameter,
+      .data$strategy
+    ) |>
+    dplyr::arrange(
+      .data$peer_year,
+      .data$activity_type,
+      .data$parameter,
+      .data$strategy
+    )
 }
 
 #' Populate dat table
@@ -88,14 +95,13 @@ prepare_skeleton_table <- function(extracted_params) {
 #' @return Tibble of data
 #' @export
 populate_table <- function(
-    skeleton_table,
-    extracted_params,
-    trust_code_lookup,
-    mitigator_lookup,
-    nee_results,
-    yaml_df
+  skeleton_table,
+  extracted_params,
+  trust_code_lookup,
+  mitigator_lookup,
+  nee_results,
+  yaml_df
 ) {
-
   data_joined <- skeleton_table |>
     dplyr::left_join(
       extracted_params,
@@ -120,13 +126,17 @@ populate_table <- function(
     ) |>
     dplyr::left_join(
       y = yaml_df |>
-        dplyr::select(.data$strategy_variable, mitigator_activity_title = .data$y_axis_title) |>
+        dplyr::select(
+          .data$strategy_variable,
+          mitigator_activity_title = .data$y_axis_title
+        ) |>
         dplyr::distinct(),
       by = dplyr::join_by("strategy" == "strategy_variable")
     )
 
   data_prepared <- data_joined |>
-    dplyr::filter(  # values must exist and be equal-to/less-than 1
+    dplyr::filter(
+      # values must exist and be equal-to/less-than 1
       (.data$value_1 <= 1 & .data$value_2 <= 1) |
         is.na(.data$value_1) & is.na(.data$value_2)
     ) |>
@@ -135,17 +145,20 @@ populate_table <- function(
       # schemes
       scheme_name = dplyr::case_when(
         # identify schemes whose mitigators are not yet finalised
-        !is.na(.data$scheme_name) & stringr::str_starts(
-          string = .data$run_stage |> stringr::str_to_lower(),
-          pattern = 'final',
-          negate = TRUE
-        ) ~ glue::glue('{scheme_name} [preliminary]'),
+        !is.na(.data$scheme_name) &
+          stringr::str_starts(
+            string = .data$run_stage |> stringr::str_to_lower(),
+            pattern = 'final',
+            negate = TRUE
+          ) ~
+          glue::glue('{scheme_name} [preliminary]'),
         .default = .data$scheme_name
       ),
       scheme_code = .data$peer,
       scheme_year = dplyr::if_else(
         stringr::str_detect(.data$run_stage, "Final"),
-        paste0(.data$peer_year, "*"), .data$peer_year
+        paste0(.data$peer_year, "*"),
+        .data$peer_year
       ),
       # model run
       run_scenario = .data$scenario,
@@ -216,7 +229,6 @@ populate_table <- function(
       tidyselect::starts_with("pm_")
     ) |>
     dplyr::arrange(.data$scheme_name, .data$mitigator_code)
-
 }
 
 #' Update dat to reflect the user's preferred values
@@ -232,10 +244,12 @@ populate_table <- function(
 #' @param focal_scheme_code Character - the scheme code of the focal scheme
 #'
 #' @return Tibble of data with the 'value_' and 'nee_' fields updated to match the user's preferred values
-update_dat_values <- function(dat,
-                              values_displayed,
-                              include_point_estimates = FALSE,
-                              focal_scheme_code) {
+update_dat_values <- function(
+  dat,
+  values_displayed,
+  include_point_estimates = FALSE,
+  focal_scheme_code
+) {
   if (values_displayed == "Percent of activity mitigated") {
     dat <-
       dat |>
@@ -291,7 +305,8 @@ update_dat_values <- function(dat,
     dat |>
     dplyr::mutate(
       scheme_name = dplyr::if_else(
-        condition = .data$scheme_code %in% dplyr::coalesce(focal_scheme_code, ""),
+        condition = .data$scheme_code %in%
+          dplyr::coalesce(focal_scheme_code, ""),
         true = glue::glue("{scheme_name} [focal]"),
         false = .data$scheme_name
       )
@@ -319,13 +334,12 @@ update_dat_values <- function(dat,
 #'
 #' @return numeric predicted value between 0 and 1 rounded to 3 decimal places at `year_forecast`
 forecast_value <- function(
-    year_baseline = 2019,
-    year_horizon,
-    year_forecast = 2041,
-    value_horizon,
-    value_displayed
+  year_baseline = 2019,
+  year_horizon,
+  year_forecast = 2041,
+  value_horizon,
+  value_displayed
 ) {
-
   # gather some details
   horizon_length <- (year_horizon - year_baseline)
   forecast_length <- (year_forecast - year_baseline)
@@ -334,7 +348,8 @@ forecast_value <- function(
   if (value_displayed == 'Percent of activity mitigated') {
     value_forecast <- ((value_horizon / horizon_length) * forecast_length)
   } else {
-    value_forecast <- 1 - (((1 - value_horizon) / horizon_length) * forecast_length)
+    value_forecast <- 1 -
+      (((1 - value_horizon) / horizon_length) * forecast_length)
   }
 
   # bound value to within 0 or 1
@@ -346,7 +361,6 @@ forecast_value <- function(
 
   # limit to 3 d.p.
   value_forecast <- round(value_forecast, digits = 3)
-
 }
 
 get_all_schemes <- function(dat) {
@@ -390,7 +404,6 @@ get_all_mitigator_groups <- function(dat) {
 #' @return Tibble of data listing participating Trusts
 #' @export
 get_trust_lookup <- function(container_support) {
-
   trust_lookup <-
     # read the data from Azure
     AzureStor::storage_read_csv(
@@ -429,7 +442,6 @@ get_trust_lookup <- function(container_support) {
 #'
 #' @returns Tibble of mitigator details including the `y_axis_title` activity
 get_mitigator_baseline_description <- function(yaml) {
-
   # abbreviate the path to the mitigators_config list
   mitigator_yaml <- yaml$default$mitigators_config
 
@@ -437,14 +449,15 @@ get_mitigator_baseline_description <- function(yaml) {
   df_return <- purrr::map_dfr(
     .x = names(mitigator_yaml),
     function(category_name) {
-
       # add to a data frame with category, element, and y_axis title
       return(
         tibble::tibble(
           activity_type = mitigator_yaml[[category_name]]$activity_type,
           mitigator_type = mitigator_yaml[[category_name]]$mitigators_type,
           category = category_name,
-          strategy_variable = names(mitigator_yaml[[category_name]]$strategy_subset),
+          strategy_variable = names(
+            mitigator_yaml[[category_name]]$strategy_subset
+          ),
           y_axis_title = mitigator_yaml[[category_name]]$y_axis_title
         )
       )
@@ -464,10 +477,9 @@ get_mitigator_baseline_description <- function(yaml) {
 #' @param mitigator_lookup Tibble of mitigator lookup data
 #'
 #' @return Tibble of mitigator lookups
-prepare_mitigators  <- function(mitigator_lookup) {
-
+prepare_mitigators <- function(mitigator_lookup) {
   mitigator_lookup |>
-    dplyr::filter(is.na(.data$active_to)) |>  # active mitigators only
+    dplyr::filter(is.na(.data$active_to)) |> # active mitigators only
     dplyr::select(
       .data$mitigator_code,
       .data$activity_type,
@@ -496,7 +508,6 @@ prepare_mitigators  <- function(mitigator_lookup) {
         "op" ~ "Outpatients"
       )
     )
-
 }
 
 #' Prepare Mitigator Lookup
@@ -510,7 +521,6 @@ prepare_mitigators  <- function(mitigator_lookup) {
 #'
 #' @return Tibble of mitigator lookups
 prepare_mitigators_ref <- function(mitigator_lookup) {
-
   # clean up the variable names
   mitigator_lookup <-
     mitigator_lookup |>
@@ -533,7 +543,9 @@ prepare_mitigators_ref <- function(mitigator_lookup) {
     mitigator_lookup |>
     dplyr::select(dplyr::any_of(mit_order$name)) |>
     dplyr::rename(mitigator_name = .data$strategy_name) |>
-    dplyr::mutate(mitigator_name = glue::glue('{mitigator_name} [{mitigator_code}]')) |>
+    dplyr::mutate(
+      mitigator_name = glue::glue('{mitigator_name} [{mitigator_code}]')
+    ) |>
     dplyr::select(-.data$strategy_variable)
 
   return(mitigator_lookup)
@@ -549,10 +561,10 @@ prepare_mitigators_ref <- function(mitigator_lookup) {
 #'
 #' @return Vector - mitigator labels with mitigator codes as the value
 add_to_selected_mitigators <- function(df, selected_currently, new_selections) {
-
   df |>
-    dplyr::filter(.data$mitigator_code %in% c(selected_currently, new_selections)) |>
+    dplyr::filter(
+      .data$mitigator_code %in% c(selected_currently, new_selections)
+    ) |>
     dplyr::select(.data$mitigator_name, .data$mitigator_code) |>
     tibble::deframe()
-
 }

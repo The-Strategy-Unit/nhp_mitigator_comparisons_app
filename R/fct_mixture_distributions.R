@@ -12,9 +12,11 @@
 #' @param mitigators A vector of the unique mitigators.
 #'
 #' @return A dataframe of distribution characteristics.
-get_distribution_characteristics <- function(normal_dists,
-                                             mix_dists,
-                                             mitigators) {
+get_distribution_characteristics <- function(
+  normal_dists,
+  mix_dists,
+  mitigators
+) {
   peer_agg_mu_sigma_n <- get_mu_sigma(normal_dists)
 
   peer_agg_p10_p50_p90 <- get_p10_p50_p90(mix_dists, mitigators)
@@ -23,7 +25,6 @@ get_distribution_characteristics <- function(normal_dists,
     dplyr::left_join(peer_agg_p10_p50_p90, dplyr::join_by("mitigator_code"))
 
   return(peer_agg_dist_summary)
-
 }
 
 #' Create mixture distributions for each mitigator:
@@ -36,8 +37,7 @@ get_distribution_characteristics <- function(normal_dists,
 #' @param mitigators A vector of the unique mitigators.
 #'
 #' @return A list of mixture distributions for each mitigator.
-get_mixture_distributions <- function(data, mitigators){
-
+get_mixture_distributions <- function(data, mitigators) {
   mix_dists <- list()
 
   for (i in (mitigators)) {
@@ -58,7 +58,6 @@ get_mixture_distributions <- function(data, mitigators){
       dist_list <- append(dist_list, peer_dist)
 
       rm(peer_dist, norm_param)
-
     }
 
     mitigator_mix_dist <- distr::UnivarMixingDistribution(Dlist = dist_list)
@@ -66,7 +65,6 @@ get_mixture_distributions <- function(data, mitigators){
     mix_dists <- append(mix_dists, mitigator_mix_dist)
 
     rm(mitigator_mix_dist, dist_list, peers)
-
   }
 
   return(mix_dists)
@@ -87,12 +85,11 @@ get_mixture_distributions <- function(data, mitigators){
 #' sd_mix = ( sum(mu^2 + sigma^2) / n ) ^ (1/2)
 #' source : https://stats.stackexchange.com/questions/447626/mean-and-variance-of-a-mixture-distribution
 
-get_mu_sigma <- function(data){
-
+get_mu_sigma <- function(data) {
   summary <- data |>
     dplyr::summarise(
       mu = mean(.data$mu),
-      sd = (mean(.data$mu ^ 2 + sigma ^ 2)) ^ (1 / 2),
+      sd = (mean(.data$mu^2 + sigma^2))^(1 / 2),
       peers = dplyr::n(),
       .by = .data$mitigator_code
     )
@@ -114,23 +111,28 @@ get_mu_sigma <- function(data){
 get_normal_distribution_parameters <- function(data) {
   normal_dists <- data |>
     # ensure distinct combinations of mitigator and scheme
-    dplyr::distinct(.data$mitigator_code, .data$scheme_code, .keep_all = TRUE) |>
+    dplyr::distinct(
+      .data$mitigator_code,
+      .data$scheme_code,
+      .keep_all = TRUE
+    ) |>
     # convert hi and lo to numerator of percentage - e.g. 90 instead of 0.9
     dplyr::mutate(
       value_lo = .data$value_lo * 100,
       value_hi = .data$value_hi * 100
     ) |>
     dplyr::filter(
-      !(.data$value_lo == 0 & .data$value_hi == 1 | # Exclude default values.
-          .data$value_lo == .data$value_hi)# Exclude point estimates
+      !(.data$value_lo == 0 &
+        .data$value_hi == 1 | # Exclude default values.
+        .data$value_lo == .data$value_hi) # Exclude point estimates
     ) |>
     dplyr::mutate(
       mu = (.data$value_lo + .data$value_hi) / 2,
-      sigma = (.data$value_hi - .data$mu) / stats::qnorm(p = 0.90, mean = 0, sd = 1)
+      sigma = (.data$value_hi - .data$mu) /
+        stats::qnorm(p = 0.90, mean = 0, sd = 1)
     )
 
   return(normal_dists)
-
 }
 
 #' Get p10, p50 and p90 of mixture distributions.
@@ -139,8 +141,7 @@ get_normal_distribution_parameters <- function(data) {
 #' @param mitigators A vector of the unique mitigators.
 #'
 #' @return A dataframe with p10, p50 and p90 of each mixture distribution.
-get_p10_p50_p90 <- function(data, mitigators){
-
+get_p10_p50_p90 <- function(data, mitigators) {
   peer_agg_p10_p50_p90 <- data.frame(
     mitigator_code = character(),
     p10 = numeric(),
@@ -160,7 +161,6 @@ get_p10_p50_p90 <- function(data, mitigators){
       dplyr::bind_rows(mitigator_p10_p50_p90)
 
     rm(mitigator_p10_p50_p90)
-
   }
 
   return(peer_agg_p10_p50_p90)
@@ -176,8 +176,7 @@ get_p10_p50_p90 <- function(data, mitigators){
 #'
 #' @return A long dataframe of the percentiles for the ECDF and PDF of each
 #' mitigator's mixture distribution.
-get_percentiles <- function(data, mitigators){
-
+get_percentiles <- function(data, mitigators) {
   peer_agg_ecdf_pdf <- data.frame(
     mitigator_code = character(),
     q = numeric(),
@@ -191,17 +190,17 @@ get_percentiles <- function(data, mitigators){
       q = seq(0, 100, 1),
       ecdf_value = data[[i]]@p(q = seq(0, 100, 1))
     ) |>
-      dplyr::mutate(pdf_value = .data$ecdf_value - dplyr::lag(.data$ecdf_value, 1))
+      dplyr::mutate(
+        pdf_value = .data$ecdf_value - dplyr::lag(.data$ecdf_value, 1)
+      )
 
     peer_agg_ecdf_pdf <- peer_agg_ecdf_pdf |>
       dplyr::bind_rows(mitigator_ecdf_pdf)
 
     rm(mitigator_ecdf_pdf)
-
   }
 
   return(peer_agg_ecdf_pdf)
-
 }
 
 
@@ -234,16 +233,18 @@ get_probability_plot <- function(data, type) {
     ggplot2::geom_vline(ggplot2::aes(xintercept = .data$p10), colour = 'blue') +
     ggplot2::geom_vline(ggplot2::aes(xintercept = .data$p90), colour = 'blue') +
     ggplot2::geom_vline(ggplot2::aes(xintercept = .data$mu), colour = 'red') +
-    ggplot2::facet_wrap(ggplot2::vars(.data$mitigator_label),
-                        scale = 'free_y') +
-    ggplot2::scale_y_continuous(name = y_axis_label,
-                                limits = c(0, y_axis_max)) +
+    ggplot2::facet_wrap(
+      ggplot2::vars(.data$mitigator_label),
+      scale = 'free_y'
+    ) +
+    ggplot2::scale_y_continuous(
+      name = y_axis_label,
+      limits = c(0, y_axis_max)
+    ) +
     ggplot2::scale_x_continuous(name = 'estimated percentage reduction') +
-    ggplot2::labs(title = title,
-                  caption = 'p10 and p90 (blue), mean (red)')
+    ggplot2::labs(title = title, caption = 'p10 and p90 (blue), mean (red)')
 
   return(plot)
-
 }
 
 #' Modifies theme of ECDF and PDF plot.
@@ -280,22 +281,28 @@ modify_theme <- function(plot, type) {
 #' strategy.
 #'
 #' @return Tibble of data showing mixture distributions
-wrangle_data_for_density_plots <- function(peer_agg_ecdf_pdf,
-                                           peer_agg_dist_summary,
-                                           strategy_lookup) {
-
+wrangle_data_for_density_plots <- function(
+  peer_agg_ecdf_pdf,
+  peer_agg_dist_summary,
+  strategy_lookup
+) {
   # make strategy lookup names tidy
   strategy_lookup <- strategy_lookup |> janitor::clean_names()
 
   data_wrangled <- peer_agg_ecdf_pdf |>
     dplyr::left_join(peer_agg_dist_summary, dplyr::join_by("mitigator_code")) |>
     dplyr::left_join(strategy_lookup, dplyr::join_by("mitigator_code")) |>
-    dplyr::mutate(mitigator_label = paste("mitigator_name",
-                                          ' (n = ', .data$peers, ')',
-                                          sep = ''))
+    dplyr::mutate(
+      mitigator_label = paste(
+        "mitigator_name",
+        ' (n = ',
+        .data$peers,
+        ')',
+        sep = ''
+      )
+    )
 
   return(data_wrangled)
-
 }
 
 
@@ -309,7 +316,6 @@ wrangle_data_for_density_plots <- function(peer_agg_ecdf_pdf,
 #' @return Tibble of mixture distribution data for each mitigator
 #' @export
 get_mixture_distributions_dat <- function(dat) {
-
   # prepare input data
   # ensure distinct combinations of mitigator and scheme to tackle an
   # issue with multiple values by the same scheme for the same mitigator
