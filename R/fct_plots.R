@@ -22,13 +22,14 @@
 #'    Allows the user to display the range of values from the National Elicitation
 #'    Exercise (NEE) as context. Defaults to on.
 #'
-#' @param dat_selected_pointrange Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat_selected_pointrange Tibble of mitigator data as produced by
+#'   `populate_table()` in `fct_tabulate.R`
 #' @param input Reference to the Shiny input widget that triggered this chart
 #'
-#' @return ggplot2 object showing point-range view facetted by scheme or mitigator
+#' @return ggplot2 object showing point-range view facetted by scheme or
+#'   mitigator
 #' @export
 plot_pointrange <- function(dat_selected_pointrange, input) {
-
   ## logic ----
   # decide what to show for the mitigator
   if (input$toggle_mitigator_code_pointrange) {
@@ -44,7 +45,6 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
     # set char wrap to 100
     y_char_wrap <- 100
-
   } else {
     var_y_axis <- var_mitigator
     var_facet <- 'scheme_name'
@@ -77,14 +77,13 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
   # add calculated vars to the plot aesthetics
   pointrange <- pointrange +
-    ggplot2::aes(y = {{var_y_axis}}) +
+    ggplot2::aes(y = {{ var_y_axis }}) +
     ggplot2::facet_wrap(
-      facets = ggplot2::vars( forcats::fct_rev( {{var_facet}} )),
+      facets = ggplot2::vars(forcats::fct_rev({{ var_facet }})),
       labeller = ggplot2::label_wrap_gen(width = 20),
       ncol = input$facet_columns,
       scales = 'free_x' # add
     )
-
 
   ## geoms ----
   # add nee as first geom (to put behind pointrange)
@@ -93,7 +92,11 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
       ggplot2::geom_crossbar(
         # limit to records with nee data
         data = dat_selected_pointrange |>
-          dplyr::filter(!is.na(.data$nee_mean) & !is.na(.data$nee_p90) & !is.na(.data$nee_p10)),
+          dplyr::filter(
+            !is.na(.data$nee_mean) &
+              !is.na(.data$nee_p90) &
+              !is.na(.data$nee_p10)
+          ),
         ggplot2::aes(
           x = .data$nee_mean,
           xmin = .data$nee_p90,
@@ -122,11 +125,13 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
   # formatting and labels
   pointrange <- pointrange +
     ggplot2::scale_y_discrete(
-      labels = \(.y) stringr::str_wrap(
-        string = .y,
-        width = y_char_wrap,
-        whitespace_only = TRUE
-      )
+      labels = \(.y) {
+        stringr::str_wrap(
+          string = .y,
+          width = y_char_wrap,
+          whitespace_only = TRUE
+        )
+      }
     ) +
     ggplot2::scale_color_manual(
       #values = c("FALSE" = "black", "TRUE" = "red")
@@ -150,8 +155,8 @@ plot_pointrange <- function(dat_selected_pointrange, input) {
 
 #' Set breaks for a percent value
 #'
-#' An internal function to produce ggplot breaks on 0.01 (1%) intervals.
-#' Based on code found here:
+#' An internal function to produce ggplot breaks on 0.01 (1%) intervals. Based
+#' on code found here:
 #' https://jhrcook.github.io/jhrcook-website/posts/2019-11-09_integer-values-ggplot-axis/
 #'
 #' @param n integer - the approximate number of breaks to set (defaults to 5)
@@ -170,29 +175,31 @@ percent_breaks <- function(n = 5, ...) {
 
 #' Mixture distribution / density plot
 #'
-#' Plot the mixutre distribution plots.
+#' Plot the mixture distribution plots.
 #'
-#' @param dat_selected_mixture_distributions Tibble - mixture distributions for all schemes for the selected mitigators - as produced by `dat_selected_mixture_distributions()` in  `app_server.R`
-#' @param dat_filtered Tibble - of mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat_selected_mixture_distributions Tibble - mixture distributions for
+#'   all schemes for the selected mitigators - as produced by
+#'   `dat_selected_mixture_distributions()` in  `app_server.R`
+#' @param dat_filtered Tibble - of mitigator data as produced by
+#'   `populate_table()` in `fct_tabulate.R`
 #' @param dat_focal_scheme_code String - the `scheme_code` of the focal scheme
 #' @param input Reference to the Shiny input widget that triggered this chart
 #'
-#' @return ggplot2 object showing the pointrange for the focal scheme in contrast with the mixture distributions for all schemes combined.
+#' @return ggplot2 object showing the pointrange for the focal scheme in
+#'   contrast with the mixture distributions for all schemes combined.
 #' @export
 plot_mixture_distributions <- function(
-    dat_selected_mixture_distributions, # the pre-calculated mixture distributions for each mitigator (based on all schemes)
-    dat_filtered, # the data filtered for scheme and mitigators
-    dat_focal_scheme_code, # the focal scheme code
-    input) {
-
+  dat_selected_mixture_distributions, # the pre-calculated mixture distributions for each mitigator (based on all schemes)
+  dat_filtered, # the data filtered for scheme and mitigators
+  dat_focal_scheme_code, # the focal scheme code
+  input
+) {
   # logic ----
   # decide what to plot on the y-axis
   if (!input$toggle_mixture_distribution_ecdf) {
     var_y_axis <- 'pdf_value'
-
   } else {
     var_y_axis <- 'ecdf_value'
-
   }
 
   # convert to symbols - so can be used as variables in ggplot
@@ -201,7 +208,13 @@ plot_mixture_distributions <- function(
   # pre-processing ----
   # get reference lines from the mixture distributions
   ref_lines <- dat_selected_mixture_distributions |>
-    dplyr::select(.data$mitigator_name, .data$mitigator_code, .data$p10, .data$p90, .data$mu) |>
+    dplyr::select(
+      .data$mitigator_name,
+      .data$mitigator_code,
+      .data$p10,
+      .data$p90,
+      .data$mu
+    ) |>
     dplyr::distinct()
 
   # get pointrange details
@@ -226,14 +239,18 @@ plot_mixture_distributions <- function(
     ggplot2::ggplot() +
 
     # plot mixture distribution - either PDF or ECDF
-    ggplot2::geom_line(ggplot2::aes(x = q, y = {{ var_y_axis }}), colour = 'grey60') +
+    ggplot2::geom_line(
+      ggplot2::aes(x = q, y = {{ var_y_axis }}),
+      colour = 'grey60'
+    ) +
     ggplot2::geom_area(ggplot2::aes(x = q, y = {{ var_y_axis }}), alpha = 0.1) +
 
     # plot reference lines
     ggplot2::geom_rect(
       data = ref_lines,
       ggplot2::aes(xmin = .data$p10, xmax = .data$p90, ymin = 0, ymax = Inf),
-      fill = 'turquoise', alpha = 0.08
+      fill = 'turquoise',
+      alpha = 0.08
     ) +
     ggplot2::geom_vline(
       data = ref_lines,
@@ -260,7 +277,10 @@ plot_mixture_distributions <- function(
         xmin = .data$value_lo * 100,
         xmax = .data$value_hi * 100
       ),
-      colour = 'red', size = 1, linewidth = 1.5, alpha = 0.75
+      colour = 'red',
+      size = 1,
+      linewidth = 1.5,
+      alpha = 0.75
     ) +
 
     # produce the rest of the plot
@@ -283,7 +303,6 @@ plot_mixture_distributions <- function(
   ## geoms ----
   # add nee as first geom (to put behind pointrange)
   if (input$toggle_nee_reference_range_density) {
-
     # Note - suppressing a warning about width being an unknown aesthetic
     # this is tracked in issue #82
     suppressWarnings({
@@ -303,11 +322,9 @@ plot_mixture_distributions <- function(
           alpha = 0.6,
         )
     })
-
   }
 
   return(plot)
-
 }
 
 #' Prepare data for the baseline comparison
@@ -315,32 +332,42 @@ plot_mixture_distributions <- function(
 #' Prepare the data for scatter plot with baseline rate on the x-axis and
 #' mitigator value on the y-axis.
 #'
-#' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat Tibble - mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
 #' @param rates_data Tibble - historical rates data for schemes / mitigators
 #' @param mitigator_codes Character vector - the mitigator codes to visualise
-#' @param focal_scheme_code Character vector - the scheme code for the focal scheme
+#' @param focal_scheme_code Character vector - the scheme code for the focal
+#'   scheme
 #' @param rate_title Character - the label for the x-axis
-#' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
+#' @param value_title Character - the label for the y-axis, should reflect the
+#'   user's preference in input$values_displayed
 #' @param trendline Boolean (default = TRUE) show a trendline between mid-points
-#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line
-#' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
-#' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
-#' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
-#' @param facet_height_px Integer (default = 250) the pixel height of each facet in the plot
+#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points
+#'   connected by a line
+#' @param scheme_label Boolean (default = TRUE) label the mid-points with the
+#'   scheme code
+#' @param quadrants Boolean (default = TRUE) show the lines splitting the data
+#'   into quadrants
+#' @param facet_columns Integer (default = 1) the number of columns to facet the
+#'   baseline plot
+#' @param facet_height_px Integer (default = 250) the pixel height of each facet
+#'   in the plot
 #'
 #' @returns Tibble
 prep_baseline_comparison <- function(
-    dat, rates_data, mitigator_codes, focal_scheme_code,
-    rate_title = 'Baseline rate',
-    value_title = 'Percent mitigated',
-    trendline = TRUE,
-    range = TRUE,
-    scheme_label = TRUE,
-    quadrants = TRUE,
-    facet_columns = 1,
-    facet_height_px = 250
+  dat,
+  rates_data,
+  mitigator_codes,
+  focal_scheme_code,
+  rate_title = 'Baseline rate',
+  value_title = 'Percent mitigated',
+  trendline = TRUE,
+  range = TRUE,
+  scheme_label = TRUE,
+  quadrants = TRUE,
+  facet_columns = 1,
+  facet_height_px = 250
 ) {
-
   # prepare the rates data
   rates_data <-
     rates_data |>
@@ -349,9 +376,15 @@ prep_baseline_comparison <- function(
         string = .data$fyear,
         start = 1L,
         end = 4L
-      ) |> as.integer()
+      ) |>
+        as.integer()
     ) |>
-    dplyr::select(.data$procode, .data$strategy, .data$baseline_year, rate_baseline = .data$rate)
+    dplyr::select(
+      .data$procode,
+      .data$strategy,
+      .data$baseline_year,
+      rate_baseline = .data$rate
+    )
 
   # prepare the data for plotting
   plot_dat <-
@@ -378,8 +411,16 @@ prep_baseline_comparison <- function(
     dplyr::mutate(
       y_mid = mean(.data$value_mid, na.rm = TRUE),
       x_mid = mean(.data$rate_baseline, na.rm = TRUE),
-      quad_baseline = ifelse(.data$rate_baseline <= .data$x_mid, 'Low baseline', 'High baseline'),
-      quad_reduction = ifelse(.data$value_mid <= .data$y_mid, 'Low reduction', 'High reduction'),
+      quad_baseline = ifelse(
+        .data$rate_baseline <= .data$x_mid,
+        'Low baseline',
+        'High baseline'
+      ),
+      quad_reduction = ifelse(
+        .data$value_mid <= .data$y_mid,
+        'Low reduction',
+        'High reduction'
+      ),
       .by = .data$mitigator_code
     ) |>
     # prepare for use
@@ -401,7 +442,6 @@ prep_baseline_comparison <- function(
     )
 
   return(plot_dat)
-
 }
 
 
@@ -410,47 +450,57 @@ prep_baseline_comparison <- function(
 #' Show a scatter plot with baseline rate on the x-axis and mitigator value on
 #' the y-axis.
 #'
-#' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat Tibble - mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
 #' @param rates_data Tibble - historical rates data for schemes / mitigators
 #' @param mitigator_codes Character vector - the mitigator codes to visualise
-#' @param focal_scheme_code Character vector - the scheme code for the focal scheme
+#' @param focal_scheme_code Character vector - the scheme code for the focal
+#'   scheme
 #' @param rate_title Character - the label for the x-axis
-#' @param value_title Character - the label for the y-axis, should reflect the user's preference in input$values_displayed
+#' @param value_title Character - the label for the y-axis, should reflect the
+#'   user's preference in input$values_displayed
 #' @param trendline Boolean (default = TRUE) show a trendline between mid-points
-#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line
-#' @param scheme_label Boolean (default = TRUE) label the mid-points with the scheme code
-#' @param quadrants Boolean (default = TRUE) show the lines splitting the data into quadrants
-#' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
-#' @param facet_height_px Integer (default = 250) the pixel height of each facet in the plot
+#' @param range Boolean (default = TRUE) show the 10\% and 90\% range as points
+#'   connected by a line
+#' @param scheme_label Boolean (default = TRUE) label the mid-points with the
+#'   scheme code
+#' @param quadrants Boolean (default = TRUE) show the lines splitting the data
+#'   into quadrants
+#' @param facet_columns Integer (default = 1) the number of columns to facet the
+#'   baseline plot
+#' @param facet_height_px Integer (default = 250) the pixel height of each facet
+#'   in the plot
 #'
 #' @returns {plotly} plot
 plot_baseline_comparison <- function(
-    dat, rates_data, mitigator_codes, focal_scheme_code,
-    rate_title = 'Baseline rate',
-    value_title = 'Percent mitigated',
-    trendline = TRUE,
-    range = TRUE,
-    scheme_label = TRUE,
-    quadrants = TRUE,
-    facet_columns = 1,
-    facet_height_px = 250
+  dat,
+  rates_data,
+  mitigator_codes,
+  focal_scheme_code,
+  rate_title = 'Baseline rate',
+  value_title = 'Percent mitigated',
+  trendline = TRUE,
+  range = TRUE,
+  scheme_label = TRUE,
+  quadrants = TRUE,
+  facet_columns = 1,
+  facet_height_px = 250
 ) {
-
   # prepare the data
   plot_dat <-
     prep_baseline_comparison(
-    dat = dat,
-    rates_data = rates_data,
-    mitigator_codes = mitigator_codes,
-    focal_scheme_code = focal_scheme_code,
-    rate_title = 'Baseline rate',
-    value_title = 'Percent mitigated',
-    trendline = TRUE,
-    range = TRUE,
-    scheme_label = TRUE,
-    quadrants = TRUE,
-    facet_columns = 1,
-    facet_height_px = 250
+      dat = dat,
+      rates_data = rates_data,
+      mitigator_codes = mitigator_codes,
+      focal_scheme_code = focal_scheme_code,
+      rate_title = 'Baseline rate',
+      value_title = 'Percent mitigated',
+      trendline = TRUE,
+      range = TRUE,
+      scheme_label = TRUE,
+      quadrants = TRUE,
+      facet_columns = 1,
+      facet_height_px = 250
     )
 
   # get the quadrants
@@ -484,7 +534,10 @@ plot_baseline_comparison <- function(
   # create the plot ---
   plot <-
     plot_dat |>
-    ggplot2::ggplot(ggplot2::aes(x = .data$rate_baseline, text = .data$tooltip_text)) +
+    ggplot2::ggplot(ggplot2::aes(
+      x = .data$rate_baseline,
+      text = .data$tooltip_text
+    )) +
     ggplot2::facet_wrap(
       facets = ggplot2::vars(.data$mitigator_name),
       scales = 'free_x',
@@ -492,7 +545,7 @@ plot_baseline_comparison <- function(
     ) +
     ggplot2::scale_y_continuous(
       labels = scales::percent,
-      limits = c(0,1)
+      limits = c(0, 1)
     )
 
   # add in quadrants?
@@ -522,7 +575,10 @@ plot_baseline_comparison <- function(
       ggplot2::geom_smooth(
         ggplot2::aes(y = .data$value_mid),
         formula = y ~ x,
-        method = 'lm', se = FALSE, linetype = 'dotted', linewidth = 1
+        method = 'lm',
+        se = FALSE,
+        linetype = 'dotted',
+        linewidth = 1
       )
   }
 
@@ -537,7 +593,8 @@ plot_baseline_comparison <- function(
           yend = .data$value_hi,
           colour = .data$scheme_highlight
         ),
-        linewidth = 2, alpha = 0.1
+        linewidth = 2,
+        alpha = 0.1
       ) +
       ggplot2::geom_point(
         ggplot2::aes(y = .data$value_lo, colour = .data$scheme_highlight),
@@ -555,14 +612,18 @@ plot_baseline_comparison <- function(
       plot +
       ggplot2::geom_text(
         ggplot2::aes(y = .data$value_mid, label = .data$scheme_code),
-        check_overlap = TRUE, nudge_y = 0.04
+        check_overlap = TRUE,
+        nudge_y = 0.04
       )
   }
 
   # add in midpoints
   plot <-
     plot +
-    ggplot2::geom_point(ggplot2::aes(y = .data$value_mid, colour = .data$scheme_highlight)) +
+    ggplot2::geom_point(ggplot2::aes(
+      y = .data$value_mid,
+      colour = .data$scheme_highlight
+    )) +
     ggplot2::scale_color_manual(
       values = c(
         'FALSE' = 'grey50',
@@ -612,7 +673,8 @@ plot_baseline_comparison <- function(
         'filename' = glue::glue(
           "nhp_baseline_comparison_", # name for this plot
           "{paste0(focal_scheme_code, collapse = '_')}_", # focal scheme code
-          "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}") # datetime
+          "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}"
+        ) # datetime
       )
     ) |>
     plotly::layout(
@@ -621,7 +683,6 @@ plot_baseline_comparison <- function(
     )
 
   return(plot)
-
 }
 
 #' Wrap a vector of strings to fit a specified width
@@ -630,18 +691,20 @@ plot_baseline_comparison <- function(
 #' width limit.
 #'
 #' @param strings Character vector - the input vector of strings to wrap
-#' @param px_limit Integer (default 300) - the number of pixels to wrap `strings` to fit
-#' @param font_family Character (default 'Arial, Helvetica, Droid Sans, sans') - the font family to use when estimating the width of strings
-#' @param font_size Integer (default 14) - the font size to use when estimating the width of strings
+#' @param px_limit Integer (default 300) - the number of pixels to wrap
+#'   `strings` to fit
+#' @param font_family Character (default 'Arial, Helvetica, Droid Sans, sans') -
+#'   the font family to use when estimating the width of strings
+#' @param font_size Integer (default 14) - the font size to use when estimating
+#'   the width of strings
 #'
 #' @returns Character vector
 wrap_strings_to_fit_pixel_limit <- function(
-    strings,
-    px_limit = 300,
-    font_family = 'Arial, Helvetica, Droid Sans, sans',
-    font_size = 14
+  strings,
+  px_limit = 300,
+  font_family = 'Arial, Helvetica, Droid Sans, sans',
+  font_size = 14
 ) {
-
   # add some margin to the px_limit
   px_limit <- px_limit * 0.8
 
@@ -689,28 +752,45 @@ wrap_strings_to_fit_pixel_limit <- function(
 #' scheme and mitigator.
 #'
 #' Note - this function is designed for use with `plot_facetted_trendlines()`
-#' which coordinates the production of plots for multiple mitigators.
-#' The use of the `subplot()` features of \{plotly\} mean that the overall plot
-#' height is specified in each subplot's definition.
+#' which coordinates the production of plots for multiple mitigators. The use of
+#' the `subplot()` features of \{plotly\} mean that the overall plot height is
+#' specified in each subplot's definition.
 #'
-#' @param plot_data Tibble - historical rate of activity for the mitigator, as produced within `plot_facetted_trendlines()` in `fct_plots.R`
-#' @param dat_lu Tibble - lookup information for schemes and mitigators, as produced within `plot_facetted_trendlines()` in `fct_plots.R`
-#' @param mitigator_codes Character vector - the `mitigator_code` to produce the plot for
-#' @param focal_scheme_code Character vector - the focal `scheme_code` to produce the plot for
-#' @param show_other_schemes Boolean (default = TRUE) plot time series for other schemes
-#' @param show_horizon_timeline Boolean (default = TRUE) plot the predicted activity on the timeline at the horizon year
-#' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted activity as an overlay over the historical time series plots
-#' @param show_prebaseline_average Boolean (default = TRUE) show the pre-baseline average (mean) with a range of two standard deviations above and below
-#' @param facet_columns Integer (default = 1) the number of columns to facet the baseline plot
+#' @param plot_data Tibble - historical rate of activity for the mitigator, as
+#'   produced within `plot_facetted_trendlines()` in `fct_plots.R`
+#' @param dat_lu Tibble - lookup information for schemes and mitigators, as
+#'   produced within `plot_facetted_trendlines()` in `fct_plots.R`
+#' @param mitigator_codes Character vector - the `mitigator_code` to produce the
+#'   plot for
+#' @param focal_scheme_code Character vector - the focal `scheme_code` to
+#'   produce the plot for
+#' @param show_other_schemes Boolean (default = TRUE) plot time series for other
+#'   schemes
+#' @param show_horizon_timeline Boolean (default = TRUE) plot the predicted
+#'   activity on the timeline at the horizon year
+#' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted
+#'   activity as an overlay over the historical time series plots
+#' @param show_prebaseline_average Boolean (default = TRUE) show the
+#'   pre-baseline average (mean) with a range of two standard deviations above
+#'   and below
+#' @param facet_columns Integer (default = 1) the number of columns to facet the
+#'   baseline plot
 #' @param facet_height_px Integer (default = 400) the height of the plot
-#' @param facet_count Integer (default = 1) the number of individual plots to be combined
-#' @param x_axis_min Integer (default = 2010) the minimum year to show on the x-axis to help coordinate the x-axes for each plot
-#' @param return_data Boolean (default = FALSE) TRUE = return a list object of tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES ONLY
+#' @param facet_count Integer (default = 1) the number of individual plots to be
+#'   combined
+#' @param x_axis_min Integer (default = 2010) the minimum year to show on the
+#'   x-axis to help coordinate the x-axes for each plot
+#' @param return_data Boolean (default = FALSE) TRUE = return a list object of
+#'   tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES
+#'   ONLY
 #'
 #' @returns {plotly} plot (or list of tibbles if return_data == TRUE)
 plot_trendline_comparison <- function(
   # data objects
-  plot_data, dat_lu, mitigator_codes, focal_scheme_code,
+  plot_data,
+  dat_lu,
+  mitigator_codes,
+  focal_scheme_code,
 
   # presentation objects
   show_other_schemes = TRUE,
@@ -723,7 +803,6 @@ plot_trendline_comparison <- function(
   x_axis_min = 2010,
   return_data = FALSE
 ) {
-
   # wrap the y-axis labels to fit within facet_height_px
   plot_data <-
     plot_data |>
@@ -750,9 +829,12 @@ plot_trendline_comparison <- function(
       horizon_value_hi = .data$rate * .data$pi_value_hi,
 
       # how do the horizon values compare with average data (i.e. z-scores)
-      zscore_value_lo = (.data$horizon_value_lo - .data$rate_mean) / .data$rate_sd,
-      zscore_value_mid = (.data$horizon_value_mid - .data$rate_mean) / .data$rate_sd,
-      zscore_value_hi = (.data$horizon_value_hi - .data$rate_mean) / .data$rate_sd,
+      zscore_value_lo = (.data$horizon_value_lo - .data$rate_mean) /
+        .data$rate_sd,
+      zscore_value_mid = (.data$horizon_value_mid - .data$rate_mean) /
+        .data$rate_sd,
+      zscore_value_hi = (.data$horizon_value_hi - .data$rate_mean) /
+        .data$rate_sd,
 
       # prepare the tooltip text
       tooltip_text = glue::glue(
@@ -769,7 +851,11 @@ plot_trendline_comparison <- function(
   # create the plot ----
   plot <-
     plot_data |>
-    ggplot2::ggplot(ggplot2::aes(x = .data$year, y = .data$rate, text = .data$tooltip_text)) +
+    ggplot2::ggplot(ggplot2::aes(
+      x = .data$year,
+      y = .data$rate,
+      text = .data$tooltip_text
+    )) +
     ggplot2::facet_wrap(
       facets = ggplot2::vars(.data$mitigator_name),
       scales = 'free',
@@ -778,7 +864,6 @@ plot_trendline_comparison <- function(
 
   ## show pre-baseline average ----
   if (show_prebaseline_average) {
-
     # calculate data to plot
     df_horizon_overlay <-
       plot_data |>
@@ -795,7 +880,8 @@ plot_trendline_comparison <- function(
       ggplot2::geom_ribbon(
         data = df_horizon_overlay,
         ggplot2::aes(
-          x = .data$year, y = .data$rate_mean,
+          x = .data$year,
+          y = .data$rate_mean,
           ymin = .data$rate_mean - (.data$rate_sd * 2),
           ymax = .data$rate_mean + (.data$rate_sd * 2),
           group = 1
@@ -806,25 +892,35 @@ plot_trendline_comparison <- function(
       ggplot2::geom_line(
         data = df_horizon_overlay,
         ggplot2::aes(x = .data$year, y = .data$rate_mean, group = 1),
-        alpha = 0.5, linetype = 'dotted'
+        alpha = 0.5,
+        linetype = 'dotted'
       ) +
       # mean + 2sd
       ggplot2::geom_line(
         data = df_horizon_overlay,
-        ggplot2::aes(x = .data$year, y = .data$rate_mean + (.data$rate_sd * 2), group = 1),
-        alpha = 0.2, linetype = 'dotted'
+        ggplot2::aes(
+          x = .data$year,
+          y = .data$rate_mean + (.data$rate_sd * 2),
+          group = 1
+        ),
+        alpha = 0.2,
+        linetype = 'dotted'
       ) +
       # mean - 2sd
       ggplot2::geom_line(
         data = df_horizon_overlay,
-        ggplot2::aes(x = .data$year, y = .data$rate_mean - (.data$rate_sd * 2), group = 1),
-        alpha = 0.2, linetype = 'dotted'
+        ggplot2::aes(
+          x = .data$year,
+          y = .data$rate_mean - (.data$rate_sd * 2),
+          group = 1
+        ),
+        alpha = 0.2,
+        linetype = 'dotted'
       )
   }
 
   ## plot all schemes? ----
   if (show_other_schemes) {
-
     # get the data
     df_other_schemes <-
       plot_data |> dplyr::filter(.data$scheme_code != focal_scheme_code)
@@ -834,7 +930,8 @@ plot_trendline_comparison <- function(
       plot <-
         plot +
         ggplot2::geom_line(
-          data = plot_data |> dplyr::filter(.data$scheme_code != focal_scheme_code),
+          data = plot_data |>
+            dplyr::filter(.data$scheme_code != focal_scheme_code),
           ggplot2::aes(group = .data$scheme_code),
           alpha = 0.2
         )
@@ -844,16 +941,20 @@ plot_trendline_comparison <- function(
   ## horizon overlay? -----
   # show the horizon forecast overlaid on the series?
   if (show_horizon_overlay) {
-
     # # calculate data to plot
     df_horizon_overlay <- tibble::tibble(
-      year_min = min(plot_data$year[plot_data$scheme_code %in% focal_scheme_code]),
+      year_min = min(plot_data$year[
+        plot_data$scheme_code %in% focal_scheme_code
+      ]),
       year_max = ifelse(
         test = show_horizon_timeline,
         yes = max(plot_data_horizon_focal$year_horizon),
         no = max(plot_data$year)
       ),
-      year = dplyr::coalesce(.data$year_min, 2010):dplyr::coalesce(.data$year_max, 2041),
+      year = dplyr::coalesce(.data$year_min, 2010):dplyr::coalesce(
+        .data$year_max,
+        2041
+      ),
       ymin = plot_data_horizon_focal$horizon_value_lo,
       ymax = plot_data_horizon_focal$horizon_value_hi,
       rate = plot_data_horizon_focal$horizon_value_mid,
@@ -872,22 +973,26 @@ plot_trendline_comparison <- function(
           ymin = .data$ymin,
           ymax = .data$ymax,
         ),
-        fill = 'red', alpha = 0.1
+        fill = 'red',
+        alpha = 0.1
       ) +
       ggplot2::geom_line(
         data = df_horizon_overlay,
         ggplot2::aes(x = .data$year, y = .data$ymin),
-        colour = 'red', alpha = 0.15
+        colour = 'red',
+        alpha = 0.15
       ) +
       ggplot2::geom_line(
         data = df_horizon_overlay,
         ggplot2::aes(x = .data$year, y = .data$ymax),
-        colour = 'red', alpha = 0.15
+        colour = 'red',
+        alpha = 0.15
       ) +
       ggplot2::geom_line(
         data = df_horizon_overlay,
         ggplot2::aes(x = .data$year, y = .data$rate),
-        colour = 'red', alpha = 0.15
+        colour = 'red',
+        alpha = 0.15
       )
   }
 
@@ -909,18 +1014,26 @@ plot_trendline_comparison <- function(
       ggplot2::geom_segment(
         data = plot_data_horizon_focal,
         ggplot2::aes(
-          x = .data$year, xend = .data$year_horizon,
-          y = .data$rate, yend = .data$horizon_value_lo
+          x = .data$year,
+          xend = .data$year_horizon,
+          y = .data$rate,
+          yend = .data$horizon_value_lo
         ),
-        alpha = 0.2, colour = 'red', linetype = 'dotted'
+        alpha = 0.2,
+        colour = 'red',
+        linetype = 'dotted'
       ) +
       ggplot2::geom_segment(
         data = plot_data_horizon_focal,
         ggplot2::aes(
-          x = .data$year, xend = .data$year_horizon,
-          y = .data$rate, yend = .data$horizon_value_hi
+          x = .data$year,
+          xend = .data$year_horizon,
+          y = .data$rate,
+          yend = .data$horizon_value_hi
         ),
-        alpha = 0.2, colour = 'red', linetype = 'dotted'
+        alpha = 0.2,
+        colour = 'red',
+        linetype = 'dotted'
       )
   }
 
@@ -930,7 +1043,8 @@ plot_trendline_comparison <- function(
     ggplot2::geom_line(
       data = plot_data |> dplyr::filter(.data$scheme_code == focal_scheme_code),
       ggplot2::aes(group = .data$scheme_code),
-      colour = 'red', linewidth = 2
+      colour = 'red',
+      linewidth = 2
     )
 
   # scales
@@ -958,7 +1072,7 @@ plot_trendline_comparison <- function(
       legend.position = 'none',
       # axes
       axis.title = ggplot2::element_blank()
-  )
+    )
 
   # convert to plotly object and tweak settings
   plot <-
@@ -993,25 +1107,40 @@ plot_trendline_comparison <- function(
 
 #' Plot faceted trendlines
 #'
-#' Co-ordinates the production of a a \{plotly\} object containing multiple
-#' time series plots, one for each mitigator in `mitigator_codes`.
+#' Co-ordinates the production of a a \{plotly\} object containing multiple time
+#' series plots, one for each mitigator in `mitigator_codes`.
 #'
-#' @param dat Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`
+#' @param dat Tibble - mitigator data as produced by `populate_table()` in
+#'   `fct_tabulate.R`
 #' @param rates_data Tibble - historical rates data for schemes / mitigators
 #' @param mitigator_codes Character vector - the mitigator codes to visualise
-#' @param focal_scheme_code Character vector - the scheme code for the focal scheme
-#' @param scheme_codes Character vector - a list of codes for other schemes to visualise
-#' @param show_other_schemes Boolean (default = TRUE) plot time series for other schemes
-#' @param show_horizon_timeline Boolean (default = TRUE) plot the predicted activity on the timeline at the horizon year
-#' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted activity as an overlay over the historical time series plots
-#' @param show_prebaseline_average Boolean (default = TRUE) show the pre-baseline average (mean) with a range of two standard deviations above and below
+#' @param focal_scheme_code Character vector - the scheme code for the focal
+#'   scheme
+#' @param scheme_codes Character vector - a list of codes for other schemes to
+#'   visualise
+#' @param show_other_schemes Boolean (default = TRUE) plot time series for other
+#'   schemes
+#' @param show_horizon_timeline Boolean (default = TRUE) plot the predicted
+#'   activity on the timeline at the horizon year
+#' @param show_horizon_overlay Boolean (default = TRUE) plot the predicted
+#'   activity as an overlay over the historical time series plots
+#' @param show_prebaseline_average Boolean (default = TRUE) show the
+#'   pre-baseline average (mean) with a range of two standard deviations above
+#'   and below
 #' @param facet_height_px Integer (default = 400) the height of the plot
-#' @param return_data Boolean (default = FALSE) TRUE = return a list object of tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES ONLY
+#' @param return_data Boolean (default = FALSE) TRUE = return a list object of
+#'   tibbles used in the production of the plot - FOR TROUBLESHOOTING PURPOSES
+#'   ONLY
 #'
-#' @returns {plotly} plot combining individual trendline plots for each mitigator
+#' @returns {plotly} plot combining individual trendline plots for each
+#'   mitigator
 plot_faceted_trendlines <- function(
   # data objects
-  dat, rates_data, mitigator_codes, focal_scheme_code, scheme_codes,
+  dat,
+  rates_data,
+  mitigator_codes,
+  focal_scheme_code,
+  scheme_codes,
 
   # presentation objects
   show_other_schemes = TRUE,
@@ -1021,7 +1150,6 @@ plot_faceted_trendlines <- function(
   facet_height_px = 400,
   return_data = FALSE
 ) {
-
   ## data wrangling ----
 
   # get some lookup information from dat
@@ -1034,13 +1162,19 @@ plot_faceted_trendlines <- function(
     ) |>
     dplyr::select(
       # keys
-      .data$mitigator_variable, .data$scheme_code,
+      .data$mitigator_variable,
+      .data$scheme_code,
 
       # lookup data
       .data$scheme_name,
-      .data$mitigator_code, .data$mitigator_name, .data$mitigator_activity_title,
-      .data$year_baseline, .data$year_horizon,
-      .data$pi_value_lo, .data$pi_value_mid, .data$pi_value_hi
+      .data$mitigator_code,
+      .data$mitigator_name,
+      .data$mitigator_activity_title,
+      .data$year_baseline,
+      .data$year_horizon,
+      .data$pi_value_lo,
+      .data$pi_value_mid,
+      .data$pi_value_hi
     ) |>
     dplyr::distinct(.keep_all = TRUE)
 
@@ -1058,7 +1192,8 @@ plot_faceted_trendlines <- function(
     ) |>
     # limit to mitigators where the focal scheme has data
     dplyr::filter(
-      .data$mitigator_code %in% .data$mitigator_code[.data$scheme_code == focal_scheme_code]
+      .data$mitigator_code %in%
+        .data$mitigator_code[.data$scheme_code == focal_scheme_code]
     ) |>
     # format the rates data ready for use
     dplyr::mutate(
@@ -1066,11 +1201,15 @@ plot_faceted_trendlines <- function(
         string = .data$fyear,
         start = 1L,
         end = 4L
-      ) |> as.integer()
+      ) |>
+        as.integer()
     ) |>
     # work out some useful metrics
     dplyr::mutate(
-      rate_mean = mean(.data$rate[.data$year <= .data$year_baseline], na.rm = T),
+      rate_mean = mean(
+        .data$rate[.data$year <= .data$year_baseline],
+        na.rm = T
+      ),
       rate_sd = sd(.data$rate[.data$year <= .data$year_baseline], na.rm = T),
       .by = c(.data$scheme_code, .data$mitigator_code)
     ) |>
@@ -1096,22 +1235,24 @@ plot_faceted_trendlines <- function(
   plots <-
     purrr::map(
       .x = mitigator_codes_new,
-      .f = \(.x) plot_trendline_comparison(
-        plot_data = plot_data |> dplyr::filter(.data$mitigator_code == .x),
-        dat_lu = dat_lu |> dplyr::filter(.data$mitigator_code == .x),
-        mitigator_codes = .x,
-        focal_scheme_code = focal_scheme_code,
+      .f = \(.x) {
+        plot_trendline_comparison(
+          plot_data = plot_data |> dplyr::filter(.data$mitigator_code == .x),
+          dat_lu = dat_lu |> dplyr::filter(.data$mitigator_code == .x),
+          mitigator_codes = .x,
+          focal_scheme_code = focal_scheme_code,
 
-        show_other_schemes = show_other_schemes,
-        show_horizon_timeline = show_horizon_timeline,
-        show_horizon_overlay = show_horizon_overlay,
-        show_prebaseline_average = show_prebaseline_average,
-        facet_columns = 1,
-        facet_height_px = facet_height_px,
-        facet_count = length(mitigator_codes_new),
-        x_axis_min = min(plot_data$year, na.rm = TRUE),
-        return_data = FALSE
-      )
+          show_other_schemes = show_other_schemes,
+          show_horizon_timeline = show_horizon_timeline,
+          show_horizon_overlay = show_horizon_overlay,
+          show_prebaseline_average = show_prebaseline_average,
+          facet_columns = 1,
+          facet_height_px = facet_height_px,
+          facet_count = length(mitigator_codes_new),
+          x_axis_min = min(plot_data$year, na.rm = TRUE),
+          return_data = FALSE
+        )
+      }
     )
 
   # display a message if no plots can be produced - better than an error
@@ -1135,12 +1276,15 @@ plot_faceted_trendlines <- function(
       # add spacing between plots to allow for facet titles
       # needs scaling in proportion to number of facets
       margin = c(
-        0, 0,
+        0,
+        0,
         0.1 * (1 / length(mitigator_codes_new)),
         0.1 * (1 / length(mitigator_codes_new))
       ), # l, r, t, b
-      shareY = FALSE, titleY = TRUE,
-      shareX = FALSE, titleX = TRUE
+      shareY = FALSE,
+      titleY = TRUE,
+      shareX = FALSE,
+      titleX = TRUE
     ) |>
     plotly::config(
       displaylogo = FALSE,
@@ -1150,7 +1294,8 @@ plot_faceted_trendlines <- function(
         'filename' = glue::glue(
           "nhp_trendline_comparison_", # name for this plot
           "{paste0(focal_scheme_code, collapse = '_')}_", # focal scheme code
-          "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}") # datetime
+          "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}"
+        ) # datetime
       )
     ) |>
     plotly::layout(
@@ -1159,7 +1304,9 @@ plot_faceted_trendlines <- function(
         text = plot_data |>
           dplyr::filter(.data$scheme_code == focal_scheme_code) |>
           dplyr::slice_head(n = 1) |>
-          dplyr::mutate(focal_scheme_name = glue::glue('{scheme_name} [{scheme_code}]')) |>
+          dplyr::mutate(
+            focal_scheme_name = glue::glue('{scheme_name} [{scheme_code}]')
+          ) |>
           dplyr::pull(.data$focal_scheme_name),
         x = 0.5,
         font = list(
@@ -1182,7 +1329,6 @@ plot_faceted_trendlines <- function(
       )
   })
 
-
   # return the plot
   if (return_data == FALSE) {
     return(plot)
@@ -1200,8 +1346,4 @@ plot_faceted_trendlines <- function(
       )
     )
   }
-
 }
-
-
-

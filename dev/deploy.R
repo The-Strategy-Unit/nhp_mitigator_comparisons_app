@@ -1,8 +1,7 @@
 deploy <- function(
-    server_name = "connect.strategyunitwm.nhs.uk",
-    type = c("prod", "dev")
+  server_name = "connect.strategyunitwm.nhs.uk",
+  type = c("prod", "dev")
 ) {
-
   type <- match.arg(type)
 
   app_id <- 108
@@ -38,6 +37,8 @@ deploy <- function(
   )
 }
 
+# Deploy development version between releases
 deploy(type = "dev")
 
+# Deploy on release
 deploy(type = "prod")
