@@ -14,18 +14,20 @@ make_scheme_uptake_dat(
 \arguments{
 \item{dat}{Tibble - the full prepared dataset for this app}
 
-\item{selected_mitigators}{Character vector - a list of mitigators selected by the user}
+\item{selected_mitigators}{Character vector - a list of mitigators selected
+by the user}
 
-\item{selected_schemes}{Character vector - a list of scheme_codes selected by the user}
+\item{selected_schemes}{Character vector - a list of scheme_codes selected by
+the user}
 
 \item{focal_scheme}{Character vector - the focal scheme_code}
 }
 \value{
-Tibble listing schemes and the proportions of mitigators in use by them
+Tibble listing schemes and the proportions of mitigators in use by
+  them
 }
 \description{
 Renders a tibble showing the proportion of mitigators used by each scheme.
-Two rates are shown:
-1. covers all available mitigators,
-2. covers the subset of mitigators selected by the user.
+Two rates are shown: 1. covers all available mitigators, 2. covers the subset
+of mitigators selected by the user.
 }

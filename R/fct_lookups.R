@@ -161,9 +161,9 @@ make_mitigator_uptake_dat <- function(dat, selected_schemes) {
     # remove ampersand from mitigator names - causes issues with DT filters
     dplyr::mutate(
       mitigator_name = gsub(
-        pattern = 'A&E',
+        pattern = "A&E",
         x = .data$mitigator_name,
-        replacement = 'ED'
+        replacement = "ED"
       )
     ) |>
     # count schemes per mitigator
@@ -216,7 +216,7 @@ make_mitigator_uptake_dat <- function(dat, selected_schemes) {
       mitigator_name = .data$mitigator_name |> factor()
     )
 
-  return(dat_return)
+  dat_return
 }
 
 #' Make the scheme uptake DT object
@@ -238,20 +238,20 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
     # display as DT
     DT::datatable(
       rownames = FALSE,
-      options = list(pageLength = 100, dom = 'ft'),
+      options = list(pageLength = 100, dom = "ft"),
       fillContainer = TRUE,
       escape = TRUE,
-      filter = 'top',
+      filter = "top",
       colnames = c(
-        'Activity type',
-        'Mitigator group',
-        'Mitigator',
-        'Coverage (all schemes)',
-        'Coverage (selected schemes)'
+        "Activity type",
+        "Mitigator group",
+        "Mitigator",
+        "Coverage (all schemes)",
+        "Coverage (selected schemes)"
       )
     ) |>
     DT::formatPercentage(
-      columns = c('n_schemes_using_all_rate', 'n_schemes_using_selected_rate')
+      columns = c("n_schemes_using_all_rate", "n_schemes_using_selected_rate")
     )
 }
 
@@ -284,11 +284,11 @@ make_scheme_uptake_dat <- function(
     dplyr::summarise(
       n_mitigators_using_all = dplyr::n_distinct(
         .data$mitigator_code,
-        na.rm = T
+        na.rm = TRUE
       ),
       n_mitigators_using_selected = dplyr::n_distinct(
         .data$mitigator_code[.data$mitigator_code %in% selected_mitigators],
-        na.rm = T
+        na.rm = TRUE
       ),
       .by = c(.data$scheme_code, .data$scheme_name)
     ) |>
@@ -297,11 +297,11 @@ make_scheme_uptake_dat <- function(
       # get denominators
       n_mitigators_all = dplyr::n_distinct(
         dat$mitigator_code,
-        na.rm = T
+        na.rm = TRUE
       ),
       n_mitigators_selected = dplyr::n_distinct(
         dat$mitigator_code[dat$mitigator_code %in% selected_mitigators],
-        na.rm = T
+        na.rm = TRUE
       ),
 
       # convert to rates
@@ -326,7 +326,7 @@ make_scheme_uptake_dat <- function(
     ) |>
     dplyr::filter(!is.na(.data$scheme_code))
 
-  return(dat_return)
+  dat_return
 }
 
 
@@ -362,35 +362,35 @@ make_scheme_uptake_dt <- function(
     # display as DT
     DT::datatable(
       rownames = FALSE,
-      options = list(pageLength = 100, dom = 'Bft'),
+      options = list(pageLength = 100, dom = "Bft"),
       fillContainer = TRUE,
       escape = TRUE,
-      style = 'default', # needed to ensure formatStyle works as expected - due to clashes with bslib & bootstrap theme
+      style = "default", # needed to ensure formatStyle works as expected - due to clashes with bslib & bootstrap theme
       colnames = c(
-        'Scheme code',
-        'Scheme name',
-        'Coverage (all mitigators)',
-        'Coverage (selected mitigators)'
+        "Scheme code",
+        "Scheme name",
+        "Coverage (all mitigators)",
+        "Coverage (selected mitigators)"
       ),
-      filter = 'top'
+      filter = "top"
     ) |>
     DT::formatPercentage(
       columns = c(
-        'n_mitigators_using_all_rate',
-        'n_mitigators_using_selected_rate'
+        "n_mitigators_using_all_rate",
+        "n_mitigators_using_selected_rate"
       )
     ) |>
     # style selected schemes in bold
     DT::formatStyle(
-      columns = 'scheme_code',
-      target = 'row',
+      columns = "scheme_code",
+      target = "row",
       # highlight all selected schemes in bold
       fontWeight = DT::styleEqual(
         levels = c(selected_schemes),
-        'bold',
-        'normal'
+        "bold",
+        "normal"
       ),
       # highlight focal scheme in red too
-      color = DT::styleEqual(levels = focal_scheme, 'red', 'black')
+      color = DT::styleEqual(levels = focal_scheme, "red", "black")
     )
 }

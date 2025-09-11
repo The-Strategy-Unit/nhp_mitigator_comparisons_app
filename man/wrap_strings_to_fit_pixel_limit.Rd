@@ -14,11 +14,14 @@ wrap_strings_to_fit_pixel_limit(
 \arguments{
 \item{strings}{Character vector - the input vector of strings to wrap}
 
-\item{px_limit}{Integer (default 300) - the number of pixels to wrap `strings` to fit}
+\item{px_limit}{Integer (default 300) - the number of pixels to wrap
+`strings` to fit}
 
-\item{font_family}{Character (default 'Arial, Helvetica, Droid Sans, sans') - the font family to use when estimating the width of strings}
+\item{font_family}{Character (default 'Arial, Helvetica, Droid Sans, sans') -
+the font family to use when estimating the width of strings}
 
-\item{font_size}{Integer (default 14) - the font size to use when estimating the width of strings}
+\item{font_size}{Integer (default 14) - the font size to use when estimating
+the width of strings}
 }
 \value{
 Character vector

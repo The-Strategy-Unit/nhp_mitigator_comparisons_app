@@ -26,7 +26,7 @@ get_container <- function(
 # Fetch result-file information
 get_nhp_result_sets <- function(container_results, container_support) {
   providers <- get_nhp_providers(container_support)
-  allowed_datasets = get_nhp_user_allowed_datasets(NULL, providers)
+  allowed_datasets <- get_nhp_user_allowed_datasets(NULL, providers)
   allowed <- tibble::tibble(dataset = allowed_datasets)
 
   container_results |>
@@ -74,39 +74,6 @@ get_nhp_results <- function(container_results, file) {
 
   readBin(temp_file, raw(), n = file.size(temp_file)) |>
     jsonlite::parse_gzjson_raw(simplifyVector = FALSE) # no need to parse
-}
-
-# Isolate metadata for model-runs that have a run_stage metadata label on Azure
-fetch_tagged_runs_meta <- function(container_results, container_support) {
-  result_sets <- get_nhp_result_sets(container_results, container_support)
-
-  # Factor levels to order run_stage by
-  run_stages <- c(
-    "final_report_ndg3", # first level because it's preferred
-    "final_report_ndg2",
-    "final_report_ndg1",
-    "intermediate_ndg3",
-    "intermediate_ndg2",
-    "intermediate_ndg1",
-    "initial_ndg3",
-    "initial_ndg2",
-    "initial_ndg1"
-  )
-
-  latest_tagged_runs <- result_sets |>
-    dplyr::filter(!is.na(.data$run_stage)) |>
-    dplyr::select(.data$dataset, .data$scenario, .data$run_stage, file) |>
-    dplyr::mutate(
-      run_stage = forcats::fct(.data$run_stage, levels = run_stages)
-    ) |>
-    dplyr::arrange(.data$dataset, .data$run_stage) |> # run_stage will be ordered by level
-    dplyr::slice(1, .by = .data$dataset) |> # isolates the 'top' level within a scheme
-    dplyr::mutate(
-      run_stage = .data$run_stage |>
-        as.character() |> # convert from factor to allow string handling
-        stringr::str_remove("(_report)?_ndg\\d") |>
-        stringr::str_to_sentence() # 'Initial', 'Intermediate', 'Final'
-    )
 }
 
 # Read json files given Azure paths

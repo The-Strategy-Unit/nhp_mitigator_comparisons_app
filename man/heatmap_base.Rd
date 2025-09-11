@@ -23,38 +23,58 @@ heatmap_base(
 )
 }
 \arguments{
-\item{dat}{Tibble - mitigator data, filtered to either the 'main' heatmap data or the 'context' data}
+\item{dat}{Tibble - mitigator data, filtered to either the 'main' heatmap
+data or the 'context' data}
 
-\item{var_y_axis}{Character - the name of the variable in `dat` to use when plotting the y-axis}
+\item{var_y_axis}{Character - the name of the variable in `dat` to use when
+plotting the y-axis}
 
-\item{var_fill}{Character - the name of the variable in `dat` to use when deciding the fill colour of the heatmap ('main' heatmaps only)}
+\item{var_fill}{Character - the name of the variable in `dat` to use when
+deciding the fill colour of the heatmap ('main' heatmaps only)}
 
-\item{x_scheme_wrap}{Integer - the number of characters to string wrap the x-axis text on}
+\item{x_scheme_wrap}{Integer - the number of characters to string wrap the
+x-axis text on}
 
-\item{x_scheme_text}{ggplot2::element_text - defining how the x-axis labels are to be displayed}
+\item{x_scheme_text}{ggplot2::element_text - defining how the x-axis labels
+are to be displayed}
 
-\item{y_char_wrap}{Integer - the number of characters to string wrap the y-axis text on}
+\item{y_char_wrap}{Integer - the number of characters to string wrap the
+y-axis text on}
 
-\item{values_displayed}{Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales}
+\item{values_displayed}{Character - value from `input$values_displayed` -
+describing if values represent either percent of activity mitigated or the
+80\% prediction interval - used to label the scales}
 
-\item{heatmap_type}{Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value}
+\item{heatmap_type}{Character - value from `input$heatmap_type` - used to
+control whether a solid colour is applied (binary) or colour is dependent
+on the value}
 
-\item{colour_binary}{Character - value from `input$heatmap_binary_colour` - hex colour string to use in the binary plots}
+\item{colour_binary}{Character - value from `input$heatmap_binary_colour` -
+hex colour string to use in the binary plots}
 
-\item{colour_value_low}{Character - value from `input$heatmap_value_colour_low` - hex colour string to use in the gradient fill for low values}
+\item{colour_value_low}{Character - value from
+`input$heatmap_value_colour_low` - hex colour string to use in the gradient
+fill for low values}
 
-\item{colour_value_high}{Character - value from `input$heatmap_value_colour_high` - hex colour string to use in the gradient fill for high values}
+\item{colour_value_high}{Character - value from
+`input$heatmap_value_colour_high` - hex colour string to use in the
+gradient fill for high values}
 
-\item{plot_height}{Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot}
+\item{plot_height}{Integer - value from `ra$heatmap_min_height` - the number
+of pixels to set as the height of the plot}
 
-\item{font_family}{Character - (default = 'Arial, Helvetica, Droid Sans, sans') a list of font families to use in the plot}
+\item{font_family}{Character - (default = 'Arial, Helvetica, Droid Sans,
+sans') a list of font families to use in the plot}
 
-\item{include_x_axis}{Boolean (default = TRUE) should the x-axis be included in the plot}
+\item{include_x_axis}{Boolean (default = TRUE) should the x-axis be included
+in the plot}
 
-\item{context}{Boolean (default = FALSE) is this a context (e.g. NEE, min / max / mean) plot}
+\item{context}{Boolean (default = FALSE) is this a context (e.g. NEE, min /
+max / mean) plot}
 }
 \value{
-{plotly} object showing heatmap component - e.g. the main plot, or a context plot for the x or y-axis.
+{plotly} object showing heatmap component - e.g. the main plot, or a
+  context plot for the x or y-axis.
 }
 \description{
 Base function used to generate heatmaps or 'context' adornments such as

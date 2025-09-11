@@ -9,9 +9,6 @@ app_server <- function(input, output, session) {
 
   ## Make connections ----
 
-  container_results <-
-    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"))
-
   container_support <-
     get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
 
@@ -52,7 +49,7 @@ app_server <- function(input, output, session) {
 
   # Metadata
   yaml <- yaml::read_yaml(
-    file = here::here('inst', 'ref_inputs-golem-config.yml'),
+    file = here::here("inst", "ref_inputs-golem-config.yml"),
     eval.expr = FALSE
   )
   yaml_df <- get_mitigator_baseline_description(yaml)
@@ -150,16 +147,6 @@ app_server <- function(input, output, session) {
     return(dat_return)
   })
 
-  dat_mixture_distributions <- shiny::reactive({
-    dat_return <- dat_reactive() |>
-      get_mixture_distributions_dat()
-
-    return(dat_return)
-  })
-
-  # pre-calculate mixture distributions (avoid re-calculating)
-  #dat_mixture_distributions <- get_mixture_distributions_dat(dat = dat())
-
   peer_set <- shiny::reactive({
     peers |>
       dplyr::filter(.data$scheme == input$focus_scheme) |>
@@ -187,8 +174,9 @@ app_server <- function(input, output, session) {
             value_horizon = .data$value_hi,
             value_displayed = input$values_displayed
           ),
-          value_mid = (.data$value_hi -
-            ((.data$value_hi - .data$value_lo) / 2)) |>
+          value_mid = (
+            .data$value_hi - ((.data$value_hi - .data$value_lo) / 2) # fmt: skip
+          ) |>
             round(digits = 3)
         )
     }
@@ -247,8 +235,8 @@ app_server <- function(input, output, session) {
             !is.na(.data$value_mid) # need at least a mid-point
           ) |>
           dplyr::summarise(
-            scheme_code = 'All',
-            scheme_name = 'Summary',
+            scheme_code = "All",
+            scheme_name = "Summary",
             value_mid = mean(.data$value_mid, na.rm = TRUE),
             value_lo = min(.data$value_lo, na.rm = TRUE),
             value_hi = max(.data$value_hi, na.rm = TRUE),
@@ -263,8 +251,8 @@ app_server <- function(input, output, session) {
             !is.na(.data$value_mid) # need at least a mid-point
           ) |>
           dplyr::summarise(
-            scheme_code = 'All',
-            scheme_name = 'Summary',
+            scheme_code = "All",
+            scheme_name = "Summary",
             value_mid = mean(.data$value_mid, na.rm = TRUE),
             value_lo = mean(.data$value_lo, na.rm = TRUE),
             value_hi = mean(.data$value_hi, na.rm = TRUE),
@@ -284,7 +272,7 @@ app_server <- function(input, output, session) {
               .data$nee_p10
             ) |>
             dplyr::distinct(),
-          by = 'mitigator_code'
+          by = "mitigator_code"
         )
 
       # add summary to dat as a new row
@@ -296,7 +284,7 @@ app_server <- function(input, output, session) {
         dplyr::mutate(
           scheme_name = .data$scheme_name |>
             base::factor() |>
-            forcats::fct_relevel('Summary', after = Inf) |>
+            forcats::fct_relevel("Summary", after = Inf) |>
             forcats::fct_rev(),
 
           # sort scheme codes to match scheme names
@@ -312,9 +300,9 @@ app_server <- function(input, output, session) {
       dat |>
       dplyr::mutate(
         point_colour = dplyr::case_when(
-          .data$scheme_code == input$focus_scheme ~ 'red',
-          .data$scheme_code == 'All' ~ 'blue',
-          .default = 'black'
+          .data$scheme_code == input$focus_scheme ~ "red",
+          .data$scheme_code == "All" ~ "blue",
+          .default = "black"
         )
       )
 
@@ -332,7 +320,6 @@ app_server <- function(input, output, session) {
       shiny::need(input$mitigators, message = "Select at least one mitigator.")
     )
 
-    #dat <- dat_filtered()
     dat <-
       dat_filtered() |>
       prepare_heatmap_dat(
@@ -367,12 +354,6 @@ app_server <- function(input, output, session) {
       )
 
     dat <- get_mixture_distributions_dat(dat = dat)
-
-    # using pre-calculated mixture distributions, filtered for selected mitigators
-    # dat <- dat_mixture_distributions() |>
-    #   dplyr::filter(
-    #     mitigator_code %in% input$mitigators
-    #   )
   })
 
   # Observers ----
@@ -519,7 +500,7 @@ app_server <- function(input, output, session) {
 
     # update the ui
     shiny::updateSliderInput(
-      inputId = 'facet_columns',
+      inputId = "facet_columns",
       max = max_facet_cols
     )
   })
@@ -658,9 +639,8 @@ app_server <- function(input, output, session) {
   })
 
   ### density functions ----
-  # adjust distribution height in response to the number of mitigators to display
+  # adjust distribution height in response to number of mitigators to display
   shiny::observe({
-    #dat <- dat_selected_mixture_distributions()
     dat <- dat_selected_heatmap()
 
     # count the number of selected mitigators
@@ -690,11 +670,6 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # output$mixture_distributions <- shiny::renderPlot({
-  #   dat_selected_mixture_distributions() |>
-  #     plot_mixture_distributions(input)
-  # }, height = 10000)
-
   ### contextual baseline -----
 
   output$contextual_baseline <- plotly::renderPlotly({
@@ -719,7 +694,7 @@ app_server <- function(input, output, session) {
         range = input$toggle_contextual_baseline_range,
         scheme_label = input$toggle_contextual_baseline_schemecode,
         quadrants = input$toggle_contextual_baseline_quadrants,
-        facet_columns = 1, # not enabling this feature - feel it is best for one row per mitigator
+        facet_columns = 1, # not enabling, feel a row per mitigator is best
         facet_height_px = input$slider_contextual_baseline_height
       )
   })
@@ -826,8 +801,8 @@ app_server <- function(input, output, session) {
         filename = file,
         plot = dat_selected_pointrange() |> plot_pointrange(input),
         scale = 4,
-        device = 'svg',
-        units = 'px',
+        device = "svg",
+        units = "px",
         height = ra$pointrange_min_height,
         width = 1100,
         limitsize = FALSE
@@ -871,8 +846,8 @@ app_server <- function(input, output, session) {
           input = input
         ),
         scale = 4,
-        device = 'svg',
-        units = 'px',
+        device = "svg",
+        units = "px",
         height = ra$mixturedist_min_height,
         width = 900,
         limitsize = FALSE
@@ -1000,7 +975,7 @@ app_server <- function(input, output, session) {
             range = input$toggle_contextual_baseline_range,
             scheme_label = input$toggle_contextual_baseline_schemecode,
             quadrants = input$toggle_contextual_baseline_quadrants,
-            facet_columns = 1, # not enabling this feature - feel it is best for one row per mitigator
+            facet_columns = 1, # not enabling, feel a row per mitigator is best
             facet_height_px = input$slider_contextual_baseline_height
           ),
         file = file,
@@ -1031,7 +1006,7 @@ app_server <- function(input, output, session) {
             range = input$toggle_contextual_baseline_range,
             scheme_label = input$toggle_contextual_baseline_schemecode,
             quadrants = input$toggle_contextual_baseline_quadrants,
-            facet_columns = 1, # not enabling this feature - feel it is best for one row per mitigator
+            facet_columns = 1, # not enabling, feel a row per mitigator is best
             facet_height_px = input$slider_contextual_baseline_height
           ) |>
           plotly::partial_bundle(minified = TRUE),

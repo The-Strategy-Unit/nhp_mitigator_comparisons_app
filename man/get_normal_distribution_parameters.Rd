@@ -12,7 +12,7 @@ normal distribution.}
 }
 \value{
 A dataframe with the mu and sigma of the normal distribution for each
- row.
+  row.
 }
 \description{
 Creates a dataframe of the normal distribution parameters for each pair of lo

@@ -19,27 +19,38 @@ prepare_heatmap_dat(
 )
 }
 \arguments{
-\item{dat}{Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`}
+\item{dat}{Tibble of mitigator data as produced by `populate_table()` in
+`fct_tabulate.R`}
 
-\item{mitigator_codes}{Character vector of mitigator codes to display in the heatmap}
+\item{mitigator_codes}{Character vector of mitigator codes to display in the
+heatmap}
 
-\item{scheme_codes}{Character vector of scheme codes to display in the heatmap}
+\item{scheme_codes}{Character vector of scheme codes to display in the
+heatmap}
 
-\item{focal_scheme_code}{Code for the scheme chosen as the focal scheme by user}
+\item{focal_scheme_code}{Code for the scheme chosen as the focal scheme by
+user}
 
-\item{heatmap_type}{String describing the type of heatmap to produce - as defined by `input$heatmap_type`}
+\item{heatmap_type}{String describing the type of heatmap to produce - as
+defined by `input$heatmap_type`}
 
 \item{scheme_order}{String describing the display order for schemes}
 
 \item{mitigator_order}{String description of the display order for mitigators}
 
-\item{values_displayed}{String description of the values displayed - as defined by `input$values_displayed`}
+\item{values_displayed}{String description of the values displayed - as
+defined by `input$values_displayed`}
 
-\item{toggle_heatmap_nee}{Boolean (default = FALSE) should the display include a column for NEE values for mitigators?}
+\item{toggle_heatmap_nee}{Boolean (default = FALSE) should the display
+include a column for NEE values for mitigators?}
 
-\item{toggle_heatmap_aggregate_summaries}{Boolean (default = FALSE) should the display include columns showing minimum, maximum and mean values for each mitigator?}
+\item{toggle_heatmap_aggregate_summaries}{Boolean (default = FALSE) should
+the display include columns showing minimum, maximum and mean values for
+each mitigator?}
 
-\item{toggle_heatmap_scheme_adornments}{Boolean (default = FALSE) should the scheme details include additional information such as scheme code, run stage and horizon year?}
+\item{toggle_heatmap_scheme_adornments}{Boolean (default = FALSE) should the
+scheme details include additional information such as scheme code, run
+stage and horizon year?}
 }
 \value{
 Tibble of data ready for use with heatmap plots

@@ -158,7 +158,8 @@ app_ui <- function(request) {
                   "Values to display",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Select whether values are shown as the amount mitigated or the expected activity levels following mitigation."
+                "Select whether values are shown as the amount mitigated or the
+                expected activity levels following mitigation."
               ),
               choices = c(
                 "Percent of activity mitigated",
@@ -177,7 +178,8 @@ app_ui <- function(request) {
                   "Standardise to 2041?",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Standardise values by extrapolating linearly to 2041, which makes a direct comparison easier."
+                "Standardise values by extrapolating linearly to 2041, which
+                makes a direct comparison easier."
               ),
               value = FALSE,
               status = "primary",
@@ -190,7 +192,9 @@ app_ui <- function(request) {
                   "Include zero-mitigation predictions?",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Include mitigators where a scheme selected a point-value of zero mitigation, rather than a range? Toggle on to enable, toggle off (default) to exclude."
+                "Include mitigators where a scheme selected a point-value of
+                zero mitigation, rather than a range? Toggle on to enable,
+                toggle off (default) to exclude."
               ),
               value = FALSE,
               status = "primary",
@@ -223,7 +227,7 @@ app_ui <- function(request) {
         title = "Point-ranges",
 
         bslib::navset_card_underline(
-          id = 'nav_panel_heatmaps_tabs',
+          id = "nav_panel_heatmaps_tabs",
           full_screen = TRUE,
 
           #### pointrange ----
@@ -231,10 +235,11 @@ app_ui <- function(request) {
             value = "nav_panel_pointrange_pointrange",
             title = bslib::tooltip(
               trigger = list(
-                'Point-range',
-                bsicons::bs_icon('info-circle')
+                "Point-range",
+                bsicons::bs_icon("info-circle")
               ),
-              'Customisable point-ranges showing distributions of values by mitigator and scheme'
+              "Customisable point-ranges showing distributions of values by
+              mitigator and scheme"
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
@@ -266,7 +271,8 @@ app_ui <- function(request) {
                           "Show mitigator code?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Replaces the full mitigator name with the mitigator code."
+                        "Replaces the full mitigator name with the mitigator
+                        code."
                       ),
                       value = FALSE
                     ),
@@ -277,7 +283,8 @@ app_ui <- function(request) {
                           "One plot per scheme?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Invert the pointrange plots to generate a sub-plot for each scheme with mitigators on the y axis."
+                        "Invert the pointrange plots to generate a sub-plot for
+                        each scheme with mitigators on the y axis."
                       ),
                       value = FALSE
                     ),
@@ -288,7 +295,12 @@ app_ui <- function(request) {
                           "Show NEE range?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Include reference results from the National Elicitation Exercise (NEE) for 2039/40 if the mitigator was part of that exercise. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                        "Include reference results from the National
+                        Elicitation Exercise (NEE) for 2039/40 if the mitigator
+                        was part of that exercise. These values are shown as
+                        horizontal bars behind each point illustrating the 10%
+                        to 90% range, with a vertical line marking the mean
+                        value."
                       ),
                       value = FALSE
                     ),
@@ -302,7 +314,7 @@ app_ui <- function(request) {
                         "Choose the number of plots to show side-by-side."
                       ),
                       min = 1,
-                      max = 5, # will be reactively updated to match the number of facets
+                      max = 5, # updates reactively to match number of facets
                       step = 1,
                       value = 5,
                       round = TRUE,
@@ -315,7 +327,9 @@ app_ui <- function(request) {
                           "Summary (selected schemes)",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Add an aggregate summary of selected schemes' responses to the plot (includes all but the focal scheme)."
+                        "Add an aggregate summary of selected schemes'
+                        responses to the plot (includes all but the focal
+                        scheme)."
                       ),
                       value = FALSE,
                       status = "primary",
@@ -328,7 +342,9 @@ app_ui <- function(request) {
                           "Range (selected schemes)",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Show the full range of selected schemes' responses, i.e. the extreme upper and lower values, or switch off to view the average (mean) range."
+                        "Show the full range of selected schemes' responses,
+                        i.e. the extreme upper and lower values, or switch off
+                        to view the average (mean) range."
                       ),
                       value = FALSE
                     ),
@@ -375,10 +391,10 @@ app_ui <- function(request) {
           bslib::nav_panel(
             title = bslib::tooltip(
               trigger = list(
-                'Distributions',
-                bsicons::bs_icon('info-circle')
+                "Distributions",
+                bsicons::bs_icon("info-circle")
               ),
-              'Mixture distributions of values provided by schemes for mitigators'
+              "Mixture distributions of values provided by schemes for mitigators"
             ),
 
             bslib::layout_sidebar(
@@ -412,7 +428,9 @@ app_ui <- function(request) {
                           "Show ECDF?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Plot the Empirical Cumulative Distribution Function (ECDF), or leave unchecked for the Probability Density Function (PDF)."
+                        "Plot the Empirical Cumulative Distribution Function
+                        (ECDF), or leave unchecked for the Probability Density
+                        Function (PDF)."
                       ),
                       value = FALSE
                     ),
@@ -424,7 +442,12 @@ app_ui <- function(request) {
                           "Show NEE range?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Include reference results from the National Elicitation Exercise (NEE) for 2039/40 if the mitigator was part of that exercise. These values are shown as horizontal bars behind each point illustrating the 10% to 90% range, with a vertical line marking the mean value."
+                        "Include reference results from the National
+                        Elicitation Exercise (NEE) for 2039/40 if the mitigator
+                        was part of that exercise. These values are shown as
+                        horizontal bars behind each point illustrating the 10%
+                        to 90% range, with a vertical line marking the mean
+                        value."
                       ),
                       value = FALSE
                     ),
@@ -463,7 +486,7 @@ app_ui <- function(request) {
                   )
                 )
               ), # end sidebar
-              shiny::plotOutput('mixture_distributions')
+              shiny::plotOutput("mixture_distributions")
             )
           )
         )
@@ -474,17 +497,18 @@ app_ui <- function(request) {
         title = "Heatmaps",
 
         bslib::navset_card_underline(
-          id = 'nav_panel_heatmaps_tabs',
+          id = "nav_panel_heatmaps_tabs",
           full_screen = TRUE,
 
           #### heatmaps ----
           bslib::nav_panel(
             title = bslib::tooltip(
               trigger = list(
-                'Heatmaps',
-                bsicons::bs_icon('info-circle')
+                "Heatmaps",
+                bsicons::bs_icon("info-circle")
               ),
-              'Customisable heatmaps showing distributions of values by mitigator and scheme'
+              "Customisable heatmaps showing distributions of values by
+              mitigator and scheme"
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
@@ -517,7 +541,9 @@ app_ui <- function(request) {
                           "Value type",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Schemes' low or high 80% confidence internal selection in the NHP inputs app, or the range or midpoint of these."
+                        "Schemes' low or high 80% confidence internal selection
+                        in the NHP inputs app, or the range or midpoint of
+                        these."
                       ),
                       choices = c(
                         Submitted = "value_binary",
@@ -536,7 +562,8 @@ app_ui <- function(request) {
                           "Show mitigator names?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Plots mitigator names on the y-axis (default) or switch off to display mitigator codes instead."
+                        "Plots mitigator names on the y-axis (default) or
+                        switch off to display mitigator codes instead."
                       ),
                       value = TRUE
                     ),
@@ -547,7 +574,10 @@ app_ui <- function(request) {
                           "Set colour within mitigator?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Controls whether the range of colours is set per mitigator or across the whole heatmap. Toggle on to colour the heatmap by each mitigator (default) or off to colour the heatmap by all values."
+                        "Controls whether the range of colours is set per
+                        mitigator or across the whole heatmap. Toggle on to
+                        colour the heatmap by each mitigator (default) or off
+                        to colour the heatmap by all values."
                       ),
                       value = TRUE
                     ),
@@ -558,7 +588,9 @@ app_ui <- function(request) {
                           "Add NEE?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Controls whether the National Elicitation Exercise (NEE) estimates are included. Toggle on to add the NEE value as an additional column."
+                        "Controls whether the National Elicitation Exercise
+                        (NEE) estimates are included. Toggle on to add the NEE
+                        value as an additional column."
                       ),
                       value = FALSE
                     ),
@@ -569,7 +601,9 @@ app_ui <- function(request) {
                           "Add aggregate summaries?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Controls whether the minimum, maximum and average mitigator values are displayed. Toggle on to see these values as additional columns and rows."
+                        "Controls whether the minimum, maximum and average
+                        mitigator values are displayed. Toggle on to see these
+                        values as additional columns and rows."
                       ),
                       value = FALSE
                     ),
@@ -580,7 +614,10 @@ app_ui <- function(request) {
                           "Add run information to scheme name?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Controls whether scheme names include additional information. Toggle off (default) to show scheme name. Toggle on to see the scheme names along with scheme codes, run stage and years for baseline and horizon."
+                        "Controls whether scheme names include additional
+                        information. Toggle off (default) to show scheme name.
+                        Toggle on to see the scheme names along with scheme
+                        codes, run stage and years for baseline and horizon."
                       ),
                       value = FALSE
                     ),
@@ -631,7 +668,8 @@ app_ui <- function(request) {
                           "Colour for 'submitted' plot",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "The colour to use where a scheme has set a value for a mitigator - 'submitted' plot types only."
+                        "The colour to use where a scheme has set a value for a
+                        mitigator - 'submitted' plot types only."
                       ),
                       value = "#273c75",
                       showColour = "both",
@@ -644,7 +682,8 @@ app_ui <- function(request) {
                           "Colour for low values",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "The colour to use where a scheme has set a low value for a mitigator - non-'submitted' plot types only."
+                        "The colour to use where a scheme has set a low value
+                        for a mitigator - non-'submitted' plot types only."
                       ),
                       value = "#22A6B3",
                       showColour = "both",
@@ -657,7 +696,8 @@ app_ui <- function(request) {
                           "Colour for high values",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "The colour to use where a scheme has set a high value for a mitigator - non-'submitted' plot types only."
+                        "The colour to use where a scheme has set a high value
+                        for a mitigator - non-'submitted' plot types only."
                       ),
                       value = "#130F40",
                       showColour = "both",
@@ -705,10 +745,10 @@ app_ui <- function(request) {
           bslib::nav_panel(
             title = bslib::tooltip(
               trigger = list(
-                'Mitigator coverage',
-                bsicons::bs_icon('info-circle')
+                "Mitigator coverage",
+                bsicons::bs_icon("info-circle")
               ),
-              'The proportion of schemes using each mitigator',
+              "The proportion of schemes using each mitigator",
             ),
 
             bslib::layout_sidebar(
@@ -756,10 +796,12 @@ app_ui <- function(request) {
           bslib::nav_panel(
             title = bslib::tooltip(
               trigger = list(
-                'Scheme coverage',
-                bsicons::bs_icon('info-circle')
+                "Scheme coverage",
+                bsicons::bs_icon("info-circle")
               ),
-              'The proportion of mitigators in use by each scheme. Selected schemes are shown in bold, the focal scheme is highlighted in red.',
+              "The proportion of mitigators in use by each scheme. Selected
+              schemes are shown in bold, the focal scheme is highlighted in
+              red."
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
@@ -815,7 +857,8 @@ app_ui <- function(request) {
                 "Baseline comparison",
                 bsicons::bs_icon("info-circle")
               ),
-              "A scatter plot comparing schemes' baseline values on the x-axis and their mitigator value inputs on the y-axis."
+              "A scatter plot comparing schemes' baseline values on the x-axis
+              and their mitigator value inputs on the y-axis."
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
@@ -848,7 +891,9 @@ app_ui <- function(request) {
                           "Show 80% range?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Shows the 80% range between upper and lower values as points connected by a line, disable to view just the mid-points."
+                        "Shows the 80% range between upper and lower values as
+                        points connected by a line, disable to view just the
+                        mid-points."
                       ),
                       value = TRUE
                     ),
@@ -859,7 +904,8 @@ app_ui <- function(request) {
                           "Show quadrant lines?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Shows dotted lines indicating schemes' average (mean) values for each axis, dividing the plot into quadrants."
+                        "Shows dotted lines indicating schemes' average (mean)
+                        values for each axis, dividing the plot into quadrants."
                       ),
                       value = TRUE
                     ),
@@ -933,7 +979,8 @@ app_ui <- function(request) {
                 "Trendline comparison",
                 bsicons::bs_icon("info-circle")
               ),
-              "A timeseries plot showing historical rates of activity for the focal scheme enabling comparisons with their predicted activity."
+              "A timeseries plot showing historical rates of activity for the
+              focal scheme enabling comparisons with their predicted activity."
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
@@ -966,7 +1013,8 @@ app_ui <- function(request) {
                           "Show other schemes?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Shows trendline plots for schemes other than the focal scheme as grey lines"
+                        "Shows trendline plots for schemes other than the focal
+                        scheme as grey lines"
                       ),
                       value = FALSE
                     ),
@@ -977,7 +1025,10 @@ app_ui <- function(request) {
                           "Show horizon on timeline?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Shows the predicted activity at the horizon year on the timeline. The predicted interval is shown as a point range on the horizon year with dotted lines connecting it with the baseline rate."
+                        "Shows the predicted activity at the horizon year on
+                        the timeline. The predicted interval is shown as a
+                        point range on the horizon year with dotted lines
+                        connecting it with the baseline rate."
                       ),
                       value = TRUE
                     ),
@@ -988,7 +1039,10 @@ app_ui <- function(request) {
                           "Show horizon as overlay?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Shows the predicted activity as an overlay. The predicted interval is shown as three lines (low, mid and high) with a coloured ribbon across the historical activity timeline."
+                        "Shows the predicted activity as an overlay. The
+                        predicted interval is shown as three lines (low, mid
+                        and high) with a coloured ribbon across the historical
+                        activity timeline."
                       ),
                       value = FALSE
                     ),
@@ -999,7 +1053,10 @@ app_ui <- function(request) {
                           "Show pre-baseline average?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Shows the average (mean) rate up to the baseline year along with a window of two standard deviations above and below to indicate the pre-baseline activity and range."
+                        "Shows the average (mean) rate up to the baseline year
+                        along with a window of two standard deviations above
+                        and below to indicate the pre-baseline activity and
+                        range."
                       ),
                       value = FALSE
                     ),
@@ -1067,9 +1124,14 @@ app_ui <- function(request) {
             title = bslib::tooltip(
               trigger = list(
                 "Raw data",
-                bsicons::bs_icon('info-circle')
+                bsicons::bs_icon("info-circle")
               ),
-              "An interactive table of underlying data. Contains scheme, mitigator and model-run metadata; schemes' selected mitigator values; and results of the National Elicitation Exercise (NEE). Column-name prefixes are 'pm' for percent mitigated and 'pi' for 80% prediction interval. Suffixes include 'p10' to mean the 10th percentile.",
+              "An interactive table of underlying data. Contains scheme,
+              mitigator and model-run metadata; schemes' selected mitigator
+              values; and results of the National Elicitation Exercise (NEE).
+              Column-name prefixes are 'pm' for percent mitigated and 'pi' for
+              80% prediction interval. Suffixes include 'p10' to mean the 10th
+              percentile.",
             ),
             DT::DTOutput("raw_data_dt")
           ),

@@ -7,12 +7,14 @@
 plot_pointrange(dat_selected_pointrange, input)
 }
 \arguments{
-\item{dat_selected_pointrange}{Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`}
+\item{dat_selected_pointrange}{Tibble of mitigator data as produced by
+`populate_table()` in `fct_tabulate.R`}
 
 \item{input}{Reference to the Shiny input widget that triggered this chart}
 }
 \value{
-ggplot2 object showing point-range view facetted by scheme or mitigator
+ggplot2 object showing point-range view facetted by scheme or
+  mitigator
 }
 \description{
 Construct the point-range

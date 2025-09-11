@@ -15,10 +15,6 @@ Tibble of mitigator details including the `y_axis_title` activity
 \description{
 The baseline activity for each mitigator is not specified in the `dat`, but
 is implicit. This function extracts the activity description, e.g.
-'Admissions per 1,000 population' or '\% of Appointments that are Face-to-Face'
-from the inputs app yaml file.
-}
-\details{
-Using Gabriel's code from here:#'
-https://github.com/The-Strategy-Unit/nhp_schemes_report/blob/55de2b1e67394a74eeef1e63ae3b88720c281c3d/R/mitigator%20credibility%20from%20historical%20data.R#L101-L137
+'Admissions per 1,000 population' or '\% of Appointments that are
+Face-to-Face' from the inputs app yaml file.
 }

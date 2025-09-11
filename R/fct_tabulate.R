@@ -148,10 +148,10 @@ populate_table <- function(
         !is.na(.data$scheme_name) &
           stringr::str_starts(
             string = .data$run_stage |> stringr::str_to_lower(),
-            pattern = 'final',
+            pattern = "final",
             negate = TRUE
           ) ~
-          glue::glue('{scheme_name} [preliminary]'),
+          glue::glue("{scheme_name} [preliminary]"),
         .default = .data$scheme_name
       ),
       scheme_code = .data$peer,
@@ -354,7 +354,7 @@ forecast_value <- function(
   forecast_length <- (year_forecast - year_baseline)
 
   # calculate linear prediction for year_forecast - adjust to whether pm or pi in use
-  if (value_displayed == 'Percent of activity mitigated') {
+  if (value_displayed == "Percent of activity mitigated") {
     value_forecast <- ((value_horizon / horizon_length) * forecast_length)
   } else {
     value_forecast <- 1 -
@@ -425,7 +425,7 @@ get_trust_lookup <- function(container_support) {
     dplyr::mutate(
       `Name of Hospital site` = dplyr::case_match(
         .data$`Trust ODS Code`,
-        'RYJ' ~ 'Imperial',
+        "RYJ" ~ "Imperial",
         .default = .data$`Name of Hospital site`
       )
     ) |>
@@ -434,7 +434,7 @@ get_trust_lookup <- function(container_support) {
     # Sort
     dplyr::arrange(.data$`Trust ODS Code`)
 
-  return(trust_lookup)
+  trust_lookup
 }
 
 #' Get mitigator baseline descriptions
@@ -443,9 +443,6 @@ get_trust_lookup <- function(container_support) {
 #' is implicit. This function extracts the activity description, e.g.
 #' 'Admissions per 1,000 population' or '\% of Appointments that are
 #' Face-to-Face' from the inputs app yaml file.
-#'
-#' Using Gabriel's code from here:
-#' https://github.com/The-Strategy-Unit/nhp_schemes_report/blob/55de2b1e67394a74eeef1e63ae3b88720c281c3d/R/mitigator%20credibility%20from%20historical%20data.R#L101-L137
 #'
 #' @param yaml List - the yaml file used in the inputs app
 #'
@@ -459,22 +456,19 @@ get_mitigator_baseline_description <- function(yaml) {
     .x = names(mitigator_yaml),
     function(category_name) {
       # add to a data frame with category, element, and y_axis title
-      return(
-        tibble::tibble(
-          activity_type = mitigator_yaml[[category_name]]$activity_type,
-          mitigator_type = mitigator_yaml[[category_name]]$mitigators_type,
-          category = category_name,
-          strategy_variable = names(
-            mitigator_yaml[[category_name]]$strategy_subset
-          ),
-          y_axis_title = mitigator_yaml[[category_name]]$y_axis_title
-        )
+      tibble::tibble(
+        activity_type = mitigator_yaml[[category_name]]$activity_type,
+        mitigator_type = mitigator_yaml[[category_name]]$mitigators_type,
+        category = category_name,
+        strategy_variable = names(
+          mitigator_yaml[[category_name]]$strategy_subset
+        ),
+        y_axis_title = mitigator_yaml[[category_name]]$y_axis_title
       )
     }
   )
 
-  # return the result
-  return(df_return)
+  df_return
 }
 
 #' Wrangle Mitigator Lookup
@@ -553,11 +547,11 @@ prepare_mitigators_ref <- function(mitigator_lookup) {
     dplyr::select(dplyr::any_of(mit_order$name)) |>
     dplyr::rename(mitigator_name = .data$strategy_name) |>
     dplyr::mutate(
-      mitigator_name = glue::glue('{mitigator_name} [{mitigator_code}]')
+      mitigator_name = glue::glue("{mitigator_name} [{mitigator_code}]")
     ) |>
     dplyr::select(-.data$strategy_variable)
 
-  return(mitigator_lookup)
+  mitigator_lookup
 }
 
 #' Add to the selected mitigator list

@@ -12,17 +12,21 @@ plot_mixture_distributions(
 )
 }
 \arguments{
-\item{dat_selected_mixture_distributions}{Tibble - mixture distributions for all schemes for the selected mitigators - as produced by `dat_selected_mixture_distributions()` in  `app_server.R`}
+\item{dat_selected_mixture_distributions}{Tibble - mixture distributions for
+all schemes for the selected mitigators - as produced by
+`dat_selected_mixture_distributions()` in  `app_server.R`}
 
-\item{dat_filtered}{Tibble - of mitigator data as produced by `populate_table()` in `fct_tabulate.R`}
+\item{dat_filtered}{Tibble - of mitigator data as produced by
+`populate_table()` in `fct_tabulate.R`}
 
 \item{dat_focal_scheme_code}{String - the `scheme_code` of the focal scheme}
 
 \item{input}{Reference to the Shiny input widget that triggered this chart}
 }
 \value{
-ggplot2 object showing the pointrange for the focal scheme in contrast with the mixture distributions for all schemes combined.
+ggplot2 object showing the pointrange for the focal scheme in
+  contrast with the mixture distributions for all schemes combined.
 }
 \description{
-Plot the mixutre distribution plots.
+Plot the mixture distribution plots.
 }
