@@ -20,29 +20,37 @@ plot_baseline_comparison(
 )
 }
 \arguments{
-\item{dat}{Tibble - mitigator data as produced by `populate_table()` in `fct_tabulate.R`}
+\item{dat}{Tibble - mitigator data as produced by `populate_table()` in
+`fct_tabulate.R`}
 
 \item{rates_data}{Tibble - historical rates data for schemes / mitigators}
 
 \item{mitigator_codes}{Character vector - the mitigator codes to visualise}
 
-\item{focal_scheme_code}{Character vector - the scheme code for the focal scheme}
+\item{focal_scheme_code}{Character vector - the scheme code for the focal
+scheme}
 
 \item{rate_title}{Character - the label for the x-axis}
 
-\item{value_title}{Character - the label for the y-axis, should reflect the user's preference in input$values_displayed}
+\item{value_title}{Character - the label for the y-axis, should reflect the
+user's preference in input$values_displayed}
 
 \item{trendline}{Boolean (default = TRUE) show a trendline between mid-points}
 
-\item{range}{Boolean (default = TRUE) show the 10\% and 90\% range as points connected by a line}
+\item{range}{Boolean (default = TRUE) show the 10\% and 90\% range as points
+connected by a line}
 
-\item{scheme_label}{Boolean (default = TRUE) label the mid-points with the scheme code}
+\item{scheme_label}{Boolean (default = TRUE) label the mid-points with the
+scheme code}
 
-\item{quadrants}{Boolean (default = TRUE) show the lines splitting the data into quadrants}
+\item{quadrants}{Boolean (default = TRUE) show the lines splitting the data
+into quadrants}
 
-\item{facet_columns}{Integer (default = 1) the number of columns to facet the baseline plot}
+\item{facet_columns}{Integer (default = 1) the number of columns to facet the
+baseline plot}
 
-\item{facet_height_px}{Integer (default = 250) the pixel height of each facet in the plot}
+\item{facet_height_px}{Integer (default = 250) the pixel height of each facet
+in the plot}
 }
 \value{
 {plotly} plot

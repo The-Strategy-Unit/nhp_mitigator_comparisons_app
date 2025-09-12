@@ -10,12 +10,12 @@ modify_theme(plot, type)
 \item{plot}{A plot of an ECDF or PDF.}
 
 \item{type}{Either `"ecdf"` or `"pdf"` to get the modifications for the
-empirical cumulative distribution functions or probability density functions,
-respectively.}
+empirical cumulative distribution functions or probability density
+functions, respectively.}
 }
 \value{
 A plot with theme modifiers based on whether the plot was is an ECDF
-or PDF.
+  or PDF.
 }
 \description{
 Modifies theme of ECDF and PDF plot.

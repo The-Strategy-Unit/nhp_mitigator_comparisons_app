@@ -7,7 +7,8 @@
 get_mixture_distributions_dat(dat)
 }
 \arguments{
-\item{dat}{Tibble - of mitigator data as produced by `populate_table()` in `fct_tabulate.R`}
+\item{dat}{Tibble - of mitigator data as produced by `populate_table()` in
+`fct_tabulate.R`}
 }
 \value{
 Tibble of mixture distribution data for each mitigator

@@ -42,7 +42,7 @@ prepare_heatmap_dat <- function(
   ## wrangle data ----
 
   # set up a list of 'context' scheme codes, i.e. are for display purposes
-  scheme_additional <- c('NEE', 'MIN', 'MAX', 'MEAN')
+  scheme_additional <- c("NEE", "MIN", "MAX", "MEAN")
 
   # limit to schemes and mitigators of choice
   dat <-
@@ -74,7 +74,7 @@ prepare_heatmap_dat <- function(
   dat_list <- list(dat)
 
   # should nee values be displayed?
-  if (toggle_heatmap_nee & heatmap_type != 'value_binary') {
+  if (toggle_heatmap_nee && heatmap_type != "value_binary") {
     dat_nee <-
       dat |>
       # keep all mitigators, even if contain no NEE data
@@ -94,7 +94,7 @@ prepare_heatmap_dat <- function(
         .data$scheme_name,
         .data$scheme_code,
         # mitigator
-        dplyr::starts_with('mitigator'),
+        dplyr::starts_with("mitigator"),
         # years
         .data$year_baseline,
         .data$year_horizon,
@@ -111,9 +111,9 @@ prepare_heatmap_dat <- function(
   }
 
   # should min/max/mean values be displayed?
-  if (toggle_heatmap_aggregate_summaries & heatmap_type != 'value_binary') {
+  if (toggle_heatmap_aggregate_summaries && heatmap_type != "value_binary") {
     # define a list of values to aggregate over
-    aggregate_values <- c('value_lo', 'value_mid', 'value_hi', 'value_range')
+    aggregate_values <- c("value_lo", "value_mid", "value_hi", "value_range")
 
     # get aggregate summaries for mitigators (displayed on right)
     dat_agg_mit <-
@@ -128,7 +128,7 @@ prepare_heatmap_dat <- function(
             ),
             scheme_name = "Minimum",
             scheme_code = "MIN",
-            .by = dplyr::starts_with('mitigator')
+            .by = dplyr::starts_with("mitigator")
           ),
 
         # max values
@@ -141,7 +141,7 @@ prepare_heatmap_dat <- function(
             ),
             scheme_name = "Maximum",
             scheme_code = "MAX",
-            .by = dplyr::starts_with('mitigator')
+            .by = dplyr::starts_with("mitigator")
           ),
 
         # mean values
@@ -154,7 +154,7 @@ prepare_heatmap_dat <- function(
             ),
             scheme_name = "Average",
             scheme_code = "MEAN",
-            .by = dplyr::starts_with('mitigator')
+            .by = dplyr::starts_with("mitigator")
           ),
       )
 
@@ -174,7 +174,7 @@ prepare_heatmap_dat <- function(
             ),
             mitigator_name = "Minimum",
             mitigator_code = "MIN",
-            .by = dplyr::starts_with('scheme')
+            .by = dplyr::starts_with("scheme")
           ),
 
         # max values
@@ -187,7 +187,7 @@ prepare_heatmap_dat <- function(
             ),
             mitigator_name = "Maximum",
             mitigator_code = "MAX",
-            .by = dplyr::starts_with('scheme')
+            .by = dplyr::starts_with("scheme")
           ),
 
         # mean values
@@ -200,7 +200,7 @@ prepare_heatmap_dat <- function(
             ),
             mitigator_name = "Average",
             mitigator_code = "MEAN",
-            .by = dplyr::starts_with('scheme')
+            .by = dplyr::starts_with("scheme")
           ),
       )
 
@@ -268,8 +268,8 @@ prepare_heatmap_dat <- function(
         mean(na.rm = TRUE),
 
       # rank schemes within each mitigator
-      # NB, this causes issues if trying to subset value, e.g.
-      # value_rank = value[!scheme_code %in% scheme_additional]
+      # NB, this causes issues if trying to subset value,
+      # e.g. value_rank = value[!scheme_code %in% scheme_additional]
       # because of mis-matched row counts. Instead will create a temp_value
       # with scheme_additional set to NA, then rank on these.
       temp_value = dplyr::if_else(
@@ -305,22 +305,22 @@ prepare_heatmap_dat <- function(
 
       # construct the tooltip text
       tooltip_text = dplyr::case_when(
-        .data$scheme_code %in% c('NEE') & is.na(.data$value) ~
-          'There is no NEE for this mitigator',
-        .data$scheme_code %in% c('NEE') ~
+        .data$scheme_code %in% c("NEE") & is.na(.data$value) ~
+          "There is no NEE for this mitigator",
+        .data$scheme_code %in% c("NEE") ~
           glue::glue(
             "<b>{scheme_name_bare}</b> [{scheme_code}]\n",
             "{mitigator_name} [{mitigator_code}]\n",
             "<b>{scales::percent(value, accuracy = 0.1)}</b> {values_displayed}\n",
             "<i>Mitigation:</i> {value_description}\n"
           ),
-        .data$scheme_code %in% c('MIN', 'MAX', 'MEAN') ~
+        .data$scheme_code %in% c("MIN", "MAX", "MEAN") ~
           glue::glue(
             "<b>{scheme_name_bare}</b> [{scheme_code}]\n",
             "{mitigator_name} [{mitigator_code}]\n",
             "<b>{scales::percent(value, accuracy = 0.1)}</b> {values_displayed}\n"
           ),
-        .data$mitigator_code %in% c('MIN', 'MAX', 'MEAN') ~
+        .data$mitigator_code %in% c("MIN", "MAX", "MEAN") ~
           glue::glue(
             "<b>{scheme_name_bare}</b> [{scheme_code}]\n",
             "{mitigator_name} [{mitigator_code}]\n",
@@ -624,19 +624,19 @@ prepare_heatmap_dat <- function(
       scheme_code = .data$scheme_code |>
         forcats::fct_expand(scheme_additional) |>
         forcats::fct_relevel(
-          'NEE',
-          'MIN',
-          'MAX',
-          'MEAN',
+          "NEE",
+          "MIN",
+          "MAX",
+          "MEAN",
           after = Inf
         ),
 
       mitigator_code = .data$mitigator_code |>
         forcats::fct_expand(scheme_additional) |>
         forcats::fct_relevel(
-          'MEAN',
-          'MAX',
-          'MIN', # NB, reverse ordering
+          "MEAN",
+          "MAX",
+          "MIN", # NB, reverse ordering
           after = Inf
         ),
 
@@ -706,19 +706,19 @@ plot_heatmap <- function(
   colour_value_low,
   colour_value_high,
   plot_height,
-  font_family = 'Arial, Helvetica, Droid Sans, sans'
+  font_family = "Arial, Helvetica, Droid Sans, sans"
 ) {
   # preparation ----
   # set up a list of 'context' scheme codes, i.e. are for display purposes
-  scheme_additional <- c('NEE', 'MIN', 'MAX', 'MEAN')
+  scheme_additional <- c("NEE", "MIN", "MAX", "MEAN")
 
   # gather information
-  y_max_char = dat$mitigator_name |>
+  y_max_char <- dat$mitigator_name |>
     as.character() |>
     nchar() |>
     max()
 
-  y_char_wrap = (y_max_char / 1.8) |>
+  y_char_wrap <- (y_max_char / 1.8) |>
     ceiling()
 
   x_scheme_count <- dat$scheme_name |>
@@ -737,36 +737,6 @@ plot_heatmap <- function(
     length()
 
   # logic ----
-
-  # TESTING - define the colour ramp
-  if (heatmap_type == 'value_binary') {
-    fill_colour_ramp <- scales::colour_ramp(
-      colors = c(colour_binary, colour_binary)
-    )
-  } else {
-    fill_colour_ramp <- scales::colour_ramp(
-      colors = c(colour_value_low, colour_value_high)
-    )
-  }
-
-  # colour definitions
-  # dat <-
-  #   dat |>
-  #   dplyr::mutate(
-  #     value_fill_colour = dplyr::case_when(
-  #       toggle_scale_fill_by_mitigator == TRUE ~ fill_colour_ramp(value_scaled),
-  #       .default = fill_colour_ramp(value)
-  #     ),
-  #     value_fill_colour_l = farver::decode_colour(value_fill_colour, 'rgb', 'hcl')[, 'l'],
-  #     value_text_colour = dplyr::case_when(
-  #       value_fill_colour_l > 50 ~ 'black',
-  #       .default = 'white'
-  #     )
-  #   )
-
-  # TROUBLESHOOTING
-  #dplyr::glimpse(dat)
-  #dat |> dplyr::count(value_text_colour) |> print()
 
   ## separate data from mitigator and scheme summaries
   dat_mitigator <-
@@ -793,16 +763,16 @@ plot_heatmap <- function(
   # decide whether to plot the mitigator code or name on the y-xais
   ifelse(
     test = toggle_mitigator_name,
-    yes = var_y_axis <- 'mitigator_name',
-    no = var_y_axis <- 'mitigator_code'
+    yes = var_y_axis <- "mitigator_name",
+    no = var_y_axis <- "mitigator_code"
   )
 
   ## fill ----
   # decide whether fill colour applies across mitigators or across whole plot
   ifelse(
     test = toggle_scale_fill_by_mitigator,
-    yes = var_fill <- 'value_scaled', # mitigator-wise fill
-    no = var_fill <- 'value' # plot-wise fill
+    yes = var_fill <- "value_scaled", # mitigator-wise fill
+    no = var_fill <- "value" # plot-wise fill
   )
 
   ## x-axis ----
@@ -813,21 +783,21 @@ plot_heatmap <- function(
       hjust = 0.5,
       vjust = 0.5
     )
-    x_scheme_wrap = 10
+    x_scheme_wrap <- 10
   } else if (x_scheme_count < 12) {
     x_scheme_text <- ggplot2::element_text(
       angle = 45,
       hjust = 0,
       vjust = -1
     )
-    x_scheme_wrap = 100
+    x_scheme_wrap <- 100
   } else {
     x_scheme_text <- ggplot2::element_text(
       angle = 90,
       hjust = 0,
       vjust = -1
     )
-    x_scheme_wrap = 100
+    x_scheme_wrap <- 100
   }
 
   # plotting ----
@@ -962,10 +932,10 @@ plot_heatmap <- function(
     heatmap |>
     plotly::config(
       displaylogo = FALSE,
-      modeBarButtons = list(list('toImage')),
+      modeBarButtons = list(list("toImage")),
       toImageButtonOptions = list(
-        'format' = 'svg',
-        'filename' = glue::glue(
+        "format" = "svg",
+        "filename" = glue::glue(
           "nhp_heatmap_", # name for this plot
           "{paste0(focal_scheme_code, collapse = '_')}_", # focal scheme code
           "{strftime(Sys.time(), '%Y%m%d_%H%M%S')}"
@@ -1056,8 +1026,8 @@ heatmap_base <- function(
   if (!context) {
     heatmap <-
       heatmap +
-      ggplot2::aes(fill = {{ var_fill }}, colour = 'white') +
-      ggplot2::geom_tile(colour = 'white') +
+      ggplot2::aes(fill = {{ var_fill }}, colour = "white") +
+      ggplot2::geom_tile(colour = "white") +
       ggplot2::scale_x_discrete(
         position = "top",
         labels = \(x) stringr::str_wrap(x, width = x_scheme_wrap),
@@ -1067,7 +1037,7 @@ heatmap_base <- function(
     # context plots (e.g. NEE, then colour white with grey border)
     heatmap <-
       heatmap +
-      ggplot2::geom_tile(fill = 'white', colour = 'grey80') +
+      ggplot2::geom_tile(fill = "white", colour = "grey80") +
       ggplot2::theme(
         axis.text.x = ggplot2::element_blank()
       )
@@ -1093,7 +1063,7 @@ heatmap_base <- function(
     ) +
     ggplot2::labs(fill = values_displayed) +
     # remove the legend
-    ggplot2::theme(legend.position = 'none')
+    ggplot2::theme(legend.position = "none")
 
   # handle non-'submitted' (non-binary) plots
   if (heatmap_type != "value_binary") {
@@ -1111,12 +1081,6 @@ heatmap_base <- function(
         high = colour_value_high,
         labels = scales::label_percent()
       )
-
-    # experiments with using hcl-mediated colours for fonts - not working
-    #+
-    # ggplot2::scale_colour_discrete(
-    #   ggplot2::aes(colour = value_text_colour)
-    # )
   }
 
   # handle 'submitted' (binary) plots
@@ -1125,17 +1089,17 @@ heatmap_base <- function(
       heatmap +
       ggplot2::theme(legend.position = "none") +
       ggplot2::aes(fill = as.character(.data$value), colour = "white") +
-      ggplot2::scale_fill_manual(values = c('1' = colour_binary))
+      ggplot2::scale_fill_manual(values = c("1" = colour_binary))
   }
 
   # convert to plotly
   heatmap <-
     heatmap |>
-    plotly::ggplotly(tooltip = c('text'), height = plot_height) |>
+    plotly::ggplotly(tooltip = c("text"), height = plot_height) |>
     plotly::layout(
       font = list(family = font_family),
       xaxis = list(
-        side = 'top',
+        side = "top",
         tickfont = list(
           family = font_family,
           size = 15
@@ -1164,5 +1128,5 @@ heatmap_base <- function(
       )
   }
 
-  return(heatmap)
+  heatmap
 }

@@ -15,7 +15,7 @@ percent_breaks(n = 5, ...)
 ggplot2::breaks object
 }
 \description{
-An internal function to produce ggplot breaks on 0.01 (1%) intervals.
-Based on code found here:
+An internal function to produce ggplot breaks on 0.01 (1%) intervals. Based
+on code found here:
 https://jhrcook.github.io/jhrcook-website/posts/2019-11-09_integer-values-ggplot-axis/
 }

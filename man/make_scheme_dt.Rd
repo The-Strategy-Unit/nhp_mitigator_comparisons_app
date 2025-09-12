@@ -7,12 +7,13 @@
 make_scheme_dt(trust_code_lookup)
 }
 \arguments{
-\item{trust_code_lookup}{Tibble of scheme data - as provided by the `get_trust_lookup()` function in `fct_tabulate.R`}
+\item{trust_code_lookup}{Tibble of scheme data - as provided by the
+`get_trust_lookup()` function in `fct_tabulate.R`}
 }
 \value{
 DT object listing schemes
 }
 \description{
-Renders a DT object listing schemes represented in the app with filters and
-a CSV download button.
+Renders a DT object listing schemes represented in the app with filters and a
+CSV download button.
 }

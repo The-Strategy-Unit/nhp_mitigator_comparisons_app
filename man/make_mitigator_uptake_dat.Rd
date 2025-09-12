@@ -9,14 +9,14 @@ make_mitigator_uptake_dat(dat, selected_schemes)
 \arguments{
 \item{dat}{Tibble - the full prepared dataset for this app}
 
-\item{selected_schemes}{Character vector - a list of mitigator_codes selected by the user}
+\item{selected_schemes}{Character vector - a list of mitigator_codes selected
+by the user}
 }
 \value{
 Tibble listing the mitigators and summaries of schemes using them
 }
 \description{
-Renders a tibble showing the proportion of schemes using each mitigator.
-Two rates are shown:
-1. covers all available schemes,
-2. covers the subset of schemes selected by the user.
+Renders a tibble showing the proportion of schemes using each mitigator. Two
+rates are shown: 1. covers all available schemes, 2. covers the subset of
+schemes selected by the user.
 }

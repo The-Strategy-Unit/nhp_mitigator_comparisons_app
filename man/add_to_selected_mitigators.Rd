@@ -9,7 +9,8 @@ add_to_selected_mitigators(df, selected_currently, new_selections)
 \arguments{
 \item{df}{Tibble of mitigator reference data - e.g. `mitigator_reference`}
 
-\item{selected_currently}{A list of mitigator_codes which are currently selected - as provided by `input$mitigators`}
+\item{selected_currently}{A list of mitigator_codes which are currently
+selected - as provided by `input$mitigators`}
 
 \item{new_selections}{A list of newly selected mitigatoe}
 }

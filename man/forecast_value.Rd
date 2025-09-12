@@ -15,16 +15,20 @@ forecast_value(
 \arguments{
 \item{year_baseline}{The year the activity starts from, defaults to 2019}
 
-\item{year_horizon}{The year the value is predicted for, often 2041 but can be different}
+\item{year_horizon}{The year the value is predicted for, often 2041 but can
+be different}
 
 \item{year_forecast}{The year to forecast for, defaults to 2041}
 
 \item{value_horizon}{The value at the horizon year}
 
-\item{value_displayed}{The content of `input$values_displayed` - whether values are displayed as prediction intervals or percent mitigated, as these require differnet calculation approaches}
+\item{value_displayed}{The content of `input$values_displayed` - whether
+values are displayed as prediction intervals or percent mitigated, as these
+require differnet calculation approaches}
 }
 \value{
-numeric predicted value between 0 and 1 rounded to 3 decimal places at `year_forecast`
+numeric predicted value between 0 and 1 rounded to 3 decimal places
+  at `year_forecast`
 }
 \description{
 Uses a simple linear model of a scheme's value - either `value_hi` or

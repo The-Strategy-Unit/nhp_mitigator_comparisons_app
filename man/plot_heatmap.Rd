@@ -19,27 +19,44 @@ plot_heatmap(
 )
 }
 \arguments{
-\item{dat}{Tibble of mitigator data as produced by `populate_table()` in `fct_tabulate.R`}
+\item{dat}{Tibble of mitigator data as produced by `populate_table()` in
+`fct_tabulate.R`}
 
-\item{focal_scheme_code}{Code for the scheme chosen as the focal scheme by user}
+\item{focal_scheme_code}{Code for the scheme chosen as the focal scheme by
+user}
 
-\item{toggle_mitigator_name}{Boolean - value from `input$toggle_mitigator_name` - used to decide what to display on y-axis}
+\item{toggle_mitigator_name}{Boolean - value from
+`input$toggle_mitigator_name` - used to decide what to display on y-axis}
 
-\item{toggle_scale_fill_by_mitigator}{Boolean - value from `input$toggle_heatmap_scale_fill_by_mitigator` - used to control whether the colour is scaled across the whole heatmap (FALSE) or applied across each mitigator (TRUE)}
+\item{toggle_scale_fill_by_mitigator}{Boolean - value from
+`input$toggle_heatmap_scale_fill_by_mitigator` - used to control whether
+the colour is scaled across the whole heatmap (FALSE) or applied across
+each mitigator (TRUE)}
 
-\item{values_displayed}{Character - value from `input$values_displayed` - describing if values represent either percent of activity mitigated or the 80\% prediction interval - used to label the scales}
+\item{values_displayed}{Character - value from `input$values_displayed` -
+describing if values represent either percent of activity mitigated or the
+80\% prediction interval - used to label the scales}
 
-\item{heatmap_type}{Character - value from `input$heatmap_type` - used to control whether a solid colour is applied (binary) or colour is dependent on the value}
+\item{heatmap_type}{Character - value from `input$heatmap_type` - used to
+control whether a solid colour is applied (binary) or colour is dependent
+on the value}
 
-\item{colour_binary}{Character - value from `input$heatmap_binary_colour` - hex colour string to use in the binary plots}
+\item{colour_binary}{Character - value from `input$heatmap_binary_colour` -
+hex colour string to use in the binary plots}
 
-\item{colour_value_low}{Character - value from `input$heatmap_value_colour_low` - hex colour string to use in the gradient fill for low values}
+\item{colour_value_low}{Character - value from
+`input$heatmap_value_colour_low` - hex colour string to use in the gradient
+fill for low values}
 
-\item{colour_value_high}{Character - value from `input$heatmap_value_colour_high` - hex colour string to use in the gradient fill for high values}
+\item{colour_value_high}{Character - value from
+`input$heatmap_value_colour_high` - hex colour string to use in the
+gradient fill for high values}
 
-\item{plot_height}{Integer - value from `ra$heatmap_min_height` - the number of pixels to set as the height of the plot}
+\item{plot_height}{Integer - value from `ra$heatmap_min_height` - the number
+of pixels to set as the height of the plot}
 
-\item{font_family}{Character - (default = 'Arial, Helvetica, Droid Sans, sans') a list of font families to use in the plot}
+\item{font_family}{Character - (default = 'Arial, Helvetica, Droid Sans,
+sans') a list of font families to use in the plot}
 }
 \value{
 {plotly} object showing heatmap

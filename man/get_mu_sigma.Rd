@@ -12,7 +12,7 @@ for each peer and mitigator.}
 }
 \value{
 A dataframe with mu, sigma and number of peers for each mixture
-distribution.
+  distribution.
 
 Note mean and sd of unweighted mixture distribution of Normal distributions
 is:
