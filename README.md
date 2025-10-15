@@ -1,9 +1,9 @@
-# NHP Scheme Activity Mitigation Predictions App
+# Compare NHP Activity Mitigation Predictions
 
 ## Purpose
 
-Explore and compare schemes' activity-mitigation predictions as part of the New Hospital Programme (NHP) modelling process. 
-Intended primarily to help schemes refine and finalise their selections and predictions.
+Compare predictions of potentially-mitigatable activity by users of the New Hospital Programme (NHP) [demand model](https://github.com/the-Strategy-Unit/nhp_project_information).
+Intended primarily to help schemes refine and finalise their scenarios.
 
 The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/mitigator-comparisons/) (login/permissions required).
 
