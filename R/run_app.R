@@ -8,10 +8,10 @@
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
 run_app <- function(
-  onStart = NULL,
+  onStart = NULL, # nolint: object_name_linter.
   options = list(),
-  enableBookmarking = "server",
-  uiPattern = "/",
+  enableBookmarking = "server", # nolint: object_name_linter.
+  uiPattern = "/", # nolint: object_name_linter.
   ...
 ) {
   with_golem_options(
