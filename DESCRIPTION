@@ -1,6 +1,6 @@
 Package: nhp.mitigator.comparisons.app
 Title: Compare NHP Activity Mitigation Predictions
-Version: 0.8.1
+Version: 0.9.0.9000
 Authors@R: c(
     person("Matt", "Dray", , "matt.dray@nhs.net", role = c("cre", "aut")),
     person("Craig", "Parylo", role = "aut"),
@@ -9,9 +9,11 @@ Authors@R: c(
     person("Ozayr", "Mohammed", role = "ctb"),
     person("Claire", "Welsh", role = "ctb")
   )
-Description: Compare predictions of potentially-mitigatable activity by users of
-    the New Hospital Programme demand model.
+Description: Compare predictions of potentially-mitigatable activity by
+    users of the New Hospital Programme demand model.
 License: MIT + file LICENSE
+Depends: 
+    R (>= 4.2.0)
 Imports: 
     arrow,
     AzureAuth,
@@ -57,7 +59,7 @@ Suggests:
     rsconnect,
     testthat (>= 3.0.0)
 Remotes: 
-    dreamRs/datamods,
+    dreamRs/datamods
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true

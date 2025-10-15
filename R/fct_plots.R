@@ -1258,8 +1258,8 @@ plot_faceted_trendlines <- function(
       expr = length(plots) > 0,
       message = glue::glue(
         "Unable to plot because the focal scheme has no:\n",
-        "• historical data for the selected mitigators, or\n",
-        "• horizon estimates for the selected mitigators."
+        "* historical data for the selected mitigators, or\n",
+        "* horizon estimates for the selected mitigators."
       )
     )
   )
