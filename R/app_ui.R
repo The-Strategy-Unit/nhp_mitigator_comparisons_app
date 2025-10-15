@@ -16,7 +16,7 @@ app_ui <- function(request) {
     # Application UI logic
     bslib::page_navbar(
       id = "page_navbar",
-      title = "NHP mitigator comparisons",
+      title = "Compare NHP Activity Mitigation Predictions",
       ## sidebar ----
       sidebar = bslib::sidebar(
         id = "sidebar",
