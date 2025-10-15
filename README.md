@@ -1,14 +1,9 @@
-# nhp_mitigator_comparisons_app
-
-<!-- badges: start -->
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-<!-- badges: end -->
+# NHP Scheme Activity Mitigation Predictions App
 
 ## Purpose
 
-Explore and compare schemes' mitigator selections as part of the National Hospital Programme (NHP) modelling process. 
-
-This tool is designed primarily for use by model-relationship managers (MRMs) in discussion with schemes so that the mitigator selections can be refined before being finalised.
+Explore and compare schemes' activity-mitigation predictions as part of the New Hospital Programme (NHP) modelling process. 
+Intended primarily to help schemes refine and finalise their selections and predictions.
 
 The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/mitigator-comparisons/) (login/permissions required).
 
@@ -16,7 +11,7 @@ The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp
 
 ### Tools
 
-The app is built with [{shiny}](https://shiny.posit.co/), [{golem}](https://thinkr-open.github.io/golem/) and [{bslib}](https://rstudio.github.io/bslib/).
+The app is built primarily with the R packages [{shiny}](https://shiny.posit.co/), [{golem}](https://thinkr-open.github.io/golem/) and [{bslib}](https://rstudio.github.io/bslib/).
 
 ### Run the app locally
 
@@ -31,10 +26,10 @@ This repo doesn't use {renv}.
 You must set some environmental variables before you can run the app locally on your machine.
 To do this, add an `.Renviron` file to the project directory that contains the variables named in the `.Renviron.example` file.
 You can ask a member of the Data Science team to help populate this file.
-
 Note that you don't technically need to provide the `CONNECT_API_KEY` variable if you're using RStudio and have already [configured your publishing account](https://docs.posit.co/connect/user/publishing-rstudio/).
 
 Remember to restart your session or run `readRenviron(".Renviron")` after you've updated your `.Renviron` file.
+If you're having authorisation issues (e.g. a 403 is being returned), try clearing your tokens with `AzureAuth::clean_token_directory()` and try again.
 
 #### Run the app
 
@@ -43,20 +38,20 @@ Source the `dev/run_dev.R` script to run the app, assuming you've installed the 
 ### Deploy
 
 You can redeploy the app to Posit Connect using the `dev/deploy.R` script.
-This usually happens after a new GitHub release/Git tag.
+There are two versions of the app you can deploy to:
+
+* ['dev' for developers](https://connect.strategyunitwm.nhs.uk/nhp/mitigator-comparisons-dev/) (login/permissions required), which you can deploy to after pull requests to check any changes
+* ['prod' for users](https://connect.strategyunitwm.nhs.uk/nhp/mitigator-comparisons/) (login/permissions required), which you can deploy to after a new GitHub release/Git tag
 
 ### Data
 
-#### Mitigators
+#### Parameters
 
-This app fetches model results files from Azure. 
-These files are large json files that bundle the model results and the the mitigator selections, which are stored in an element called 'params' (parameters).
-
-To avoid the app having to read the entire json file for each scheme's model scenario, there is a system to pre-prepare the params alone.
-[A scheduled Quarto document on Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/tagged-runs-params-report/) has code to select the appropriate json file, extract the params and [save them as an RDS file to a pin](https://connect.strategyunitwm.nhs.uk/content/32c7f642-e420-448d-b888-bf655fc8fa8b/) on Posit Connect.
+There is a system to pre-prepare user-selected parameters ('params') data for quick access by the app.
+[A Quarto document on Posit Connect](https://connect.strategyunitwm.nhs.uk/nhp/tagged-runs-params-report/) runs on schedule to read the params and [save them as an RDS file to a pin](https://connect.strategyunitwm.nhs.uk/content/32c7f642-e420-448d-b888-bf655fc8fa8b/) on Posit Connect.
 It also saves [a CSV file to another pin](https://connect.strategyunitwm.nhs.uk/content/811dbaf9-18fe-43aa-bf8e-06b0df66004e/) that contains metadata about the model scenarios.
 The app then reads data from these pins using [the {pins} package](https://pins.rstudio.com/).
-A [blogpost by the Data Science team](https://the-strategy-unit.github.io/data_science/blogs/posts/2024-05-22-storing-data-safely/#posit-connect-pins) contains note on authenticating RStudio with Posit Connect, should you need to.
+A [blogpost by the Data Science team](https://the-strategy-unit.github.io/data_science/blogs/posts/2024-05-22-storing-data-safely/#posit-connect-pins) contains a note on authenticating RStudio with Posit Connect, should you need to.
 
 Schemes run many scenarios, but the app only displays data from a single scenario, preferably the one used to compile their outputs ('final') report.
 MRMs tell the Data Science team which particular results file should be labelled manually on Azure with the 'run stage' metadata of 'final' (and possibly 'intermediate' or 'initial').
@@ -64,5 +59,5 @@ There's [a handy lookup table](https://connect.strategyunitwm.nhs.uk/nhp/tagged_
 
 #### Supporting
 
-Supporting data is fetched from Azure.
-This includes lookups for mitigators and schemes, baseline trend data, as well as data from the National Elicitation Exercise (NEE).
+Supporting data is fetched from a specific Azure container.
+This includes lookups for schemes and for types of potentially-mitigatable activity, baseline trend data, and data from the National Elicitation Exercise (NEE).
