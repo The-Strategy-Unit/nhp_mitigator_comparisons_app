@@ -3,7 +3,7 @@
 First, make selections in the left-hand panel.
 
 1.  Under 'select schemes', choose a focal scheme and schemes to visualise alongside it.
-2.  Under 'select mitigators', choose mitigators via the dropdown filters and 'add to selected' to present them in the app.
+2.  Under 'select TPMAs', choose types of potentially mitigable activity (TPMAs) via the dropdown filters and 'add to selected' to present them in the app.
 3.  Under 'other settings', decide the scale of the values (); whether to standardise all results to a common year of 2041 (simple linear extrapolation); and whether to include mitgators for a scheme if a scheme chose lower and upper values of 100% (i.e. no reduction)
 
 Then, navigate through the app and make further selections:
@@ -27,4 +27,4 @@ If you want to 'save' the app's current state and return to it later:
 3. Copy the provided URL.
 4. Paste this URL into your browser to return to the app with all the previously-selected options applied.
 
-It could be useful to record several of these bookmark URLs to aid discussions with schemes about particular sets of mitigators.
+It could be useful to record several of these bookmark URLs to aid discussions with schemes about particular sets of TPMAs.

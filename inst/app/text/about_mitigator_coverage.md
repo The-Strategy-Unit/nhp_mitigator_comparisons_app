@@ -1,10 +1,12 @@
-This table shows the proportion of schemes that have provided responses for each selected mitigator.
+### "How many schemes have submitted assumptions for this type of activity?"
 
-Use this view to see which of the selected mitigators are more commonly used across schemes.
+This table shows the proportion of schemes that have provided responses for each selected type of potentially mitigable activity (TPMA).
+
+Use this view to see which of the selected TPMAs are more commonly used across schemes.
 
 #### Structure
 
-Mitigators are listed in each row of the table along with their groupings.
+TPMAs are listed in each row of the table along with their groupings.
 
 The last two columns show the percentage coverage by:
 
