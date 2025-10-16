@@ -1,4 +1,4 @@
-extract_params <- function(params, runs_meta) {
+extract_params <- function(params, runs_meta, mitigator_lookup, run_stages_rx) {
   possibly_report_params_table <- purrr::possibly(report_params_table)
 
   activity_avoidance <- params |>
@@ -12,8 +12,7 @@ extract_params <- function(params, runs_meta) {
   runs_meta <- runs_meta |>
     dplyr::select(.data$dataset, .data$scenario, .data$run_stage)
 
-  activity_avoidance |>
-    dplyr::bind_rows(efficiencies) |>
+  params_extracted <- dplyr::bind_rows(activity_avoidance, efficiencies) |>
     dplyr::mutate(
       peer_year = paste0(
         .data$peer,
@@ -24,6 +23,12 @@ extract_params <- function(params, runs_meta) {
       )
     ) |>
     dplyr::left_join(runs_meta, by = dplyr::join_by("peer" == "dataset"))
+
+  params_extracted |>
+    dplyr::filter(
+      .data$strategy %in% mitigator_lookup[["Strategy variable"]],
+      stringr::str_detect(.data$run_stage, .env$run_stages_rx)
+    )
 }
 
 report_params_table <- function(

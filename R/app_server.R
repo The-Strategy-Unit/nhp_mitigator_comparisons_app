@@ -57,11 +57,12 @@ app_server <- function(input, output, session) {
   # Parameters
   params <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_params")
   runs_meta <- pins::pin_read(board, name = "matt.dray/nhp_tagged_runs_meta")
-  extracted_params <- extract_params(params, runs_meta) |>
-    dplyr::filter(
-      # include active mitigators only
-      .data$strategy %in% mitigator_lookup[["Strategy variable"]]
-    )
+  extracted_params <- extract_params(
+    params,
+    runs_meta,
+    mitigator_lookup,
+    "final_report_ndg*"
+  )
   skeleton_table <- prepare_skeleton_table(extracted_params)
 
   ## Prep data ----

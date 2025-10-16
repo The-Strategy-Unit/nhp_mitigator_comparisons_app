@@ -16,7 +16,6 @@ From the navigation bar above you can visit the:
 ### Labels
 
 -   The scenarios presented in this app are the ones each scheme has identified as the 'final' one used in their outputs report.
--   Schemes labelled as '[preliminary]' have not yet identified a 'final' scenario but have identified one as an 'initial' or 'intermediate' scenarios.
 -   The scheme labelled '[focal]' is the one you have selected as the focal scheme in the left-hand panel.
 
 ### 80% prediction interval
