@@ -60,4 +60,4 @@ There's [a handy lookup table](https://connect.strategyunitwm.nhs.uk/nhp/tagged_
 #### Supporting
 
 Supporting data is fetched from a specific Azure container.
-This includes lookups for schemes and for types of potentially-mitigatable activity, baseline trend data, and data from the National Elicitation Exercise (NEE).
+This includes lookups for schemes and for types of potentially-mitigatable activity, baseline trend data, and data from [the National Elicitation Exercise (NEE)](https://doi.org/10.1136/bmjopen-2024-084632).
