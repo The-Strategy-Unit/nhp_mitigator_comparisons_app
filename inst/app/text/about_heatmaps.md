@@ -53,9 +53,9 @@ Disable this option to colour values across the whole heatmap. This highlights t
 
 ##### Add NEE?
 
-This options controls the visibility of the National Elicitation Exercise (NEE) mitigator summary column.
+This options controls the visibility of [the National Elicitation Exercise (NEE)](https://doi.org/10.1136/bmjopen-2024-084632) mitigator summary column.
 
-Enable this option to see the relevant NEE value column (midpoint, low, high or range) as context to the mitigator values in the heatmap.
+Enable this option to see the relevant NEE value column (midpoint, low, high or interval) as context to the mitigator values in the heatmap.
 
 ##### Add aggregate summaries?
 

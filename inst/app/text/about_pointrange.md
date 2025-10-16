@@ -1,6 +1,6 @@
-Point-range plots show ranges and midpoints estimated by schemes for their selected mitigators.
+Use these plots to compare and contrast schemes' estimated prediction intervals for the selected mitigators.
 
-Use these plots to compare and contrast schemes' estimated predictions for mitigators.
+The data is visualised with 'point-ranges' that show the range of the schemes' prediction intervals (line) and their midpoints (point).
 
 #### Structure
 
@@ -40,9 +40,9 @@ Enable this option to show separate plots for each scheme, with the mitigators l
 
 These plots are a helpful way to scan responses for each scheme.
 
-##### Show NEE range
+##### Show NEE interval
 
-Enable this option to see the range of values suggested from the National Elicitation Exercise (NEE) as bars.
+Enable this option to see the range of values suggested from [the National Elicitation Exercise (NEE)](https://doi.org/10.1136/bmjopen-2024-084632) as bars.
 
 These are useful aid to check if values are within the ranges suggested by national experts.
 
@@ -58,4 +58,4 @@ Enable this option to see an aggregate summary of selected schemes' responses (e
 
 This is useful to compare the focal scheme with an aggregate summary of the other schemes' responses.
 
-Enable the *Range (selected schemes)* option to see the extreme upper and lower values for the ranges.
+Enable the 'Full range (selected schemes)' option to see the extreme upper and lower values for the ranges.

@@ -29,9 +29,9 @@ Toggle this option to switch between the density plot and the cumulative density
 
 These are useful to simplify complex, multi-peak distributions to a smoother line.
 
-##### Show NEE range?
+##### Show NEE interval?
 
-Enable this option to see the range of values suggested from the National Elicitation Exercise (NEE) as bars.
+Enable this option to see the range of values suggested from [the National Elicitation Exercise (NEE)](https://doi.org/10.1136/bmjopen-2024-084632) as bars.
 
 These are useful aid to check if values are within the ranges suggested by national experts.
 

@@ -30,10 +30,10 @@ Note that other schemes' data won't be plotted if there is no data to show.
 
 ##### Show horizon on timeline?
 
-Toggle this option to see the focal scheme's estimated activity at the horizon year, represented by a dot for the middle point with 10% and 90% range shown as whiskers.
+Toggle this option to see the focal scheme's estimated activity at the horizon year, represented by a dot for the middle point with 10% and 90% interval shown as whiskers.
 Dotted lines run from the baseline year to the horizon year to illustrate the expected change.
 
-Hovering over the pointrange reveals contextual information such as the horizon year, the rate of activity expected and the z-scores for these.
+Hovering over the point-range reveals contextual information such as the horizon year, the rate of activity expected and the z-scores for these.
 
 Z-scores show how many standard deviations difference there is for the horizon activity when compared with the average historical activity leading up to the baseline year.
 Scores greater than 2 or less than -2 are indicative of substantial change.
