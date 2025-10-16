@@ -193,7 +193,7 @@ app_ui <- function(request) {
                   bsicons::bs_icon("info-circle")
                 ),
                 "Include mitigators where a scheme selected a point-value of
-                zero mitigation, rather than a range? Toggle on to enable,
+                zero mitigation, rather than an interval? Toggle on to enable,
                 toggle off (default) to exclude."
               ),
               value = FALSE,
@@ -224,7 +224,7 @@ app_ui <- function(request) {
       ### point range plots ----
       bslib::nav_panel(
         id = "nav_panel_pointrange",
-        title = "Point-ranges",
+        title = "Prediction Intervals",
 
         bslib::navset_card_underline(
           id = "nav_panel_heatmaps_tabs",
@@ -235,11 +235,11 @@ app_ui <- function(request) {
             value = "nav_panel_pointrange_pointrange",
             title = bslib::tooltip(
               trigger = list(
-                "Point-range",
+                "Prediction intervals",
                 bsicons::bs_icon("info-circle")
               ),
-              "Customisable point-ranges showing distributions of values by
-              mitigator and scheme"
+              "Customisable plots showing distributions of values by mitigator
+              and scheme"
             ),
             bslib::layout_sidebar(
               sidebar = bslib::sidebar(
@@ -283,8 +283,8 @@ app_ui <- function(request) {
                           "One plot per scheme?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Invert the pointrange plots to generate a sub-plot for
-                        each scheme with mitigators on the y axis."
+                        "Invert the plots to generate a sub-plot for each scheme
+                        with mitigators on the y axis."
                       ),
                       value = FALSE
                     ),
@@ -292,14 +292,14 @@ app_ui <- function(request) {
                       inputId = "toggle_nee_reference_range",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Show NEE range?",
+                          "Show NEE interval?",
                           bsicons::bs_icon("info-circle")
                         ),
                         "Include reference results from the National
                         Elicitation Exercise (NEE) for 2039/40 if the mitigator
                         was part of that exercise. These values are shown as
                         horizontal bars behind each point illustrating the 10%
-                        to 90% range, with a vertical line marking the mean
+                        to 90% interval, with a vertical line marking the mean
                         value."
                       ),
                       value = FALSE
@@ -339,12 +339,12 @@ app_ui <- function(request) {
                       inputId = "toggle_aggregate_summary_minmaxrange",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Range (selected schemes)",
+                          "Interval (selected schemes)",
                           bsicons::bs_icon("info-circle")
                         ),
                         "Show the full range of selected schemes' responses,
                         i.e. the extreme upper and lower values, or switch off
-                        to view the average (mean) range."
+                        to view the average (mean) interval."
                       ),
                       value = FALSE
                     ),
@@ -439,14 +439,14 @@ app_ui <- function(request) {
                       inputId = "toggle_nee_reference_range_density",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Show NEE range?",
+                          "Show NEE interval?",
                           bsicons::bs_icon("info-circle")
                         ),
                         "Include reference results from the National
                         Elicitation Exercise (NEE) for 2039/40 if the mitigator
                         was part of that exercise. These values are shown as
                         horizontal bars behind each point illustrating the 10%
-                        to 90% range, with a vertical line marking the mean
+                        to 90% interval, with a vertical line marking the mean
                         value."
                       ),
                       value = FALSE
@@ -541,9 +541,9 @@ app_ui <- function(request) {
                           "Value type",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Schemes' low or high 80% confidence internal selection
-                        in the NHP inputs app, or the range or midpoint of
-                        these."
+                        "Schemes' low or high 80% confidence interval selection
+                        in the NHP inputs app, or the range of these, or the
+                        midpoint of these."
                       ),
                       choices = c(
                         Submitted = "value_binary",
@@ -888,11 +888,11 @@ app_ui <- function(request) {
                       inputId = "toggle_contextual_baseline_range",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Show 80% range?",
+                          "Show 80% interval?",
                           bsicons::bs_icon("info-circle")
                         ),
-                        "Shows the 80% range between upper and lower values as
-                        points connected by a line, disable to view just the
+                        "Shows the 80% interval between upper and lower values
+                        as points connected by a line, disable to view just the
                         mid-points."
                       ),
                       value = TRUE
