@@ -339,7 +339,7 @@ app_ui <- function(request) {
                       inputId = "toggle_aggregate_summary_minmaxrange",
                       label = bslib::tooltip(
                         trigger = list(
-                          "Interval (selected schemes)",
+                          "Full range (selected schemes)",
                           bsicons::bs_icon("info-circle")
                         ),
                         "Show the full range of selected schemes' responses,

@@ -23,7 +23,7 @@ Schemes may have chosen not to set a mitigator, or a mitigator [may not have bee
 
 #### Settings
 
-##### Show full range?
+##### Show 80% interval?
 
 Toggle this option to show or hide the 80% interval between low and high points for each scheme.
 
@@ -44,6 +44,7 @@ This is useful if you wish to save the plot as a static image and would like to 
 
 ##### Plot height
 
-Use the slider to specify a height for each plot. The default is 250 pixels but this slider allows you to set this as low as 150 pixels for a condensed view or as high as 400 pixels for better clarity.
+Use the slider to specify a height for each plot.
+The default is 250 pixels but this slider allows you to set this as low as 150 pixels for a condensed view or as high as 400 pixels for better clarity.
 
 This is useful where schemes are clustered and you would like to see the plots in more detail.
