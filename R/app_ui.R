@@ -72,7 +72,11 @@ app_ui <- function(request) {
             id = "accordion_mitigators",
             title = "Select TPMAs",
             icon = bsicons::bs_icon("sliders"),
-
+            "Filter for Types of Potentially-Mitigatable Activity (TPMAs) and
+            add them to your selected set of TPMAs. Hover over options for full
+            text.",
+            shiny::br(),
+            shiny::br(),
             # new mitigator selection ---
             shinyWidgets::panel(
               datamods::select_group_ui(
@@ -83,38 +87,35 @@ app_ui <- function(request) {
                   showValuesAsTags = TRUE
                 ),
                 params = list(
-                  mitigator_type = list(
-                    inputId = "mitigator_type",
-                    label = "TPMA type",
-                    placeholder = "..."
-                  ),
                   activity_type = list(
                     inputId = "activity_type",
                     label = "Activity type",
-                    placeholder = "..."
+                    placeholder = "Optional filter"
+                  ),
+                  mitigator_type = list(
+                    inputId = "mitigator_type",
+                    label = "TPMA type",
+                    placeholder = "Optional filter"
+                  ),
+                  strategy_subset = list(
+                    inputId = "strategy_subset",
+                    label = "TPMA subset",
+                    placeholder = "Optional filter"
                   ),
                   grouping = list(
                     inputId = "grouping",
                     label = "TPMA group",
-                    placeholder = "..."
-                  ),
-                  strategy_subset = list(
-                    inputId = "strategy_subset",
-                    label = "Strategy subset",
-                    placeholder = "..."
+                    placeholder = "Optional filter"
                   ),
                   mitigator_name = list(
                     inputId = "mitigator_name",
                     label = "TPMA",
-                    placeholders = "..."
+                    placeholders = "Optional filter"
                   )
                 )
               ),
 
-              # add some separation between 'reset filters' and below button
-              shiny::br(),
-
-              # button to add mitigators to the selection box (🍫)
+              # button to add mitigators to the selection box
               shiny::actionButton(
                 inputId = "mitigators_add_to_selected",
                 label = "Add to selection",
@@ -155,11 +156,13 @@ app_ui <- function(request) {
               inputId = "values_displayed",
               label = bslib::tooltip(
                 trigger = list(
-                  "Values to display",
+                  "Mitigation scale",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Select whether values are shown as the amount mitigated or the
-                expected activity levels following mitigation."
+                "Select whether values are shown as the amount mitigated
+                (default) or its inversion: the expected level of activity
+                following mitigation (i.e. the format presented in the NHP
+                Inputs app)."
               ),
               choices = c(
                 "Percent of activity mitigated",
@@ -179,7 +182,7 @@ app_ui <- function(request) {
                   bsicons::bs_icon("info-circle")
                 ),
                 "Standardise values by extrapolating linearly to 2041, which
-                makes a direct comparison easier."
+                makes a direct comparison easier (defaults to off)."
               ),
               value = FALSE,
               status = "primary",
@@ -192,9 +195,9 @@ app_ui <- function(request) {
                   "Include zero-mitigation predictions?",
                   bsicons::bs_icon("info-circle")
                 ),
-                "Include TPMAs where a scheme selected a point-value of
-                zero mitigation, rather than an interval? Toggle on to enable,
-                toggle off (default) to exclude."
+                "Include TPMAs where a scheme selected (erroneously) a
+                point-value of zero mitigation, rather than an interval? Toggle
+                on to enable, toggle off (default) to exclude."
               ),
               value = FALSE,
               status = "primary",
@@ -208,16 +211,37 @@ app_ui <- function(request) {
       bslib::nav_panel(
         id = "nav_panel_info",
         title = "Information",
-        bslib::layout_column_wrap(
-          bslib::card(
-            id = "card_about",
-            bslib::card_header("About"),
-            md_file_to_html("app", "text", "about.md")
+        bslib::layout_columns(
+          bslib::layout_columns(
+            col_widths = c(12, 12),
+            bslib::card(
+              id = "card_purpose",
+              bslib::card_header("Purpose"),
+              md_file_to_html("app", "text", "info_purpose.md")
+            ),
+            bslib::card(
+              id = "card_how_to_use",
+              bslib::card_header("How to use"),
+              md_file_to_html("app", "text", "info_how.md")
+            )
           ),
-          bslib::card(
-            id = "card_how_to_use",
-            bslib::card_header("How to use"),
-            md_file_to_html("app", "text", "how-to.md")
+          bslib::layout_columns(
+            col_widths = c(12, 12),
+            bslib::card(
+              id = "card_data",
+              bslib::card_header("Data"),
+              md_file_to_html("app", "text", "info_data.md")
+            ),
+            bslib::card(
+              id = "card_warning",
+              fill = FALSE,
+              bslib::card_header(
+                class = "bg-warning",
+                bsicons::bs_icon("exclamation-triangle"),
+                "Warning: comparisons"
+              ),
+              md_file_to_html("app", "text", "info_warning.md")
+            )
           )
         )
       ),
@@ -227,7 +251,7 @@ app_ui <- function(request) {
         title = "Prediction Intervals",
 
         bslib::navset_card_underline(
-          id = "nav_panel_heatmaps_tabs",
+          id = "nav_panel_pointrange_tabs",
           full_screen = TRUE,
 
           #### pointrange ----
@@ -235,7 +259,7 @@ app_ui <- function(request) {
             value = "nav_panel_pointrange_pointrange",
             title = bslib::tooltip(
               trigger = list(
-                "Prediction intervals",
+                "Point-ranges",
                 bsicons::bs_icon("info-circle")
               ),
               "Customisable plots showing distributions of values by TPMA
@@ -247,7 +271,8 @@ app_ui <- function(request) {
                 width = 350,
 
                 bslib::accordion(
-                  open = c("Controls"),
+                  open = FALSE,
+
                   bslib::accordion_panel(
                     title = "Information",
                     icon = bslib::tooltip(
@@ -357,7 +382,7 @@ app_ui <- function(request) {
                   ),
 
                   bslib::accordion_panel(
-                    title = "Download",
+                    title = "Downloads",
                     icon = bslib::tooltip(
                       trigger = bsicons::bs_icon("box-arrow-down"),
                       "Export data and plots"
@@ -403,7 +428,7 @@ app_ui <- function(request) {
                 width = 350,
 
                 bslib::accordion(
-                  open = c("Controls"),
+                  open = FALSE,
 
                   bslib::accordion_panel(
                     title = "Information",
@@ -460,7 +485,7 @@ app_ui <- function(request) {
                   ),
 
                   bslib::accordion_panel(
-                    title = "Download",
+                    title = "Downloads",
                     icon = bslib::tooltip(
                       trigger = bsicons::bs_icon("box-arrow-down"),
                       "Export data and plots"
@@ -516,7 +541,7 @@ app_ui <- function(request) {
                 open = TRUE,
 
                 bslib::accordion(
-                  open = c("Controls"),
+                  open = FALSE,
 
                   bslib::accordion_panel(
                     title = "Information",
@@ -711,7 +736,7 @@ app_ui <- function(request) {
                   ),
 
                   bslib::accordion_panel(
-                    title = "Download",
+                    title = "Downloads",
                     icon = bslib::tooltip(
                       trigger = bsicons::bs_icon("box-arrow-down"),
                       "Export data and plots"
@@ -757,7 +782,7 @@ app_ui <- function(request) {
                 width = 350,
 
                 bslib::accordion(
-                  open = c("Information"),
+                  open = FALSE,
 
                   bslib::accordion_panel(
                     title = "Information",
@@ -773,7 +798,7 @@ app_ui <- function(request) {
                   ),
 
                   bslib::accordion_panel(
-                    title = "Download",
+                    title = "Downloads",
                     icon = bslib::tooltip(
                       trigger = bsicons::bs_icon("box-arrow-down"),
                       "Export data"
@@ -809,7 +834,7 @@ app_ui <- function(request) {
                 open = TRUE,
 
                 bslib::accordion(
-                  open = c("Information"),
+                  open = FALSE,
 
                   bslib::accordion_panel(
                     title = "Information",
@@ -821,7 +846,7 @@ app_ui <- function(request) {
                   ),
 
                   bslib::accordion_panel(
-                    title = "Download",
+                    title = "Downloads",
                     icon = bslib::tooltip(
                       trigger = bsicons::bs_icon("box-arrow-down"),
                       "Export data"
@@ -866,7 +891,7 @@ app_ui <- function(request) {
                 open = TRUE,
 
                 bslib::accordion(
-                  open = c("Controls"),
+                  open = FALSE,
 
                   bslib::accordion_panel(
                     title = "Information",
@@ -942,7 +967,7 @@ app_ui <- function(request) {
                   ),
 
                   bslib::accordion_panel(
-                    title = "Download",
+                    title = "Downloads",
                     icon = bslib::tooltip(
                       trigger = bsicons::bs_icon("box-arrow-down"),
                       "Export data and plots"
@@ -988,7 +1013,7 @@ app_ui <- function(request) {
                 open = TRUE,
 
                 bslib::accordion(
-                  open = c("Controls"),
+                  open = FALSE,
 
                   bslib::accordion_panel(
                     title = "Information",
@@ -1082,7 +1107,7 @@ app_ui <- function(request) {
                   ),
 
                   bslib::accordion_panel(
-                    title = "Download",
+                    title = "Downloads",
                     icon = bslib::tooltip(
                       trigger = bsicons::bs_icon("box-arrow-down"),
                       "Export data and plots"
