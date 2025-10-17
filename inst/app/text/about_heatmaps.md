@@ -1,6 +1,10 @@
-### "How does my prediction compare to other schemes' for this type of activity?"
+#### Purpose
 
-Heatmaps show values in a 2D grid of cells by scheme and types of potentially mitigable activity (TPMAs). The colour of cells indicates the value shown.
+Use this section to ask:
+
+> "How does my prediction compare to other schemes' for this type of activity?"
+
+Heatmaps show values in a 2D grid of cells by scheme and Types of Potentially Mitigatable Activity (TPMAs). The colour of cells indicates the value shown.
 
 Use these for an at-a-glance sense of how activity estimates vary by scheme and across TPMAs.
 
@@ -23,13 +27,10 @@ Schemes may have chosen not to set a TPMA, or a TPMA [may not have been availabl
 
 Select a value from the drop-down list to be displayed in the heatmap. The default option is 'Midpoint', with options for:
 
--   'Range' - the difference the low and high values of the selected 80% prediction interval / activity mitigated
-
--   'Low' - the 10% value
-
--   'High' - the 90% value
-
--   'Submitted' - binary value indicating where a response has or has not been provided by schemes
+* 'Range' - the difference the low and high values of the selected 80% prediction interval/activity mitigated
+* 'Low' - the 10% value
+* 'High' - the 90% value
+* 'Submitted' - binary value indicating where a response has or has not been provided by schemes
 
 ##### Standardise by horizon?
 
@@ -76,21 +77,17 @@ Enable this option to extend the scheme names to include scheme code, run stage 
 
 Select a value from the drop-down list for how schemes are ordered on the x-axis. The default option is 'Number of TPMAs (desc)', with options for:
 
--   'Scheme name (asc)/(desc)' - order schemes alphabetically by their names
-
--   'Number of TPMAs (asc)/(desc)' - order schemes by the number of TPMAs they have used
-
--   'Average mitigation (asc)/(desc)' - order schemes by their average values set for the TPMAs
+* 'Scheme name (asc/desc)' - order schemes alphabetically by their names
+* 'Number of TPMAs (asc/desc)' - order schemes by the number of TPMAs they have used
+* 'Average mitigation (asc/desc)' - order schemes by their average values set for the TPMAs
 
 ##### Order TPMAs by
 
 Select a value from the drop-down list for how TPMAs are ordered on the y-axis. The default option is 'Number of schemes (desc)', with options for:
 
--   'TPMA name (asc)/(desc)' - order TPMAs alphabetically by their names
-
--   'Number of schemes (asc)/(desc)' - order TPMAs by the number of schemes that have set values for it
-
--   'Average mitigation (asc)/(desc)' - order TPMAs by their average values set for them by schemes
+* 'TPMA name (asc/desc)' - order TPMAs alphabetically by their names
+* 'Number of schemes (asc/desc)' - order TPMAs by the number of schemes that have set values for it
+* 'Average mitigation (asc/desc)' - order TPMAs by their average values set for them by schemes
 
 ##### Colour for 'submitted' plot
 

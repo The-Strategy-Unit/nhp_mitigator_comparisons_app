@@ -1,14 +1,18 @@
-### "How does our prediction compare to all other schemes' predictions combined?"
+#### Purpose
+
+Use this section to ask:
+
+> "How does our prediction compare to all other schemes' predictions combined?"
 
 These illustrate the combined distributions of all schemes' responses as either a density plot (PDF) or a cumulative density plot (ECDF).
 
 Use these to compare the focal scheme's response against the combination of all other schemes' responses.
 
-NB, point-estimates (prediction intervals with the same low and high values) are removed from the data when constructing these distributions.
+Note: point-estimates (prediction intervals with the same low and high values) are removed from the data when constructing these distributions.
 
 #### Structure
 
-Types of potentially mitigable activity (TPMAs) are shown in separate plots, with either the 80% prediction interval or the percent of activity mitigated, on the x-axes and the y-axis showing the density of the mixture distribution.
+Types of Potentially-Mitigatable Activity (TPMAs) are shown in separate plots, with either the 80% prediction interval or the percent of activity mitigated, on the x-axes and the y-axis showing the density of the mixture distribution.
 
 Overlaying the plots are dotted lines indicating the 80% range between low and high values for the overall distributions, highlighted in turquoise, and a dashed line indicating the mid point.
 

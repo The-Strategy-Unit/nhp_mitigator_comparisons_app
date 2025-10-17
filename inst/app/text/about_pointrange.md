@@ -1,6 +1,10 @@
-### "How do my predictions for this type of activity compare to those of other schemes?"
+#### Purpose
 
-Use these plots to compare and contrast schemes' estimated prediction intervals for the selected types of potentially mitigable activity (TPMAs).
+Use this section to ask:
+
+> "How do my predictions for this type of activity compare to those of other schemes?"
+
+Use these plots to compare and contrast schemes' estimated prediction intervals for the selected Types of Potentially-Mitigatable Activity (TPMAs).
 
 The data is visualised with 'point-ranges' that show the range of the schemes' prediction intervals (line) and their midpoints (point).
 
@@ -13,7 +17,7 @@ Separate plots are provided for each of your selected TPMAs.
 Plots are placed in 'columns' horizontally and repeated on several vertical 'rows' as required.
 You can control the number of plots per row using the 'Number of charts per row' slider control in the settings sidebar.
 
-Responses for the *Focal scheme* are highlighted in red.
+Responses for the focal scheme are highlighted in red.
 
 #### Data Availability
 

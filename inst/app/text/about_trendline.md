@@ -1,8 +1,12 @@
-These visualisations provide a time line of the focal scheme's historic activity rates with the ability to compare against other schemes' historical activity and / or the focal scheme's predicted activity at the horizon year.
+#### Purpose
 
-Please note, types of potentially mitigable activity (TPMAs) are limited to those where there is historical data for the focal scheme.
+Use this section to ask:
 
-Use these to compare each scheme's ambitions relative to their historic performance.
+> "How do our ambitions relative to our historic activity compare with other schemes?".
+
+These visualisations provide a time line of the focal scheme's historic activity rates with the ability to compare against other schemes' historical activity and/or the focal scheme's predicted activity at the horizon year.
+
+Please note: Types of Potentially-Mitigatable Activity (TPMAs) are limited to those where there is historical data for the focal scheme.
 
 #### Structure
 

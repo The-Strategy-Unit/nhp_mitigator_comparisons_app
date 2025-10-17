@@ -1,6 +1,10 @@
-### "Have we set ambitious assumptions compared to our baseline activity rates?"
+#### Purpose
 
-These provide a scatter plot view of scheme's types of potentially mitigable activity (TPMA) ambitions against their baseline rates.
+Use this section to ask:
+
+> "Have we set ambitious assumptions compared to our baseline activity rates?"
+
+These provide a scatter plot view of scheme's Types of Potentially-Mitigatable Activity (TPMA) ambitions against their baseline rates.
 
 Use these to compare each scheme's ambitions relative to their baseline rate.
 
@@ -10,11 +14,10 @@ TPMAs are shown in separate plots, with baseline rates across the x-axes and the
 
 Overlaying the plots are dotted lines indicating the mean scheme values, dividing the plot into four quadrants:
 
--   Left-right: Low baseline - High baseline
+* left-right: low to high baseline
+* bottom-top: high mitigation/low prediction to low mitigation/high prediction (depending on your preferred view)
 
--   Bottom-top: High mitigation / Low prediction - Low mitigation / High prediction (depending on your preferred view).
-
-Hovering each point reveals contextual information such as scheme name and code, percent mitigated / predicted, baseline rate and year and a textual description of the quadrant the scheme falls within.
+Hovering each point reveals contextual information such as scheme name and code, percent mitigated/predicted, baseline rate and year and a textual description of the quadrant the scheme falls within.
 
 Click the plot's camera icon to download a copy of the plot as a high quality image (scalable vector graphic).
 
