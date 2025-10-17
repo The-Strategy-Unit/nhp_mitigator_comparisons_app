@@ -6,7 +6,7 @@ deploy <- function(
 
   app_id <- 108
   app_name <- "nhp_mitigator_comparisons_app"
-  app_title <- "NHP Mitigator Comparisons App"
+  app_title <- "Compare NHP Activity Mitigation Predictions"
 
   if (type == "dev") {
     app_id <- 193
