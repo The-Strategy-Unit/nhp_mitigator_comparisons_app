@@ -1,12 +1,13 @@
 make_raw_dt <- function(dat) {
   dat_prepared <- dat |>
     dplyr::filter(!is.na(.data$value_lo)) |> # only want mitigators selected by schemes
+    dplyr::rename_with(\(col) stringr::str_replace(col, "mitigator", "tpma")) |>
     dplyr::mutate(
       dplyr::across(
         c(
           tidyselect::starts_with("scheme"),
           tidyselect::starts_with("run"),
-          tidyselect::starts_with("mitigator"),
+          tidyselect::starts_with("tpma"),
           .data$value_point_or_range,
           .data$value_time_profile
         ),
@@ -26,7 +27,7 @@ make_raw_dt <- function(dat) {
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "_mitigator-comparison-data"),
+            filename = paste0(Sys.Date(), "_tpma-comparison-data"),
             text = "Download (CSV)"
           )
         )
