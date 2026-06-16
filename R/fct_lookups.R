@@ -1,12 +1,13 @@
 make_raw_dt <- function(dat) {
   dat_prepared <- dat |>
     dplyr::filter(!is.na(.data$value_lo)) |> # only want mitigators selected by schemes
+    dplyr::rename_with(\(col) stringr::str_replace(col, "mitigator", "tpma")) |>
     dplyr::mutate(
       dplyr::across(
         c(
           tidyselect::starts_with("scheme"),
           tidyselect::starts_with("run"),
-          tidyselect::starts_with("mitigator"),
+          tidyselect::starts_with("tpma"),
           .data$value_point_or_range,
           .data$value_time_profile
         ),
@@ -26,7 +27,7 @@ make_raw_dt <- function(dat) {
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "_mitigator-comparison-data"),
+            filename = paste0(Sys.Date(), "_tpma-comparison-data"),
             text = "Download (CSV)"
           )
         )
@@ -56,12 +57,12 @@ make_raw_dt <- function(dat) {
 make_mitigator_dt <- function(mitigator_lookup) {
   mitigator_lookup_prepared <- mitigator_lookup |>
     dplyr::select(
-      .data$`Mitigator code`,
-      `Mitigator name` = .data$`Strategy name`,
-      `Mitigator variable` = .data$`Strategy variable`,
-      .data$`Mitigator type`,
+      `Code` = .data$`Mitigator code`,
+      `Name` = .data$`Strategy name`,
+      `Variable` = .data$`Strategy variable`,
+      `Type` = .data$`Mitigator type`,
       .data$`Activity type`,
-      `Mitigator grouping` = .data$Grouping
+      `Group` = .data$Grouping
     ) |>
     dplyr::mutate(dplyr::across(tidyselect::everything(), factor))
 
@@ -77,7 +78,7 @@ make_mitigator_dt <- function(mitigator_lookup) {
         buttons = list(
           list(
             extend = "csv",
-            filename = paste0(Sys.Date(), "_mitigator-lookup"),
+            filename = paste0(Sys.Date(), "_tpma-lookup"),
             text = "Download (CSV)"
           )
         )
