@@ -204,29 +204,6 @@ get_percentiles <- function(data, mitigators) {
   peer_agg_ecdf_pdf
 }
 
-#' Modifies theme of ECDF and PDF plot.
-#'
-#' @param plot A plot of an ECDF or PDF.
-#' @param type Either `"ecdf"` or `"pdf"` to get the modifications for the
-#'   empirical cumulative distribution functions or probability density
-#'   functions, respectively.
-#'
-#' @return A plot with theme modifiers based on whether the plot was is an ECDF
-#'   or PDF.
-modify_theme <- function(plot, type) {
-  if (type == "ecdf") {
-    plot <- plot
-  } else {
-    plot <- plot +
-      ggplot2::theme(
-        axis.text.y = ggplot2::element_blank(),
-        axis.ticks.y = ggplot2::element_blank()
-      )
-  }
-
-  plot
-}
-
 #' Prepare data for plotting densities.
 #'
 #' Wrangles data to a dataframe for plotting ECDFs and PDFs
@@ -317,11 +294,9 @@ get_mixture_distributions_dat <- function(dat) {
   )
 
   # get data for plotting
-  # nolint start: object_usage_linter
   data_for_plotting <- wrangle_data_for_density_plots(
     peer_agg_ecdf_pdf = peer_agg_ecdf_pdf,
     peer_agg_dist_summary = peer_agg_dist_summary,
     strategy_lookup = strategy_lookup
   )
-  # nolint end: object_usage_linter
 }
