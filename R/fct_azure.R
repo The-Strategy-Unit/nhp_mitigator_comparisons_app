@@ -46,3 +46,6 @@ read_provider_data <- function(
 
   arrow::read_parquet(parquet_in) |> tibble::as_tibble()
 }
+
+
+any(is.na(x))
