@@ -23,40 +23,6 @@ get_container <- function(
     AzureStor::storage_container(container_name)
 }
 
-# Identify scheme codes for which data can be read
-get_nhp_user_allowed_datasets <- function(groups = NULL, providers) {
-  if (!(is.null(groups) || any(c("nhp_devs", "nhp_power_users") %in% groups))) {
-    a <- groups |>
-      stringr::str_subset("^nhp_provider_") |>
-      stringr::str_remove("^nhp_provider_")
-    providers <- intersect(providers, a)
-  }
-
-  c("synthetic", providers)
-}
-
-# Read the providers file
-get_nhp_providers <- function(container_support) {
-  raw_json <- AzureStor::storage_download(
-    container_support,
-    src = "providers.json",
-    dest = NULL
-  )
-
-  raw_json |>
-    rawToChar() |>
-    jsonlite::fromJSON(simplifyVector = TRUE)
-}
-
-# Read the results jsons
-get_nhp_results <- function(container_results, file) {
-  temp_file <- withr::local_tempfile()
-  AzureStor::download_blob(container_results, file, temp_file)
-
-  readBin(temp_file, raw(), n = file.size(temp_file)) |>
-    jsonlite::parse_gzjson_raw(simplifyVector = FALSE) # no need to parse
-}
-
 #' Read Rates (Trend) Data
 #' Fetch and read parquet files that store contextual data used in the NHP
 #' inputs app.
