@@ -756,19 +756,17 @@ plot_heatmap <- function(
 
   ## y-axis ----
   # decide whether to plot the mitigator code or name on the y-xais
-  ifelse(
-    test = toggle_mitigator_name,
-    yes = var_y_axis <- "mitigator_name",
-    no = var_y_axis <- "mitigator_code"
-  )
+  var_y_axis <- "mitigator_code"
+  if (toggle_mitigator_name) {
+    var_y_axis <- "mitigator_name"
+  }
 
   ## fill ----
   # decide whether fill colour applies across mitigators or across whole plot
-  ifelse(
-    test = toggle_scale_fill_by_mitigator,
-    yes = var_fill <- "value_scaled", # mitigator-wise fill
-    no = var_fill <- "value" # plot-wise fill
-  )
+  var_fill <- "value" # plot-wise fill
+  if (toggle_scale_fill_by_mitigator) {
+    var_fill <- "value_scaled" # mitigator-wise fill
+  }
 
   ## x-axis ----
   # decide how scheme names should be plotted on the x-axis
