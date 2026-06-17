@@ -240,8 +240,8 @@ make_mitigator_uptake_dt <- function(dat, selected_schemes) {
       filter = "top",
       colnames = c(
         "Activity type",
-        "Mitigator group",
-        "Mitigator",
+        "TPMA group",
+        "TPMA",
         "Coverage (all schemes)",
         "Coverage (selected schemes)"
       )
@@ -365,8 +365,8 @@ make_scheme_uptake_dt <- function(
       colnames = c(
         "Scheme code",
         "Scheme name",
-        "Coverage (all mitigators)",
-        "Coverage (selected mitigators)"
+        "Coverage (all TPMAs)",
+        "Coverage (selected TPMAs)"
       ),
       filter = "top"
     ) |>
