@@ -317,11 +317,9 @@ get_mixture_distributions_dat <- function(dat) {
   )
 
   # get data for plotting
-  # nolint start: object_usage_linter
   data_for_plotting <- wrangle_data_for_density_plots(
     peer_agg_ecdf_pdf = peer_agg_ecdf_pdf,
     peer_agg_dist_summary = peer_agg_dist_summary,
     strategy_lookup = strategy_lookup
   )
-  # nolint end: object_usage_linter
 }
