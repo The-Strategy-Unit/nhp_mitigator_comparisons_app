@@ -1,7 +1,10 @@
 # Compare NHP Activity Mitigation Predictions
 
+<!-- badges: start -->
+[![R-CMD-check.yaml](https://github.com/The-Strategy-Unit/nhp_inputs_report_app/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/The-Strategy-Unit/nhp_inputs_report_app/actions/workflows/R-CMD-check.yaml)
 [![air-check.yaml](https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/actions/workflows/air-check.yaml/badge.svg)](https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/actions/workflows/air-check.yaml)
 [![jarl-check.yaml](https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/actions/workflows/jarl-check.yaml/badge.svg)](https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/actions/workflows/jarl-check.yaml)
+<!-- badges: end -->
 
 ## Purpose
 
