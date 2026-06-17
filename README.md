@@ -1,5 +1,8 @@
 # Compare NHP Activity Mitigation Predictions
 
+[![air-check.yaml](https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/actions/workflows/air-check.yaml/badge.svg)](https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/actions/workflows/air-check.yaml)
+[![jarl-check.yaml](https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/actions/workflows/jarl-check.yaml/badge.svg)](https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/actions/workflows/jarl-check.yaml)
+
 ## Purpose
 
 Compare predictions of potentially-mitigatable activity by users of the New Hospital Programme (NHP) [demand model](https://github.com/the-Strategy-Unit/nhp_project_information).
