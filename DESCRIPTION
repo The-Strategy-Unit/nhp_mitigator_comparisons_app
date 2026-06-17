@@ -21,7 +21,6 @@ Imports:
     bsicons,
     bslib (>= 0.7.0),
     colourpicker,
-    config (>= 0.3.1),
     datamods (>= 1.5.3.9100),
     distr,
     dplyr,
@@ -33,7 +32,6 @@ Imports:
     here,
     htmlwidgets,
     janitor,
-    jsonlite,
     magrittr,
     markdown,
     pins,
@@ -52,14 +50,13 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    withr,
     yaml
 Suggests:
     rsconnect,
     testthat (>= 3.0.0)
 Remotes:
     dreamRs/datamods
+Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-Config/roxygen2/version: 8.0.0
