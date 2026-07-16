@@ -495,48 +495,6 @@ get_mitigator_baseline_description <- function(yaml) {
   df_return
 }
 
-#' Wrangle Mitigator Lookup
-#'
-#' Prepare mitigator lookup file that's been read in from Azure. Rename/adjust
-#' content to recreate the original form of the mitigator lookup file, which has
-#' since been adjusted.
-#'
-#' @param mitigator_lookup Tibble of mitigator lookup data
-#'
-#' @return Tibble of mitigator lookups
-prepare_mitigators <- function(mitigator_lookup) {
-  mitigator_lookup |>
-    dplyr::filter(is.na(.data$active_to)) |> # active mitigators only
-    dplyr::select(
-      .data$mitigator_code,
-      .data$activity_type,
-      .data$mitigator_type,
-      .data$mitigator_variable,
-      .data$mitigator_name,
-      .data$mitigator_subset,
-      .data$mitigator_grouping
-    ) |>
-    dplyr::rename_with(\(col_name) {
-      col_name |>
-        stringr::str_to_sentence() |>
-        stringr::str_replace_all("_", " ")
-    }) |>
-    dplyr::rename(
-      "Strategy variable" = "Mitigator variable",
-      "Strategy name" = "Mitigator name",
-      "Strategy subset" = "Mitigator subset",
-      "Grouping" = "Mitigator grouping"
-    ) |>
-    dplyr::mutate(
-      `Activity type` = dplyr::case_match(
-        .data$`Activity type`,
-        "aae" ~ "Accident and Emergency",
-        "ip" ~ "Inpatients",
-        "op" ~ "Outpatients"
-      )
-    )
-}
-
 #' Prepare Mitigator Lookup
 #'
 #' Prepare the mitigator lookup file for subsequent use by:
