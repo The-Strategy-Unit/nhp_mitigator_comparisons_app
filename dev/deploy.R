@@ -29,7 +29,6 @@ deploy <- function(
     envVars = c(
       "AZ_STORAGE_EP",
       "AZ_STORAGE_CONTAINER_INPUTS",
-      "AZ_STORAGE_CONTAINER_SUPPORT",
       "FEEDBACK_FORM_URL"
     ),
     lint = FALSE,
