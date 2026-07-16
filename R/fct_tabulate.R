@@ -84,7 +84,7 @@ filter_run_stage_preferentially <- function(params_extracted, run_stage_prefs) {
 
 report_params_table <- function(
   p, # a single scheme's params
-  parameter = c("activity_avoidance", "efficiencies")
+  parameter = c("Activity Avoidance", "Efficiencies")
 ) {
   parameter_data <- p[[parameter]]
   scenario_name <- p[["scenario"]]
@@ -116,6 +116,39 @@ report_params_table <- function(
       parameter = parameter,
       baseline_year = p[["start_year"]],
       horizon_year = p[["end_year"]]
+    )
+}
+
+#' Read and Wrangle the TPMA Lookup
+#' @param path Character. The path to the TPMA-lookup CSV. Expected to be a
+#'     GitHub URL for the celntralised TPMAs repo.
+#' @return A data.frame.
+#' @noRd
+get_mitigator_lookup <- function(
+  path = "https://raw.githubusercontent.com/The-Strategy-Unit/TPMAs/refs/heads/main/reference/tpma-lookup.csv"
+) {
+  tpma_lookup <- readr::read_csv(path, col_types = "c") |>
+    dplyr::filter(is.na(.data$active_to))
+
+  # Convert the new lookup to match what's expected by the app. Refactor:
+  # https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/issues/262
+  tpma_lookup |>
+    dplyr::mutate(
+      .keep = "none",
+      `Mitigator code` = tpma_code,
+      `Activity type` = dplyr::if_else(
+        .data$activity_type == "A&E",
+        "Accident and Emergency",
+        .data$activity_type
+      ),
+      `Mitigator type` = tpma_type,
+      `Strategy variable` = tpma_variable, # slight name variations
+      `Strategy name` = dplyr::if_else(
+        is.na(.data$tpma_subtype), # if no sub-type
+        glue::glue("{tpma_name}"),
+        glue::glue("{tpma_name} ({tpma_subtype})")
+      ),
+      `Strategy subset` = tpma_mechanism
     )
 }
 
@@ -219,7 +252,6 @@ populate_table <- function(
       mitigator_variable = .data$strategy,
       mitigator_activity_type = .data$`Activity type`,
       mitigator_type = .data$`Mitigator type`,
-      mitigator_group = .data$Grouping,
       mitigator_activity_title = .data$mitigator_activity_title,
       # mitigator value selections
       value_lo = .data$value_1,

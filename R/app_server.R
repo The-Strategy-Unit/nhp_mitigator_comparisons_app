@@ -9,9 +9,6 @@ app_server <- function(input, output, session) {
 
   ## Make connections ----
 
-  container_support <-
-    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
-
   container_inputs <-
     get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_INPUTS"))
 
@@ -51,12 +48,10 @@ app_server <- function(input, output, session) {
   peers <- readr::read_csv(
     app_sys("app", "reference", "nhp-peers.csv"),
     col_types = "c"
-  )
+  ) |>
+    dplyr::rename("scheme" = "procode")
 
-  mitigator_lookup <- container_support |>
-    AzureStor::storage_read_csv("mitigator-lookup.csv", col_types = "c") |>
-    prepare_mitigators()
-
+  mitigator_lookup <- get_mitigator_lookup()
   mitigator_reference <- mitigator_lookup |> prepare_mitigators_ref()
 
   # Metadata
@@ -112,7 +107,6 @@ app_server <- function(input, output, session) {
     vars = c(
       "mitigator_type",
       "activity_type",
-      "grouping",
       "strategy_subset",
       "mitigator_name"
     )
