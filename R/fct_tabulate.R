@@ -135,20 +135,20 @@ get_mitigator_lookup <- function(
   tpma_lookup |>
     dplyr::mutate(
       .keep = "none",
-      `Mitigator code` = tpma_code,
+      `Mitigator code` = .data$tpma_code,
       `Activity type` = dplyr::if_else(
         .data$activity_type == "A&E",
         "Accident and Emergency",
         .data$activity_type
       ),
-      `Mitigator type` = tpma_type,
-      `Strategy variable` = tpma_variable, # slight name variations
+      `Mitigator type` = .data$tpma_type,
+      `Strategy variable` = .data$tpma_variable, # slight name variations
       `Strategy name` = dplyr::if_else(
         is.na(.data$tpma_subtype), # if no sub-type
         glue::glue("{tpma_name}"),
         glue::glue("{tpma_name} ({tpma_subtype})")
       ),
-      `Strategy subset` = tpma_mechanism
+      `Strategy subset` = .data$tpma_mechanism
     )
 }
 
