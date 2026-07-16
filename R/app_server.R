@@ -48,15 +48,16 @@ app_server <- function(input, output, session) {
       )
     )
 
+  peers <- readr::read_csv(
+    app_sys("app", "reference", "nhp-peers.csv"),
+    col_types = "c"
+  )
+
   mitigator_lookup <- container_support |>
     AzureStor::storage_read_csv("mitigator-lookup.csv", col_types = "c") |>
     prepare_mitigators()
 
   mitigator_reference <- mitigator_lookup |> prepare_mitigators_ref()
-
-  peers <- container_support |>
-    AzureStor::storage_load_rds("trust-peers.rds") |>
-    dplyr::rename(scheme = .data$procode)
 
   # Metadata
   yaml <- yaml::read_yaml(
