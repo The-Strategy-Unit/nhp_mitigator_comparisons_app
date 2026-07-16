@@ -35,7 +35,18 @@ app_server <- function(input, output, session) {
 
   # Lookups
 
-  trust_code_lookup <- get_trust_lookup(container_support = container_support)
+  trust_code_lookup <- readr::read_csv(
+    app_sys("app", "reference", "nhp-scheme-lookup.csv"),
+    col_types = "c"
+  ) |>
+    # See https://github.com/The-Strategy-Unit/nhp_planning/issues/340
+    dplyr::mutate(
+      `Name of Hospital site` = dplyr::case_match(
+        .data$`Trust ODS Code`,
+        "RYJ" ~ "Imperial", # three sites with same scheme code
+        .default = .data$`Name of Hospital site`
+      )
+    )
 
   mitigator_lookup <- container_support |>
     AzureStor::storage_read_csv("mitigator-lookup.csv", col_types = "c") |>

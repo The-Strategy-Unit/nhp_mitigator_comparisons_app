@@ -429,41 +429,6 @@ get_all_schemes <- function(dat) {
     tibble::deframe()
 }
 
-#' Get a lookup table of participating Trusts
-#'
-#' Read a csv lookup file from Azure storage and do some clean-up to ensure
-#' one row per Trust.
-#'
-#'@param container_support The Azure container for supporting information, as
-#'    obtained by `get_container()` from `fct_azure.R`.
-#'
-#' @return Tibble of data listing participating Trusts
-#' @export
-get_trust_lookup <- function(container_support) {
-  trust_lookup <-
-    # read the data from Azure
-    AzureStor::storage_read_csv(
-      container = container_support,
-      file = "nhp-scheme-lookup.csv",
-      show_col_types = FALSE
-    ) |>
-    # Imperial College (RYJ) appears three times due to different hospital
-    # sites, so simplify to one row
-    dplyr::mutate(
-      `Name of Hospital site` = dplyr::case_match(
-        .data$`Trust ODS Code`,
-        "RYJ" ~ "Imperial",
-        .default = .data$`Name of Hospital site`
-      )
-    ) |>
-    # Ensure one row per trust - deals with Hampshire which appears twice
-    dplyr::distinct(.data$`Trust ODS Code`, .keep_all = TRUE) |>
-    # Sort
-    dplyr::arrange(.data$`Trust ODS Code`)
-
-  trust_lookup
-}
-
 #' Get mitigator baseline descriptions
 #'
 #' The baseline activity for each mitigator is not specified in the `dat`, but
