@@ -1,17 +1,22 @@
 read_nee <- function(
-  container_support,
-  filename = "nee_table.rds",
+  filename = app_sys("app", "reference", "nee_table.rds"),
   as_decimal = TRUE
 ) {
-  nee <- container_support |>
-    AzureStor::storage_load_rds(filename, type = "none")
+  nee <- readr::read_rds(filename) |>
+    dplyr::select(
+      # We only need to match on param_name (others may be outdated)
+      -c(tidyselect::starts_with("strategy"), "type")
+    )
 
   if (as_decimal) {
     nee <- nee |>
       dplyr::mutate(
-        dplyr::across(c(.data$percentile10, .data$percentile90, mean), \(x) {
-          x / 100
-        })
+        dplyr::across(
+          c("percentile10", "percentile90", "mean"),
+          \(x) {
+            x / 100
+          }
+        )
       )
   }
 

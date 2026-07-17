@@ -84,7 +84,7 @@ filter_run_stage_preferentially <- function(params_extracted, run_stage_prefs) {
 
 report_params_table <- function(
   p, # a single scheme's params
-  parameter = c("activity_avoidance", "efficiencies")
+  parameter = c("Activity Avoidance", "Efficiencies")
 ) {
   parameter_data <- p[[parameter]]
   scenario_name <- p[["scenario"]]
@@ -116,6 +116,39 @@ report_params_table <- function(
       parameter = parameter,
       baseline_year = p[["start_year"]],
       horizon_year = p[["end_year"]]
+    )
+}
+
+#' Read and Wrangle the TPMA Lookup
+#' @param path Character. The path to the TPMA-lookup CSV. Expected to be a
+#'     GitHub URL for the celntralised TPMAs repo.
+#' @return A data.frame.
+#' @noRd
+get_mitigator_lookup <- function(
+  path = "https://raw.githubusercontent.com/The-Strategy-Unit/TPMAs/refs/heads/main/reference/tpma-lookup.csv"
+) {
+  tpma_lookup <- readr::read_csv(path, col_types = "c") |>
+    dplyr::filter(is.na(.data$active_to))
+
+  # Convert the new lookup to match what's expected by the app. Refactor:
+  # https://github.com/The-Strategy-Unit/nhp_compare_mitigation_predictions_app/issues/262
+  tpma_lookup |>
+    dplyr::mutate(
+      .keep = "none",
+      `Mitigator code` = .data$tpma_code,
+      `Activity type` = dplyr::if_else(
+        .data$activity_type == "A&E",
+        "Accident and Emergency",
+        .data$activity_type
+      ),
+      `Mitigator type` = .data$tpma_type,
+      `Strategy variable` = .data$tpma_variable, # slight name variations
+      `Strategy name` = dplyr::if_else(
+        is.na(.data$tpma_subtype), # if no sub-type
+        glue::glue("{tpma_name}"),
+        glue::glue("{tpma_name} ({tpma_subtype})")
+      ),
+      `Strategy subset` = .data$tpma_mechanism
     )
 }
 
@@ -219,7 +252,6 @@ populate_table <- function(
       mitigator_variable = .data$strategy,
       mitigator_activity_type = .data$`Activity type`,
       mitigator_type = .data$`Mitigator type`,
-      mitigator_group = .data$Grouping,
       mitigator_activity_title = .data$mitigator_activity_title,
       # mitigator value selections
       value_lo = .data$value_1,
@@ -429,41 +461,6 @@ get_all_schemes <- function(dat) {
     tibble::deframe()
 }
 
-#' Get a lookup table of participating Trusts
-#'
-#' Read a csv lookup file from Azure storage and do some clean-up to ensure
-#' one row per Trust.
-#'
-#'@param container_support The Azure container for supporting information, as
-#'    obtained by `get_container()` from `fct_azure.R`.
-#'
-#' @return Tibble of data listing participating Trusts
-#' @export
-get_trust_lookup <- function(container_support) {
-  trust_lookup <-
-    # read the data from Azure
-    AzureStor::storage_read_csv(
-      container = container_support,
-      file = "nhp-scheme-lookup.csv",
-      show_col_types = FALSE
-    ) |>
-    # Imperial College (RYJ) appears three times due to different hospital
-    # sites, so simplify to one row
-    dplyr::mutate(
-      `Name of Hospital site` = dplyr::case_match(
-        .data$`Trust ODS Code`,
-        "RYJ" ~ "Imperial",
-        .default = .data$`Name of Hospital site`
-      )
-    ) |>
-    # Ensure one row per trust - deals with Hampshire which appears twice
-    dplyr::distinct(.data$`Trust ODS Code`, .keep_all = TRUE) |>
-    # Sort
-    dplyr::arrange(.data$`Trust ODS Code`)
-
-  trust_lookup
-}
-
 #' Get mitigator baseline descriptions
 #'
 #' The baseline activity for each mitigator is not specified in the `dat`, but
@@ -496,48 +493,6 @@ get_mitigator_baseline_description <- function(yaml) {
   )
 
   df_return
-}
-
-#' Wrangle Mitigator Lookup
-#'
-#' Prepare mitigator lookup file that's been read in from Azure. Rename/adjust
-#' content to recreate the original form of the mitigator lookup file, which has
-#' since been adjusted.
-#'
-#' @param mitigator_lookup Tibble of mitigator lookup data
-#'
-#' @return Tibble of mitigator lookups
-prepare_mitigators <- function(mitigator_lookup) {
-  mitigator_lookup |>
-    dplyr::filter(is.na(.data$active_to)) |> # active mitigators only
-    dplyr::select(
-      .data$mitigator_code,
-      .data$activity_type,
-      .data$mitigator_type,
-      .data$mitigator_variable,
-      .data$mitigator_name,
-      .data$mitigator_subset,
-      .data$mitigator_grouping
-    ) |>
-    dplyr::rename_with(\(col_name) {
-      col_name |>
-        stringr::str_to_sentence() |>
-        stringr::str_replace_all("_", " ")
-    }) |>
-    dplyr::rename(
-      "Strategy variable" = "Mitigator variable",
-      "Strategy name" = "Mitigator name",
-      "Strategy subset" = "Mitigator subset",
-      "Grouping" = "Mitigator grouping"
-    ) |>
-    dplyr::mutate(
-      `Activity type` = dplyr::case_match(
-        .data$`Activity type`,
-        "aae" ~ "Accident and Emergency",
-        "ip" ~ "Inpatients",
-        "op" ~ "Outpatients"
-      )
-    )
 }
 
 #' Prepare Mitigator Lookup

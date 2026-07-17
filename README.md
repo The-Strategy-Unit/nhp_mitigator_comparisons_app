@@ -24,7 +24,7 @@ The app is built primarily with the R packages [{shiny}](https://shiny.posit.co/
 #### Install packages
 
 You must ensure you have installed all the packages listed in the `DESCRIPTION`.
-These can be installed with `pak::local_install_deps(dependencies = TRUE)`.
+These can be installed with `pak::pak()`.
 This repo doesn't use {renv}.
 
 #### Add environmental variables
@@ -65,5 +65,6 @@ There's [a handy lookup table](https://connect.strategyunitwm.nhs.uk/nhp/tagged_
 
 #### Supporting
 
-Supporting data is fetched from a specific Azure container.
-This includes lookups for schemes and for types of potentially-mitigatable activity, baseline trend data, and data from [the National Elicitation Exercise (NEE)](https://doi.org/10.1136/bmjopen-2024-084632).
+Some supporting data is `hosted in inst/app/data/reference/`.
+This includes scheme lookups and data from [the National Elicitation Exercise (NEE)](https://doi.org/10.1136/bmjopen-2024-084632).
+The lookup for Types of Mitigatable Activity (TPMAs) is sourced from [the central TPMAs repository](htpps://github.com/The-Strategy-Unit/TPMAs).

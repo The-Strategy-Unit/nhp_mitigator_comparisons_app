@@ -24,6 +24,9 @@
 !golem-config.yml
 !ref_inputs-golem-config.yml
 !.github/workflows/*.yaml
+!nee_table.rds
+!nhp-scheme-lookup.csv
+!nhp-peers.csv
 
 # History files
 .Rhistory

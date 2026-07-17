@@ -35,7 +35,7 @@ app_ui <- function(request) {
               inputId = "focus_scheme",
               label = bslib::tooltip(
                 trigger = list(
-                  "Focal scheme",
+                  "Choose a focal scheme",
                   bsicons::bs_icon("info-circle")
                 ),
                 "The scheme of interest to highlight in visualisations. Autoselects peers to be visualised."
@@ -48,7 +48,7 @@ app_ui <- function(request) {
               inputId = "schemes",
               label = bslib::tooltip(
                 trigger = list(
-                  "Schemes to visualise",
+                  "Choose comparison schemes",
                   bsicons::bs_icon("info-circle")
                 ),
                 "Peers autoselected when a focal scheme is selected. Use buttons to add/remove all."
@@ -79,8 +79,7 @@ app_ui <- function(request) {
             title = "Select TPMAs",
             icon = bsicons::bs_icon("sliders"),
             "Filter for Types of Potentially-Mitigatable Activity (TPMAs) and
-            add them to your selected set of TPMAs. Hover over options for full
-            text.",
+            press 'add to selected'. Hover over TPMAs for full text.",
             shiny::br(),
             shiny::br(),
             # new mitigator selection ---
@@ -96,36 +95,30 @@ app_ui <- function(request) {
                   # default startup values provided as a demo for the user
                   activity_type = list(
                     inputId = "activity_type",
-                    label = "Activity type",
+                    label = "Filter by activity type (optional)",
                     placeholder = "Optional filter",
                     selected = "Inpatients"
                   ),
                   mitigator_type = list(
                     inputId = "mitigator_type",
-                    label = "TPMA type",
+                    label = "Filter by TPMA type (optional)",
                     placeholder = "Optional filter",
-                    selected = "efficiencies"
+                    selected = "Efficiencies"
                   ),
                   strategy_subset = list(
                     inputId = "strategy_subset",
-                    label = "TPMA subset",
+                    label = "Filter by TPMA mechanism (optional)",
                     placeholder = "Optional filter",
-                    selected = "Mean Length of Stay Reduction"
-                  ),
-                  grouping = list(
-                    inputId = "grouping",
-                    label = "TPMA group",
-                    placeholder = "Optional filter",
-                    selected = "Hospital activity amenable to primary care and community interventions"
+                    selected = "Hospital Efficiency"
                   ),
                   mitigator_name = list(
                     inputId = "mitigator_name",
-                    label = "TPMA",
+                    label = "Choose TPMAs",
                     placeholder = "Optional filter",
                     selected = c(
-                      "Excess Beddays (Emergency Admissions) [IP-EF-019]",
-                      "General LoS Reduction: Emergency Admissions [IP-EF-021]",
-                      "Virtual Wards LoS Reduction (Acute Respiratory Infection) [IP-EF-026]"
+                      "Excess Bed-Days (Emergency Admissions) [IP-EF-019]",
+                      "Improved Inpatient Flow (Emergency Admissions) [IP-EF-021]",
+                      "Discharge Early for Home-Based Management (Acute Respiratory Infection) [IP-EF-026]"
                     )
                   )
                 )
@@ -143,16 +136,16 @@ app_ui <- function(request) {
             # add the startup values selected in select_group_ui, above
             shiny::selectizeInput(
               inputId = "mitigators",
-              label = "Selected TPMAs",
+              label = "Currently selected TPMAs",
               choices = c(
-                "Excess Beddays (Emergency Admissions) [IP-EF-019]" = "IP-EF-019",
-                "General LoS Reduction: Emergency Admissions [IP-EF-021]" = "IP-EF-021",
-                "Virtual Wards LoS Reduction (Acute Respiratory Infection) [IP-EF-026]" = "IP-EF-026"
+                "Excess Bed-Days (Emergency Admissions) [IP-EF-019]" = "IP-EF-019",
+                "Improved Inpatient Flow (Emergency Admissions) [IP-EF-021]" = "IP-EF-021",
+                "Discharge Early for Home-Based Management (Acute Respiratory Infection) [IP-EF-026]" = "IP-EF-026"
               ),
               selected = c(
-                "Excess Beddays (Emergency Admissions) [IP-EF-019]" = "IP-EF-019",
-                "General LoS Reduction: Emergency Admissions [IP-EF-021]" = "IP-EF-021",
-                "Virtual Wards LoS Reduction (Acute Respiratory Infection) [IP-EF-026]" = "IP-EF-026"
+                "Excess Bed-Days (Emergency Admissions) [IP-EF-019]" = "IP-EF-019",
+                "Improved Inpatient Flow (Emergency Admissions) [IP-EF-021]" = "IP-EF-021",
+                "Discharge Early for Home-Based Management (Acute Respiratory Infection) [IP-EF-026]" = "IP-EF-026"
               ),
               multiple = TRUE,
               options = list("plugins" = list("remove_button"))

@@ -9,9 +9,6 @@ app_server <- function(input, output, session) {
 
   ## Make connections ----
 
-  container_support <-
-    get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_SUPPORT"))
-
   container_inputs <-
     get_container(container_name = Sys.getenv("AZ_STORAGE_CONTAINER_INPUTS"))
 
@@ -31,21 +28,31 @@ app_server <- function(input, output, session) {
       n = .data$denominator
     )
 
-  nee_results <- container_support |> read_nee("nee_table.rds")
+  nee_results <- read_nee()
 
   # Lookups
 
-  trust_code_lookup <- get_trust_lookup(container_support = container_support)
+  trust_code_lookup <- readr::read_csv(
+    app_sys("app", "reference", "nhp-scheme-lookup.csv"),
+    col_types = "c"
+  ) |>
+    # See https://github.com/The-Strategy-Unit/nhp_planning/issues/340
+    dplyr::mutate(
+      `Name of Hospital site` = dplyr::case_match(
+        .data$`Trust ODS Code`,
+        "RYJ" ~ "Imperial", # three sites with same scheme code
+        .default = .data$`Name of Hospital site`
+      )
+    )
 
-  mitigator_lookup <- container_support |>
-    AzureStor::storage_read_csv("mitigator-lookup.csv", col_types = "c") |>
-    prepare_mitigators()
+  peers <- readr::read_csv(
+    app_sys("app", "reference", "nhp-peers.csv"),
+    col_types = "c"
+  ) |>
+    dplyr::rename("scheme" = "procode")
 
+  mitigator_lookup <- get_mitigator_lookup()
   mitigator_reference <- mitigator_lookup |> prepare_mitigators_ref()
-
-  peers <- container_support |>
-    AzureStor::storage_load_rds("trust-peers.rds") |>
-    dplyr::rename(scheme = .data$procode)
 
   # Metadata
   yaml <- yaml::read_yaml(
@@ -100,7 +107,6 @@ app_server <- function(input, output, session) {
     vars = c(
       "mitigator_type",
       "activity_type",
-      "grouping",
       "strategy_subset",
       "mitigator_name"
     )

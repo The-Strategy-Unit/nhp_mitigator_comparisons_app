@@ -57,12 +57,12 @@ make_raw_dt <- function(dat) {
 make_mitigator_dt <- function(mitigator_lookup) {
   mitigator_lookup_prepared <- mitigator_lookup |>
     dplyr::select(
-      `Code` = .data$`Mitigator code`,
-      `Name` = .data$`Strategy name`,
-      `Variable` = .data$`Strategy variable`,
-      `Type` = .data$`Mitigator type`,
+      Code = .data$`Mitigator code`,
+      Name = .data$`Strategy name`,
+      Variable = .data$`Strategy variable`,
       .data$`Activity type`,
-      `Group` = .data$Grouping
+      Type = .data$`Mitigator type`,
+      Mechanism = .data$`Strategy subset`
     ) |>
     dplyr::mutate(dplyr::across(tidyselect::everything(), factor))
 
