@@ -28,7 +28,7 @@ app_server <- function(input, output, session) {
       n = .data$denominator
     )
 
-  nee_results <- readr::read_rds(app_sys("app", "reference", "nee_table.rds"))
+  nee_results <- read_nee()
 
   # Lookups
 
