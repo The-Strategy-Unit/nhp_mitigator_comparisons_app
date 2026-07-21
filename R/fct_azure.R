@@ -3,7 +3,7 @@ get_container <- function(
   tenant = Sys.getenv("AZ_TENANT_ID"),
   app_id = Sys.getenv("AZ_APP_ID"),
   ep_uri = Sys.getenv("AZ_STORAGE_EP"),
-  container_name # env var "AZ_STORAGE_CONTAINER_RESULTS" or "*_SUPPORT"
+  container_name # env var "AZ_STORAGE_CONTAINER_RESULTS"
 ) {
   # if the app_id variable is empty, we assume that this is running on an Azure
   # VM, and then we will use Managed Identities for authentication.
