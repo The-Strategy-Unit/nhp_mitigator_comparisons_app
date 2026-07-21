@@ -49,6 +49,10 @@ There are two versions of the app you can deploy to:
 * ['dev' for developers](https://connect.strategyunitwm.nhs.uk/nhp/compare-mitigation-predictions-dev/) (login/permissions required), which you can deploy to after pull requests to check any changes
 * ['prod' for users](https://connect.strategyunitwm.nhs.uk/nhp/compare-mitigation-predictions/) (login/permissions required), which you can deploy to after a new GitHub release/Git tag
 
+When you deploy to dev, the `NHP_INPUTS_DATA_VERSION` environment variable is set to `"dev"`.
+If deploying to prod, the value is fetched from [the nhp_data repository](https://github.com/The-Strategy-Unit/nhp_data)'s latest release value.
+This assumes that the name of the latest inputs-data directory in Azure blob storage matches the latest release-version value (ignoring the patch value, so 'vX.Y').
+
 ### Data
 
 #### Parameters

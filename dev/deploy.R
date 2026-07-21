@@ -6,8 +6,9 @@ get_env_var <- function(env_var) {
   env_val
 }
 
-get_model_version <- function(
-  repo = "The-Strategy-Unit/nhp_model",
+# Assumes latest Azure data-dir name is same as latest nhp_data version
+get_data_version <- function(
+  repo = "The-Strategy-Unit/nhp_data",
   remove_patch = TRUE # vX.Y not vX.Y.Z
 ) {
   url <- glue::glue("https://github.com/{repo}/releases/latest")
@@ -35,7 +36,7 @@ deploy <- function(
     AZ_STORAGE_EP = get_env_var("AZ_STORAGE_EP"),
     AZ_STORAGE_CONTAINER_INPUTS = get_env_var("AZ_STORAGE_CONTAINER_INPUTS"),
     FEEDBACK_FORM_URL = get_env_var("FEEDBACK_FORM_URL"),
-    NHP_INPUTS_DATA_VERSION = get_model_version()
+    NHP_INPUTS_DATA_VERSION = get_data_version()
   )
   app_id <- 108
   app_name <- "nhp_compare_mitigation_prediction_app"
