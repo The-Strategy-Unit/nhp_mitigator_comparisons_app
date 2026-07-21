@@ -52,8 +52,10 @@ Imports:
     tidyselect,
     yaml
 Suggests:
+    httr2,
     rsconnect,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    withr
 Remotes:
     dreamRs/datamods
 Config/roxygen2/version: 8.0.0
