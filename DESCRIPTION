@@ -16,6 +16,7 @@ Depends:
     R (>= 4.2.0)
 Imports:
     arrow,
+    azkit,
     AzureAuth,
     AzureStor,
     bsicons,
